@@ -1,7 +1,8 @@
 package com.ahmadhassan.i210403
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -10,22 +11,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        val recyclerView: RecyclerView = findViewById(R.id.TopMentors)
+        val recyclerViewTopMentor: RecyclerView = findViewById(R.id.TopMentors)
+        val recyclerViewEdMentor: RecyclerView = findViewById(R.id.EdMentors)
+        val recyclerViewRecentMentor: RecyclerView = findViewById(R.id.RecentMentors)
+
+
 
         // Set layout manager
-        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        recyclerViewTopMentor.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        recyclerViewEdMentor.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        recyclerViewRecentMentor.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+
         // Create dummy data
         val mentorsList = listOf(
             Mentors("John Doe", "Software Engineer", "$50/hr", "Available"),
             Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable"),
             Mentors("Michael ", "UX Designer", "$55/hr", "Available"),
-            // Add more mentors as needed
+            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available"),
         )
 
         // Create adapter
         val adapter = CardAdapter(mentorsList, this)
 
         // Set adapter
-        recyclerView.adapter = adapter
+        recyclerViewTopMentor.adapter = adapter
+        recyclerViewEdMentor.adapter = adapter
+        recyclerViewRecentMentor.adapter = adapter
     }
+
 }

@@ -2,6 +2,7 @@
 package com.ahmadhassan.i210403;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +36,13 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.jobTitle.setText(mentor.getJobTitle());
         holder.rate.setText(mentor.getRate());
         holder.availability.setText(mentor.getAvailability());
-    }
 
+        if(mentor.getAvailability().equals(" 🟢 Available")) {
+            holder.availability.setTextColor(Color.parseColor("#359400"));
+        } else {
+            holder.availability.setTextColor(Color.LTGRAY);
+        }
+    }
     @Override
     public int getItemCount() {
         return mentors.size();
