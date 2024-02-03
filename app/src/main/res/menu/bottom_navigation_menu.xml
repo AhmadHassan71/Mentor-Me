@@ -1,0 +1,28 @@
+<!-- bottom_navigation_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home"
+        android:iconTint="@color/white"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/search"
+        android:iconTint="@color/white"
+        android:title="Search" />
+
+    <item
+        android:id="@+id/navigation_chat"
+        android:icon="@drawable/chat"
+        android:iconTint="@color/white"
+        android:title="Chat" />
+
+    <item
+        android:id="@+id/people"
+        android:icon="@drawable/person"
+        android:iconTint="@color/white"
+        android:title="People" />
+
+</menu>

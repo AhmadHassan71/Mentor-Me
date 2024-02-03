@@ -1,0 +1,53 @@
+
+//        val spinner: Spinner = findViewById(R.id.CityEditText)
+//
+//        val cities = arrayOf(
+//            "Enter City", "Karachi", "Lahore", "Faisalabad", "Rawalpindi", "Multan",
+//            "Gujranwala", "Hyderabad", "Peshawar", "Quetta", "Islamabad"
+//        )
+//
+//        val adapter = ArrayAdapter(
+//            this,
+//            android.R.layout.simple_spinner_item,
+//            cities
+//        )
+//
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//
+//        spinner.adapter = adapter
+//
+//        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parent: AdapterView<*>,
+//                view: View,
+//                position: Int,
+//                id: Long
+//            ) {
+//                if (!isCitySelected) {
+//                    if (position == 0) return
+//
+//                    val selectedCity = parent.getItemAtPosition(position).toString()
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "Selected city: $selectedCity",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//
+//                    isCitySelected = true
+//
+//                    val updatedCities = cities.filter { it != "Enter City" }.toTypedArray()
+//                    val updatedAdapter = ArrayAdapter(
+//                        applicationContext,
+//                        android.R.layout.simple_spinner_item,
+//                        updatedCities
+//                    )
+//                    updatedAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+//                    spinner.adapter = updatedAdapter
+//                }
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>?) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        }

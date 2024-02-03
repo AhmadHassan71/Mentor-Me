@@ -64,20 +64,18 @@
             android:layout_width="371dp"
             android:layout_height="54dp"
             android:layout_marginLeft="20dp"
-
             android:layout_marginBottom="68dp"
-            android:autofillHints="Enter Email"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/white"
             android:ems="10"
+            android:hint="Enter your Email"
             android:inputType="textEmailAddress"
             android:padding="10dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
+            android:textColorHint="@color/material_dynamic_neutral50"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/PasswordEditText"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteX="16dp" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/PasswordTextView"
@@ -100,21 +98,21 @@
             android:layout_width="371dp"
             android:layout_height="54dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
-            android:autofillHints="Enter Email"
+            android:hint="Enter your Password"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/white"
             android:ems="10"
             android:inputType="textEmailAddress"
             android:padding="10dp"
+            android:password="true"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
+            android:textColorHint="@color/material_dynamic_neutral50"
             android:textSize="18sp"
+
             app:layout_constraintBottom_toTopOf="@+id/ForgotPasswordTextView"
             app:layout_constraintStart_toStartOf="parent"
-
-            tools:layout_editor_absoluteX="16dp" />
+            tools:ignore="Deprecated" />
 
         <TextView
             android:id="@+id/ForgotPasswordTextView"
@@ -137,9 +135,12 @@
             android:layout_marginStart="108dp"
             android:layout_marginTop="56dp"
             android:background="@drawable/rounded_border"
+            android:backgroundTintMode="src_over"
+            android:drawableTint="@color/white"
             android:text="Login"
+            android:textAllCaps="false"
             android:textColor="#50C1C8"
-            android:textSize="22dp"
+            android:textSize="22sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ForgotPasswordTextView" />
 
@@ -174,7 +175,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/circle" />
+        app:srcCompat="@drawable/transparent_circle" />
 
     <ImageView
         android:id="@+id/TopCircleImageView"
@@ -184,7 +185,7 @@
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toBottomOf="@+id/BottomCircleImageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:srcCompat="@drawable/circle" />
+        app:srcCompat="@drawable/transparent_circle" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
