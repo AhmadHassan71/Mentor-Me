@@ -21,7 +21,7 @@ class RegisterActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.LoginButton)
         loginButton.setOnClickListener {
             // Start the HomeActivity when the login button is clicked
-            val intent = Intent(this@RegisterActivity, HomeActivity::class.java)
+            val intent = Intent(this@RegisterActivity, VerifyActivity::class.java)
             startActivity(intent)
         }
 
