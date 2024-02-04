@@ -141,7 +141,7 @@
             app:layout_constraintStart_toStartOf="@+id/ContactEditText"
             app:layout_constraintTop_toBottomOf="@+id/ContactEditText" />
 
-        <EditText
+        <Spinner
             android:id="@+id/CountryEditText"
 
             android:layout_width="350dp"
@@ -169,7 +169,7 @@
             app:layout_constraintStart_toStartOf="@+id/CountryEditText"
             app:layout_constraintTop_toBottomOf="@+id/CountryEditText" />
 
-        <EditText
+        <Spinner
             android:id="@+id/CityEditText"
 
             android:layout_width="350dp"
