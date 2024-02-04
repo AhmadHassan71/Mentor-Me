@@ -25,5 +25,12 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intent)
         }
+
+        val forgotPasswordTextView: TextView = findViewById(R.id.ForgotPasswordTextView)
+        forgotPasswordTextView.setOnClickListener {
+            // Start the ForgotPasswordActivity when the forgot password text view is clicked
+            val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
