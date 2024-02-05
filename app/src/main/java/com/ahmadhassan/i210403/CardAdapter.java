@@ -1,4 +1,3 @@
-// file 2
 package com.ahmadhassan.i210403;
 
 import android.content.Context;
@@ -14,6 +13,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<Mentors> mentors;
+    private OnItemClickListener itemClickListener;
 
     public CardAdapter(List<Mentors> mentors, Context context) {
         this.mentors = mentors;
@@ -36,16 +36,36 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.rate.setText(mentor.getRate());
         holder.availability.setText(mentor.getAvailability());
         holder.Favorite.setText(mentor.getFavorite());
-        if(mentor.getAvailability().equals(" 🟢 Available")) {
+
+        if (mentor.getAvailability().equals(" 🟢 Available")) {
             holder.availability.setTextColor(Color.parseColor("#359400"));
         } else {
             holder.availability.setTextColor(Color.LTGRAY);
         }
 
+        // Set click listener
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(mentor);
+                }
+            }
+        });
     }
+
     @Override
     public int getItemCount() {
         return mentors.size();
     }
 
+    // Setter method for the item click listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        itemClickListener = listener;
+    }
+
+    // Interface for click listener
+    public interface OnItemClickListener {
+        void onItemClick(Mentors mentor);
+    }
 }

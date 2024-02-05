@@ -58,6 +58,11 @@ class HomeActivity : AppCompatActivity() {
                 else -> false
             }
         }
-}
+
+        adapter.setOnItemClickListener {
+            val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
 }

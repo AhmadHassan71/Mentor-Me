@@ -1,9 +1,13 @@
 package com.ahmadhassan.i210403
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class SearchResultActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,5 +39,42 @@ class SearchResultActivity : AppCompatActivity() {
 
         // Set adapter
         recyclerViewTopMentor.adapter = adapter
+
+
+        val backButton = findViewById<ImageView>(R.id.backButton)
+        backButton.setOnClickListener {
+            val intent = Intent(this, SearchPageActivity::class.java)
+            startActivity(intent)
+        }
+
+
+
+
+        val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+
+        bottomNavView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                // handle search item
+                R.id.navigation_search -> {
+                    startActivity(Intent(this, SearchPageActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+
+
+        adapter.setOnItemClickListener(object : VerticalCardAdapter.OnItemClickListener {
+            override fun onItemClick(mentor: Mentors) {
+                val intent = Intent(this@SearchResultActivity, MentorProfileActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
     }
+
 }

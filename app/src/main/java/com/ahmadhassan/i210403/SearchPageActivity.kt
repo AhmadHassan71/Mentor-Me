@@ -18,6 +18,13 @@ class SearchPageActivity : AppCompatActivity() {
             val intent = Intent(this, SearchResultActivity::class.java)
             startActivity(intent)
         }
+        //on click listener for the back button go to home page
+        val backButton = findViewById<ImageView>(R.id.backButton)
+        backButton.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
 
         bottomNavView.setOnNavigationItemSelectedListener { item ->
