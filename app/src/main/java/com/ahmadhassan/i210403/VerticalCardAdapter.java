@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
+public class VerticalCardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<Mentors> mentors;
 
-    public CardAdapter(List<Mentors> mentors, Context context) {
+    public VerticalCardAdapter(List<Mentors> mentors, Context context) {
         this.mentors = mentors;
         this.inflater = LayoutInflater.from(context);
     }
@@ -23,7 +23,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.card, parent, false);
+        View view = inflater.inflate(R.layout.verticalcard, parent, false);
         return new ViewHolder(view);
     }
 

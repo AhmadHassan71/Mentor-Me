@@ -12,6 +12,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     TextView jobTitle;
     TextView rate;
     TextView availability;
+    TextView Favorite;
 
     public ViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -19,5 +20,6 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         jobTitle = itemView.findViewById(R.id.JobTitle);
         rate = itemView.findViewById(R.id.Rate);
         availability = itemView.findViewById(R.id.Availability);
+        Favorite = itemView.findViewById(R.id.Favorite);
     }
 }

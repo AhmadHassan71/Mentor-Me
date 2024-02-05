@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DDF7F7 ">
+
+
+    <ImageView
+        android:id="@+id/BottomCircleImageView"
+        android:layout_width="117dp"
+        android:layout_height="115dp"
+        app:layout_constraintEnd_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/transparent_circle" />
+
+    <ImageView
+        android:id="@+id/TopCircleImageView"
+        android:layout_width="119dp"
+        android:layout_height="114dp"
+        android:layout_marginStart="36dp"
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toStartOf="@+id/BottomCircleImageView"
+        app:srcCompat="@drawable/transparent_circle" />
+
+
+    <!-- Bottom Navigation View -->
+
+    <!-- ImageView positioned on top of BottomNavigationView -->
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="sans-serif"
+        android:text="Search Results"
+        android:textColor="#1D757C"
+        android:textFontWeight="600"
+        android:textSize="26sp"
+        app:layout_constraintStart_toStartOf="@+id/backButton"
+        app:layout_constraintTop_toBottomOf="@+id/backButton" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/TopMentors"
+        android:layout_width="wrap_content"
+        android:layout_height="600dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1D757C"
+        android:elevation="0dp"
+        android:translationZ="0dp"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="66dp"
+        android:layout_height="63dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="172dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="#1D757C"
+        android:elevation="4dp"
+        android:padding="4dp"
+        android:translationZ="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:srcCompat="@drawable/plus" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="56dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back"
+        app:tint="#147076" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="#9273B8B0"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/textView">
+
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="Filter"
+            android:textColor="#1D757C"
+            android:textColorHint="#CBCBCB"
+            android:textSize="22sp" />
+
+        <ImageView
+            android:id="@+id/downArrow"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="Search"
+            android:src="@drawable/arrow_down"
+            app:tint="#1D757C" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

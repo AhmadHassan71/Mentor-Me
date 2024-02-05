@@ -8,7 +8,9 @@ public class Mentors {
     private String rate;
     private String Availability;
 
-    public Mentors(String name, String jobTitle, String rate, String Availability) {
+    private String Favorite;
+
+    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite) {
         this.name = name;
         this.jobTitle = jobTitle;
         this.rate = rate;
@@ -19,6 +21,11 @@ public class Mentors {
         } else {
             this.Availability = " ⚪ Not Available";
             // make text color silver
+        }
+        if(Favorite.equals("Favorite")) {
+            this.Favorite = "❤️";
+        } else {
+            this.Favorite = "🩶";
         }
 
     }
@@ -35,5 +42,9 @@ public class Mentors {
     }
     public String getAvailability() {
         return Availability;
+    }
+
+    public String getFavorite() {
+        return Favorite;
     }
 }
