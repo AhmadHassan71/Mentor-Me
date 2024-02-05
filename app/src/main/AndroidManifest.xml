@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".VerifyActivity">
         </activity>
+        <activity android:name=".ResetPasswordActivity">
+        </activity>
 
     </application>
 
