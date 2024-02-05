@@ -39,6 +39,10 @@
         </activity>
         <activity android:name=".MentorProfileActivity">
         </activity>
+        <activity android:name=".CommunityActivity">
+        </activity>
+        <activity android:name=".ReviewActivity">
+        </activity>
 
     </application>
 

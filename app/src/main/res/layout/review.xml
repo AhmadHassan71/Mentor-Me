@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#DDF7F7">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_bottom"
+        android:backgroundTint="#50C1C8"
+        android:padding="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back"
+            app:tint="#147076" />
+
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Hi, I'm"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="@+id/backButton"
+            app:layout_constraintTop_toBottomOf="@+id/backButton" />
+
+        <TextView
+            android:id="@+id/MentorNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Jon Copper"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="@+id/textView21"
+            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/MentorNameTextView" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:drawableEnd="@drawable/emoji_add"
+            android:text="Drop me a Review  "
+            android:textColor="@color/white"
+            android:textSize="28dp"
+            app:layout_constraintStart_toStartOf="@+id/MentorNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
+
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/transparent_circle"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/MentorNameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.697"
+            app:layout_constraintStart_toEndOf="@+id/MentorNameTextView"
+            app:layout_constraintTop_toTopOf="@+id/backButton"
+            app:layout_constraintVertical_bias="0.883"
+            app:srcCompat="@drawable/personpic" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="344dp"
+        android:layout_height="153dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/outline_borders"
+        android:hint=" Type your experience ..."
+        android:inputType="textMultiLine"
+        android:padding="10dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+
+    <Button
+        android:id="@+id/submitFeedbackButton"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="68dp"
+        android:background="@drawable/rounded_border"
+        android:backgroundTint="#147076"
+        android:fontFamily="sans-serif-medium"
+        android:text="Submit Feedback"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/imageView21"
+        app:layout_constraintVertical_bias="0.7" />
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="40dp"
+        app:tint="#147076"
+
+        android:layout_height="40dp"
+        app:layout_constraintStart_toEndOf="@+id/imageView22"
+        app:layout_constraintTop_toTopOf="@+id/imageView22"
+        app:srcCompat="@drawable/star" />
+
+    <ImageView
+        android:id="@+id/imageView19"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:tint="#147076"
+
+        app:layout_constraintStart_toEndOf="@+id/imageView23"
+        app:layout_constraintTop_toTopOf="@+id/imageView23"
+        app:srcCompat="@drawable/star" />
+
+    <ImageView
+        android:id="@+id/imageView21"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:tint="#147076"
+
+        app:layout_constraintStart_toEndOf="@+id/imageView18"
+        app:layout_constraintTop_toTopOf="@+id/imageView18"
+        app:srcCompat="@drawable/star" />
+
+    <ImageView
+        android:id="@+id/imageView22"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintHorizontal_bias="0.218"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
+        app:tint="#147076"
+        app:srcCompat="@drawable/star" />
+
+    <ImageView
+        android:id="@+id/imageView23"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:tint="#147076"
+
+        app:layout_constraintStart_toEndOf="@+id/imageView21"
+        app:layout_constraintTop_toTopOf="@+id/imageView21"
+        app:srcCompat="@drawable/star" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

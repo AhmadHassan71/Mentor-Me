@@ -3,6 +3,6 @@
     android:shape="rectangle">
     <solid android:color="@color/white" />
     <stroke android:color="#147076" android:width="2dp" />
-    <corners android:radius="1000dp" /> <!-- Use a large radius to make it effectively a transparent_circle -->
+    <corners android:radius="25dp" /> <!-- Use a large radius to make it effectively a transparent_circle -->
 </shape>
 
