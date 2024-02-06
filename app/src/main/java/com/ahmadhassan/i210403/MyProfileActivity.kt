@@ -2,6 +2,7 @@ package com.ahmadhassan.i210403
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -73,6 +74,32 @@ class MyProfileActivity: AppCompatActivity() {
         )
         val adapter2 = ReviewAdapter(reviews)
         recyclerView.adapter = adapter2
+
+
+        // optionsImageView opens EditProfileActivity
+        val optionsImageView = findViewById<ImageView>(R.id.optionsImageView)
+        optionsImageView.setOnClickListener {
+            val intent = Intent(this, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+        // editProfileButton opens EditProfileActivity
+        val editProfileButton = findViewById<ImageView>(R.id.editProfilePicture)
+        editProfileButton.setOnClickListener {
+            val intent = Intent(this, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+        val editCoverButton = findViewById<ImageView>(R.id.editCoverPicture)
+        editCoverButton.setOnClickListener {
+            val intent = Intent(this, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        // bookedSessionsButton opens BookedSessionActivity
+        val bookedSessionsButton = findViewById<Button>(R.id.bookedSessionsButton)
+        bookedSessionsButton.setOnClickListener {
+            val intent = Intent(this, BookedSessionActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 }
