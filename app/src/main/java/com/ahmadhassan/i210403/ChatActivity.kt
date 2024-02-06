@@ -1,15 +1,47 @@
 package com.ahmadhassan.i210403
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ChatActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_menu)
+
+
+        // back button
+        val backButton = findViewById<ImageView>(R.id.backButton)
+        backButton.setOnClickListener {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
+
+        // bottom navigation view
+
+        val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+
+        bottomNavView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    true
+                }
+                R.id.navigation_search -> {
+                    startActivity(Intent(this, SearchPageActivity::class.java))
+                    true
+                }
+                // Handle other menu items if needed
+                else -> false
+            }
+        }
+
+        // RecyclerView for profile pics
 
         val recyclerView: RecyclerView = findViewById(R.id.myCommunityRecyclerView)
 

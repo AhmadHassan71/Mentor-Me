@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class PersonProfileAdapter(private val profiles: List<PersonProfile>) :
@@ -18,10 +19,18 @@ class PersonProfileAdapter(private val profiles: List<PersonProfile>) :
         fun bind(personProfile: PersonProfile) {
             profilePictureImageView.setImageResource(personProfile.profilePicture)
             personNameTextView.text = personProfile.personName
-            unreadMessagesTextView.text = if (personProfile.unreadMessages > 0) {
-                "Unread Messages: ${personProfile.unreadMessages}"
+            if (personProfile.unreadMessages == 1) {
+                "${personProfile.unreadMessages} New Message".also { unreadMessagesTextView.text = it }
+                // Change text color to red for one unread message
+                unreadMessagesTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
+            } else if (personProfile.unreadMessages > 1) {
+                "${personProfile.unreadMessages} New Messages".also { unreadMessagesTextView.text = it }
+                // Change text color to red for multiple unread messages
+                unreadMessagesTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.red))
             } else {
-                "No Unread Messages"
+                "No Unread Messages".also { unreadMessagesTextView.text = it }
+                // Reset text color to default for no unread messages
+                unreadMessagesTextView.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
             }
         }
     }

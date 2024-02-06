@@ -33,6 +33,10 @@ class SearchPageActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeActivity::class.java))
                     true
                 }
+                R.id.navigation_search -> {
+                    startActivity(Intent(this, SearchPageActivity::class.java))
+                    true
+                }
                 // Handle other menu items if needed
                 else -> false
             }
