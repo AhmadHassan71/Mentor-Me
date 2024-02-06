@@ -25,8 +25,14 @@ class SearchPageActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
 
+        val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+        bottomNavView.selectedItemId = R.id.navigation_search
         bottomNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -39,6 +45,9 @@ class SearchPageActivity : AppCompatActivity() {
                 }
                 // Handle other menu items if needed
                 else -> false
+            }.also {
+                // Set the selected item as checked to highlight it
+                item.isChecked = true
             }
         }
     }

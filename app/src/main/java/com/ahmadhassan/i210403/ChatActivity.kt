@@ -25,7 +25,7 @@ class ChatActivity: AppCompatActivity() {
         // bottom navigation view
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
-
+       bottomNavView.selectedItemId = R.id.navigation_chat
         bottomNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
@@ -36,13 +36,24 @@ class ChatActivity: AppCompatActivity() {
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
+                R.id.navigation_chat -> {
+                    startActivity(Intent(this, ChatActivity::class.java))
+                    true
+                }
                 // Handle other menu items if needed
                 else -> false
+            }.also {
+                // Set the selected item as checked to highlight it
+                item.isChecked = true
             }
         }
 
         // RecyclerView for profile pics
-
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
         val recyclerView: RecyclerView = findViewById(R.id.myCommunityRecyclerView)
 
         // Sample data for profile pics (replace with your actual data)

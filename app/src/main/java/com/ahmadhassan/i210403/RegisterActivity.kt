@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -43,6 +44,11 @@ class RegisterActivity : AppCompatActivity() {
             cities
         )
 
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 

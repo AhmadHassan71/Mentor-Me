@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DDF7F7 ">
+
+
+        <ImageView
+            android:id="@+id/BottomCircleImageView"
+            android:layout_width="117dp"
+            android:layout_height="115dp"
+            app:layout_constraintEnd_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/transparent_circle" />
+
+        <ImageView
+            android:id="@+id/TopCircleImageView"
+            android:layout_width="119dp"
+            android:layout_height="114dp"
+            android:layout_marginStart="36dp"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toStartOf="@+id/BottomCircleImageView"
+            app:srcCompat="@drawable/transparent_circle" />
+
+
+        <!-- Bottom Navigation View -->
+
+        <!-- ImageView positioned on top of BottomNavigationView -->
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif"
+            android:text="Add New Mentor"
+            android:textColor="#1D757C"
+            android:textFontWeight="600"
+            android:textSize="26sp"
+            app:layout_constraintStart_toStartOf="@+id/backButton"
+            app:layout_constraintTop_toBottomOf="@+id/backButton" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/foregroundlayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/rounded_top"
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
+            app:layout_constraintHeight_percent=".75"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView46"
+            app:layout_constraintWidth_percent="1">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="136dp"
+                android:text="Name"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/NameEditText"
+
+                android:layout_width="346dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="Enter Name"
+                android:inputType="textEmailAddress"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Description"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/NameEditText" />
+
+            <EditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="Enter Description"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+            <TextView
+                android:id="@+id/availabilityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Availability"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
+
+            <Spinner
+                android:id="@+id/availabilityEditText"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:inputType="text"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/availabilityTextView"
+                app:layout_constraintTop_toBottomOf="@+id/availabilityTextView" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/uploadVideoLaout"
+                android:layout_width="158dp"
+                android:layout_height="104dp"
+                android:background="@drawable/outline_borders"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/textView2"
+                app:layout_constraintEnd_toStartOf="@+id/uploadImageLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <ImageView
+                    android:id="@+id/videoImage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:layout_column="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.296"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/videocall"
+                    app:tint="#1D757C" />
+
+                <TextView
+                    android:id="@+id/uploadViewTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Video"
+
+                    app:layout_column="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/videoImage"
+                    app:layout_row="1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/uploadButton"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="#147076"
+                android:fontFamily="sans-serif-medium"
+                android:text="Upload"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp"
+                app:layout_constraintEnd_toEndOf="@+id/availabilityEditText"
+                app:layout_constraintStart_toStartOf="@+id/availabilityEditText"
+                app:layout_constraintTop_toBottomOf="@+id/availabilityEditText" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/uploadImageLayout"
+                android:layout_width="158dp"
+                android:layout_height="104dp"
+                android:layout_marginEnd="32dp"
+                android:background="@drawable/outline_borders"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toTopOf="@+id/textView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:id="@+id/cameraImage"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:layout_column="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.296"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/camera"
+                    app:tint="#1D757C" />
+
+                <TextView
+                    android:id="@+id/cameraTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Camera"
+
+                    app:layout_column="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cameraImage"
+                    app:layout_row="1" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1D757C"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_navigation_menu" />
+
+        <ImageView
+            android:id="@+id/addMentorButton"
+            android:layout_width="66dp"
+            android:layout_height="63dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginStart="172dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#1D757C"
+            android:elevation="4dp"
+            android:padding="4dp"
+            android:translationZ="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:srcCompat="@drawable/plus" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back"
+            app:tint="#147076" />
+
+        <TextView
+            android:id="@+id/textView46"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Help us expand!"
+            android:textColor="#147076"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -130,7 +130,7 @@
         app:menu="@menu/bottom_navigation_menu" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/addMentorButton"
         android:layout_width="66dp"
         android:layout_height="63dp"
         android:layout_gravity="bottom|center_horizontal"

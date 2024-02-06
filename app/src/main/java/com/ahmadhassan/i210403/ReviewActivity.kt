@@ -17,5 +17,11 @@ class ReviewActivity : AppCompatActivity() {
             val intent = Intent(this, MentorProfileActivity::class.java)
             startActivity(intent)
         }
+
+        // on back button go to  MentorProfileActivity
+        findViewById<Button>(R.id.backButton).setOnClickListener {
+            val intent = Intent(this, MentorProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

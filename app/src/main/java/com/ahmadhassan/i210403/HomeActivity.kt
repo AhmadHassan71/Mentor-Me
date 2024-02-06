@@ -3,6 +3,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -47,24 +48,38 @@ class HomeActivity : AppCompatActivity() {
 
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+        bottomNavView.selectedItemId = R.id.navigation_home
 
         bottomNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_search -> {
+                    // highlight the search icon
+                    R.id.navigation_search
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
                 R.id.navigation_chat -> {
+                    // highlight the chat icon
+
                     startActivity(Intent(this, ChatActivity::class.java))
                     true
                 }
                 // Handle other menu items if needed
                 else -> false
+            }.also {
+                // Set the selected item as checked to highlight it
+                item.isChecked = true
             }
         }
 
         adapter.setOnItemClickListener {
             val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
             startActivity(intent)
         }
     }

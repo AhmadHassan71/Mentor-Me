@@ -46,7 +46,11 @@ class SearchResultActivity : AppCompatActivity() {
             val intent = Intent(this, SearchPageActivity::class.java)
             startActivity(intent)
         }
-
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
 
 
 
@@ -66,7 +70,6 @@ class SearchResultActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
 
         adapter.setOnItemClickListener(object : VerticalCardAdapter.OnItemClickListener {
             override fun onItemClick(mentor: Mentors) {

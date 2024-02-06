@@ -29,5 +29,6 @@ class MentorProfileActivity : AppCompatActivity() {
             val intent = Intent(this, CommunityActivity::class.java)
             startActivity(intent)
         }
+
     }
 }

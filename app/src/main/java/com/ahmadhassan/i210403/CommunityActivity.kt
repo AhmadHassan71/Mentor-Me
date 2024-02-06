@@ -29,6 +29,7 @@ class CommunityActivity : AppCompatActivity() {
 
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
+        bottomNavView.selectedItemId = R.id.navigation_search
 
         bottomNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -40,12 +41,23 @@ class CommunityActivity : AppCompatActivity() {
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
+                R.id.navigation_chat -> {
+                    startActivity(Intent(this, ChatActivity::class.java))
+                    true
+                }
                 // Handle other menu items if needed
                 else -> false
+            }.also {
+                // Set the selected item as checked to highlight it
+                item.isChecked = true
             }
         }
 
-
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
             val intent = Intent(this, MentorProfileActivity::class.java)
