@@ -3,6 +3,7 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 class ReviewActivity : AppCompatActivity() {
@@ -19,7 +20,7 @@ class ReviewActivity : AppCompatActivity() {
         }
 
         // on back button go to  MentorProfileActivity
-        findViewById<Button>(R.id.backButton).setOnClickListener {
+        findViewById<ImageView>(R.id.backButton).setOnClickListener {
             val intent = Intent(this, MentorProfileActivity::class.java)
             startActivity(intent)
         }
