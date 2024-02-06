@@ -76,5 +76,14 @@ class ChatActivity: AppCompatActivity() {
         val adapter2 = PersonProfileAdapter(profiles)
         recyclerView2.adapter = adapter2
         recyclerView2.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+
+
+        adapter2.setOnItemClickListener(object : PersonProfileAdapter.OnItemClickListener {
+            override fun onItemClick(profile: PersonProfile) {
+                val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)
+                // Pass any necessary data to the ChatRoomActivity using intent extras if needed
+                startActivity(intent)
+            }
+        })
     }
 }
