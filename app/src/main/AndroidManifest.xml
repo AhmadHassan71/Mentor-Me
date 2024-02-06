@@ -43,6 +43,8 @@
         </activity>
         <activity android:name=".ReviewActivity">
         </activity>
+        <activity android:name=".ChatActivity">
+        </activity>
 
     </application>
 

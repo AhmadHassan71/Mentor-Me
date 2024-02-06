@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="15dp"
+    android:layout_marginTop="25dp"
+    app:layout_constraintEnd_toEndOf="parent">
+    <!-- Replace this with your actual chat box layout -->
+
+
+    <TextView
+        android:id="@+id/userchatMessageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_border"
+        android:backgroundTint="#AFE9E3"
+        android:fontFamily="sans-serif"
+        android:padding="15dp"
+        android:text="Nice Job"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/usertimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="13:30"
+        android:textSize="12sp"
+        android:layout_marginRight="10dp"
+
+        app:layout_constraintEnd_toEndOf="@+id/userchatMessageTextView"
+        app:layout_constraintTop_toBottomOf="@+id/userchatMessageTextView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

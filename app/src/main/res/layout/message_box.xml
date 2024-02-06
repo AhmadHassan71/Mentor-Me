@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/rounded_border"
+    android:backgroundTint="#50C1C8"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#50C1C8"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        app:tint="@color/white"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:flow_verticalAlign="top">
+
+
+        <ImageView
+            android:id="@+id/attachmentButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:tint="@color/white"
+
+            android:contentDescription="Search"
+            android:src="@drawable/ic_menu_attachment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="Search"
+            android:src="@android:drawable/ic_menu_gallery"
+            app:tint="@color/white"
+            app:layout_constraintStart_toEndOf="@+id/attachmentButton"
+            app:layout_constraintTop_toTopOf="@+id/attachmentButton" />
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="231dp"
+            android:layout_height="31dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Type something here..."
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="@color/white"
+            android:textColorHint="#ffff"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageButton"
+            app:layout_constraintTop_toTopOf="@+id/imageButton" />
+
+        <ImageView
+            android:id="@+id/cameraButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="Search"
+            android:src="@android:drawable/ic_menu_camera"
+            app:tint="@color/white"
+
+            app:layout_constraintStart_toEndOf="@+id/searchEditText"
+            app:layout_constraintTop_toTopOf="@+id/searchEditText" />
+
+        <ImageView
+            android:id="@+id/micButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="Search"
+            android:src="@android:drawable/ic_btn_speak_now"
+            app:layout_constraintStart_toEndOf="@+id/cameraButton"
+            app:layout_constraintTop_toTopOf="@+id/cameraButton"
+            app:tint="@color/white"
+            />
+
+        <ImageView
+            app:tint="@color/white"
+
+            android:id="@+id/sendButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="Search"
+            android:src="@android:drawable/ic_menu_send"
+            app:layout_constraintStart_toEndOf="@+id/micButton"
+            app:layout_constraintTop_toTopOf="@+id/micButton" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

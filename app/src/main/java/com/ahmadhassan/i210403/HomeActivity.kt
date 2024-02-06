@@ -54,6 +54,10 @@ class HomeActivity : AppCompatActivity() {
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
+                R.id.navigation_chat -> {
+                    startActivity(Intent(this, ChatActivity::class.java))
+                    true
+                }
                 // Handle other menu items if needed
                 else -> false
             }
