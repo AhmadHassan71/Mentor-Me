@@ -87,6 +87,12 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, AddNewMentorActivity::class.java)
             startActivity(intent)
         }
+
+        val notificationButton = findViewById<ImageView>(R.id.imageView2)
+        notificationButton.setOnClickListener {
+            val intent = Intent(this, NotificationActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 }

@@ -101,5 +101,10 @@ class MyProfileActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+        adapter.setOnItemClickListener {
+            val intent = Intent(this@MyProfileActivity, MentorProfileActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }

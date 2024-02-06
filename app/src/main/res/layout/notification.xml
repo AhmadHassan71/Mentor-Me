@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DDF7F7 ">
+
+
+    <ImageView
+        android:id="@+id/BottomCircleImageView"
+        android:layout_width="117dp"
+        android:layout_height="115dp"
+        app:layout_constraintEnd_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/transparent_circle" />
+
+    <ImageView
+        android:id="@+id/TopCircleImageView"
+        android:layout_width="119dp"
+        android:layout_height="114dp"
+        android:layout_marginStart="36dp"
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toStartOf="@+id/BottomCircleImageView"
+        app:srcCompat="@drawable/transparent_circle" />
+
+
+    <!-- Bottom Navigation View -->
+
+    <!-- ImageView positioned on top of BottomNavigationView -->
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="Notifications "
+android:layout_marginStart="20dp"
+        android:textColor="#1D757C"
+        android:drawableEnd="@drawable/bell_svgrepo_com"
+        android:drawableTint="#1D757C"
+        android:textFontWeight="600"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@+id/backButton"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="@+id/backButton" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notificationRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.73"
+        app:layout_constraintStart_toStartOf="@+id/backButton"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintWidth_percent="0.9" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1D757C"
+        android:elevation="0dp"
+        android:translationZ="0dp"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+    <ImageView
+        android:id="@+id/addMentorButton"
+        android:layout_width="66dp"
+        android:layout_height="63dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginStart="172dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="#1D757C"
+        android:elevation="4dp"
+        android:padding="4dp"
+        android:translationZ="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:srcCompat="@drawable/plus" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="56dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back"
+        app:tint="#147076" />
+
+    <TextView
+        android:id="@+id/clearAllTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="#F0C31E"
+        android:fontFamily="sans-serif-medium"
+        android:text="Clear All"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
