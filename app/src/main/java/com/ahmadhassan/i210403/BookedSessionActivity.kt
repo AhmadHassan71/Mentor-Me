@@ -19,7 +19,7 @@ class BookedSessionActivity : AppCompatActivity() {
             Session("John Doe", "Software Engineer", "23 Dec 2023", "12:20 pm", R.drawable.donny_savage),
             Session("Jane Smith", "Product Manager", "24 Dec 2023", "10:00 am", R.drawable.donny_savage),
             Session("Michael ", "UX Designer", "25 Dec 2023", "11:00 am", R.drawable.donny_savage),
-            Session("Jack Son", "Data Scientist", "26 Dec 2023", "12:00 pm", R.drawable.donny_savage),
+            Session("Jack Son", "Data Scientist", "26 Dec 2023", "12:00 pm", R.drawable.donny_savage)
         )
         val adapter = SessionAdapter(sessions)
         recyclerView.adapter = adapter
