@@ -64,6 +64,11 @@ class HomeActivity : AppCompatActivity() {
                     startActivity(Intent(this, ChatActivity::class.java))
                     true
                 }
+                R.id.navigation_profile -> {
+                    // highlight the my profile icon
+                    startActivity(Intent(this, MyProfileActivity::class.java))
+                    true
+                }
                 // Handle other menu items if needed
                 else -> false
             }.also {

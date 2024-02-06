@@ -44,11 +44,7 @@ class RegisterActivity : AppCompatActivity() {
             cities
         )
 
-        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
-        addMentorButton.setOnClickListener {
-            val intent = Intent(this, AddNewMentorActivity::class.java)
-            startActivity(intent)
-        }
+
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 

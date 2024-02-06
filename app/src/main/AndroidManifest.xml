@@ -49,6 +49,8 @@
         </activity>
         <activity android:name=".AddNewMentorActivity">
         </activity>
+        <activity android:name=".MyProfileActivity">
+        </activity>
 
     </application>
 

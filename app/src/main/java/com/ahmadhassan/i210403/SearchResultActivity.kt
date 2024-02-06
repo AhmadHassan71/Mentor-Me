@@ -67,6 +67,15 @@ class SearchResultActivity : AppCompatActivity() {
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
+                R.id.navigation_chat -> {
+                    startActivity(Intent(this, ChatActivity::class.java))
+                    true
+                }
+                R.id.navigation_profile -> {
+                    // highlight the my profile icon
+                    startActivity(Intent(this, MyProfileActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }

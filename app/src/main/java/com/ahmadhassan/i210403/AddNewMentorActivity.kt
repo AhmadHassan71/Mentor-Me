@@ -10,6 +10,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class AddNewMentorActivity: AppCompatActivity() {
@@ -53,6 +54,11 @@ class AddNewMentorActivity: AppCompatActivity() {
                     startActivity(Intent(this, ChatActivity::class.java))
                     true
                 }
+                R.id.navigation_profile -> {
+                    // highlight the my profile icon
+                    startActivity(Intent(this, MyProfileActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
@@ -89,5 +95,8 @@ class AddNewMentorActivity: AppCompatActivity() {
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
+
+
+
     }
 }

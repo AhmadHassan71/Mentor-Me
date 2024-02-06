@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DDF7F7 "
+        tools:layout_editor_absoluteX="44dp"
+        tools:layout_editor_absoluteY="110dp">
+
+
+        <!-- Bottom Navigation View -->
+
+        <!-- ImageView positioned on top of BottomNavigationView -->
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="sans-serif"
+            android:text="My Profile"
+            android:textColor="#1D757C"
+            android:textFontWeight="600"
+            android:textSize="26sp"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="@+id/backButton" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1D757C"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_navigation_menu" />
+
+        <!-- Profile Picture (Circular) -->
+
+        <ImageView
+            android:id="@+id/coverPicture"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_cover_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="150dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#DDF7F7"
+            android:cropToPadding="true"
+            android:src="@drawable/personpic"
+            app:layout_constraintBottom_toBottomOf="@id/coverPicture"
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/coverPicture"
+            app:layout_constraintTop_toBottomOf="@id/coverPicture" />
+
+        <ImageView
+            android:id="@+id/editProfilePicture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/pencil"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/profilePicture"
+            app:layout_constraintEnd_toEndOf="@id/profilePicture"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/circle"
+            android:padding="6dp"
+            android:clickable="true"
+            android:focusable="true" />
+        <ImageView
+            android:id="@+id/editCoverPicture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/pencil"
+            app:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/coverPicture"
+            app:layout_constraintEnd_toEndOf="@id/coverPicture"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/circle"
+            android:padding="6dp"
+            android:clickable="true"
+            android:focusable="true" />
+        <ImageView
+            android:id="@+id/addMentorButton"
+            android:layout_width="66dp"
+            android:layout_height="63dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginStart="172dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#1D757C"
+            android:elevation="4dp"
+            android:padding="4dp"
+            android:translationZ="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:srcCompat="@drawable/plus" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back"
+            app:tint="#147076" />
+
+        <ImageView
+            android:id="@+id/optionsImageView"
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/dots_horizontal" />
+
+        <TextView
+            android:id="@+id/myNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Ali"
+            android:textColor="#1D757C"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/profilePicture"
+            app:layout_constraintStart_toStartOf="@+id/profilePicture"
+            app:layout_constraintTop_toBottomOf="@+id/profilePicture" />
+
+        <TextView
+            android:id="@+id/locationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Islamabad"
+            android:textColor="#918B8B"
+            android:drawableStart="@drawable/location_pin"
+            android:drawableTint="#918B8B"
+            app:layout_constraintEnd_toEndOf="@+id/myNameTextView"
+            app:layout_constraintStart_toStartOf="@+id/myNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/myNameTextView" />
+
+        <Button
+            android:id="@+id/bookedSessionsButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/rounded_border"
+            android:backgroundTint="#FFC909"
+            android:text="Booked Sessions"
+            android:textAllCaps="false"
+            android:textColor="#1D757C"
+            app:layout_constraintEnd_toStartOf="@+id/editCoverPicture"
+            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintStart_toStartOf="@+id/locationTextView"
+            app:layout_constraintTop_toBottomOf="@+id/locationTextView"
+            app:layout_constraintWidth_percent="0.4" />
+
+        <TextView
+            android:id="@+id/textView49"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:text="Favorite Mentors"
+            app:fontFamily="sans-serif-medium"
+            android:textSize="16sp"
+            android:textColor="#1D757C"
+            app:layout_constraintStart_toStartOf="@+id/profilePicture"
+            app:layout_constraintTop_toBottomOf="@+id/bookedSessionsButton" />
+
+        <TextView
+            android:id="@+id/textView50"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Reviews"
+            android:textColor="#1D757C"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            app:fontFamily="sans-serif-medium"
+            app:layout_constraintStart_toStartOf="@+id/favMentorsRecyclerView"
+            app:layout_constraintTop_toBottomOf="@+id/favMentorsRecyclerView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/favMentorsRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="140dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/textView49"
+            app:layout_constraintTop_toBottomOf="@+id/textView49"
+            app:layout_constraintWidth_percent="0.9" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reviewRecycleView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/textView50"
+            app:layout_constraintTop_toBottomOf="@+id/textView50"
+           app:layout_constraintHeight_percent=".25"
+            app:layout_constraintWidth_percent="0.9" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

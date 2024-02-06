@@ -20,9 +20,9 @@
         android:title="Chat" />
 
     <item
-        android:id="@+id/people"
+        android:id="@+id/navigation_profile"
         android:icon="@drawable/person"
         android:iconTint="@color/white"
-        android:title="People" />
+        android:title="Profile" />
 
 </menu>
