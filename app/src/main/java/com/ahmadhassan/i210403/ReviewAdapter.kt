@@ -11,7 +11,6 @@ class ReviewAdapter(private val reviews: List<Review>) :
         val view = LayoutInflater.from(parent.context).inflate(R.layout.review_card, parent, false)
         return ReviewViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val currentReview = reviews[position]
         holder.mentorName.text = currentReview.mentorName
