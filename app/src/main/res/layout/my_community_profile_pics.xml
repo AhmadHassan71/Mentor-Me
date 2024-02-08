@@ -22,4 +22,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/personpic" />
+    <ImageView
+        android:id="@+id/editProfilePicture"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/circle"
+        app:tint="#f5c542"
+        app:layout_constraintTop_toTopOf="@id/communityProfilePic"
+        app:layout_constraintEnd_toEndOf="@id/communityProfilePic"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="2dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="@color/white"
+        android:padding="2dp"
+        android:clickable="true"
+        android:focusable="true" />
 </androidx.constraintlayout.widget.ConstraintLayout>

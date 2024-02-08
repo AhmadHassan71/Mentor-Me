@@ -2,7 +2,9 @@ package com.ahmadhassan.i210403
 
 import ChatAdapter
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -66,6 +68,41 @@ class CommunityActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
             val intent = Intent(this, MentorProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        // call
+        findViewById<ImageView>(R.id.CallImageView).setOnClickListener {
+            val intent = Intent(this, CallActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<ImageView>(R.id.VideoCallImageView).setOnClickListener {
+            val intent = Intent(this, VideoCallActivity::class.java)
+            startActivity(intent)
+        }
+        // For gallery access
+        findViewById<ImageView>(R.id.imageButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivity(intent)
+        }
+
+        // For camera access
+        findViewById<ImageView>(R.id.cameraButton).setOnClickListener {
+            val intent = Intent(this,CameraActivity::class.java)
+            startActivity(intent)
+        }
+
+        findViewById<ImageView>(R.id.micButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+            startActivity(intent)
+        }
+
+
+// For accessing files
+        findViewById<ImageView>(R.id.attachmentButton).setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "*/*" // This will allow any type of file
             startActivity(intent)
         }
     }

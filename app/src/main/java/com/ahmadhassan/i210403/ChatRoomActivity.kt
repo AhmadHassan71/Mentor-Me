@@ -74,16 +74,15 @@ class ChatRoomActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // call
         findViewById<ImageView>(R.id.CallImageView).setOnClickListener {
-            val phoneNumber = "tel:+1234567890"
-            val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse(phoneNumber))
-            startActivity(dialIntent)
+            val intent = Intent(this, CallActivity::class.java)
+            startActivity(intent)
         }
 
         findViewById<ImageView>(R.id.VideoCallImageView).setOnClickListener {
-            val phoneNumber = "tel:+1234567890"
-            val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse(phoneNumber))
-            startActivity(dialIntent)
+            val intent = Intent(this, VideoCallActivity::class.java)
+            startActivity(intent)
         }
         // For gallery access
         findViewById<ImageView>(R.id.imageButton).setOnClickListener {
@@ -91,9 +90,9 @@ class ChatRoomActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-// For camera access
+        // For camera access
         findViewById<ImageView>(R.id.cameraButton).setOnClickListener {
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val intent = Intent(this,CameraActivity::class.java)
             startActivity(intent)
         }
 

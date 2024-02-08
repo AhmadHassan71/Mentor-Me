@@ -21,13 +21,16 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/foregroundlayout"
-        android:layout_width="415dp"
-        android:layout_height="572dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:background="@drawable/rounded_top"
         android:orientation="vertical"
         android:paddingTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/LoginTextView"
@@ -41,7 +44,8 @@
             android:textFontWeight="700"
             android:textSize="32sp"
             app:layout_constraintBottom_toTopOf="@+id/EmailTextView"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/EmailTextView"
@@ -99,10 +103,10 @@
             android:layout_height="54dp"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="8dp"
-            android:hint="Enter your Password"
             android:background="@drawable/rounded_border"
             android:backgroundTint="@color/white"
             android:ems="10"
+            android:hint="Enter your Password"
             android:inputType="textEmailAddress"
             android:padding="10dp"
             android:password="true"

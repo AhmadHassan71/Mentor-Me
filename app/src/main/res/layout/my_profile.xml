@@ -221,10 +221,11 @@
             android:layout_marginBottom="20dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation_view"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent=".25"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/textView50"
             app:layout_constraintTop_toBottomOf="@+id/textView50"
-           app:layout_constraintHeight_percent=".25"
+            app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_percent="0.9" />
 
 

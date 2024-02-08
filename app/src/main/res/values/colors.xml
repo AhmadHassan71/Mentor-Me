@@ -3,4 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="red">#FF0000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="selected_bkg_color">#147076</color>
+    <color name="unselected_bkg_color">#EDEDED</color>
 </resources>

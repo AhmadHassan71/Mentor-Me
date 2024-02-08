@@ -24,6 +24,11 @@ class MentorProfileActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val bookSession = findViewById<Button>(R.id.bookButton)
+        bookSession.setOnClickListener {
+            val intent = Intent(this,BookASessionActivity::class.java)
+            startActivity(intent)
+        }
         val joinCommunityButton = findViewById<Button>(R.id.joinCommunityButton)
         joinCommunityButton.setOnClickListener {
             val intent = Intent(this, CommunityActivity::class.java)

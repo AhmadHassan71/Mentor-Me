@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -94,6 +95,13 @@ class RegisterActivity : AppCompatActivity() {
         )
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner2.adapter = adapter2
+
+        val loginTextView: TextView = findViewById(R.id.LoginText)
+        loginTextView.setOnClickListener {
+            // Start the HomeActivity when the login button is clicked
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

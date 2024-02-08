@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DDF7F7"
+    android:backgroundTint="#F8F8F8">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_bottom"
+        android:backgroundTint="#50C1C8"
+        android:padding="10dp"
+        android:translationZ="0dp"
+        android:elevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="56dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back"
+            app:tint="#147076" />
+
+        <TextView
+            android:id="@+id/RatingTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⭐ 4.8"
+            android:textColor="@color/white"
+            android:textSize="22dp"
+            app:layout_constraintStart_toStartOf="@+id/MentorNameTextView"
+            app:layout_constraintTop_toBottomOf="@+id/MentorNameTextView" />
+
+        <TextView
+            android:id="@+id/textView21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Book your session"
+            android:textColor="#147076"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="@+id/backButton" />
+
+        <TextView
+            android:id="@+id/MentorNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Jon Copper"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            app:layout_constraintStart_toStartOf="@+id/textView21"
+            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/RatingTextView" />
+
+        <TextView
+            android:id="@+id/rateTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="$400/Session"
+            android:textColor="#FEC809"
+            android:textFontWeight="600"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/RatingTextView"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <ImageView
+            android:id="@+id/imageView17"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/transparent_circle"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/MentorNameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.697"
+            app:layout_constraintStart_toEndOf="@+id/MentorNameTextView"
+            app:layout_constraintTop_toTopOf="@+id/backButton"
+            app:layout_constraintVertical_bias="0.883"
+            app:srcCompat="@drawable/personpic" />
+
+        <ImageView
+            android:id="@+id/ChatImageView"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#FEC809"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/rateTextView"
+            app:layout_constraintStart_toStartOf="@+id/imageView17"
+            app:layout_constraintTop_toTopOf="@+id/rateTextView"
+            app:srcCompat="@drawable/chat"
+            app:tint="#147076"/>
+
+        <ImageView
+            android:id="@+id/CallImageView"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#FEC809"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ChatImageView"
+            app:layout_constraintEnd_toEndOf="@+id/imageView17"
+            app:layout_constraintStart_toEndOf="@+id/ChatImageView"
+            app:layout_constraintTop_toTopOf="@+id/ChatImageView"
+            app:srcCompat="@drawable/call"
+            app:tint="#147076"/>
+
+
+        <ImageView
+            android:id="@+id/VideoCallImageView"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#FEC809"
+            android:padding="3dp"
+            app:layout_constraintBottom_toBottomOf="@+id/CallImageView"
+            app:layout_constraintEnd_toEndOf="@+id/imageView17"
+            app:layout_constraintStart_toEndOf="@+id/CallImageView"
+            app:layout_constraintTop_toTopOf="@+id/CallImageView"
+            app:layout_constraintVertical_bias="0.416"
+            app:srcCompat="@drawable/videocall"
+            app:tint="#147076" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintWidth_percent=".9" />
+
+    <Button
+        android:id="@+id/submitFeedbackButton"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_border"
+        android:backgroundTint="#147076"
+        android:fontFamily="sans-serif-medium"
+        android:text="Book an Appointment"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/calendarView"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toBottomOf="@+id/timeSlot2"
+/>
+    <TextView
+        android:id="@+id/timeSlot1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="#EDEDED"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onTimeSlotClicked"
+        android:padding="12dp"
+        android:text="9:00 AM"
+        android:layout_marginTop='15dp'
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/textView47"
+        app:layout_constraintStart_toStartOf="@+id/textView47"
+        app:layout_constraintTop_toBottomOf="@+id/textView47" />
+
+    <TextView
+        android:id="@+id/timeSlot2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="#EDEDED"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onTimeSlotClicked"
+        android:padding="12dp"
+        android:text="11:00 AM"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/timeSlot1"
+        app:layout_constraintStart_toEndOf="@+id/timeSlot1"
+        app:layout_constraintTop_toTopOf="@+id/timeSlot1" />
+
+    <TextView
+        android:id="@+id/timeSlot3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="#EDEDED"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="onTimeSlotClicked"
+        android:padding="12dp"
+        android:text="01:00 PM"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/timeSlot2"
+        app:layout_constraintStart_toEndOf="@+id/timeSlot2"
+        app:layout_constraintTop_toTopOf="@+id/timeSlot2" />
+
+    <TextView
+        android:id="@+id/textView47"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="Select a Time Slot"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@+id/calendarView"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

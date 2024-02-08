@@ -241,9 +241,43 @@
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/PasswordEditText"
-            app:layout_constraintHorizontal_bias="0.462"
+            app:layout_constraintHorizontal_bias="0.461"
             app:layout_constraintStart_toStartOf="@+id/PasswordEditText"
-            app:layout_constraintTop_toBottomOf="@+id/PasswordEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/PasswordEditText"
+            app:layout_constraintVertical_bias="0.206" />
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif"
+            android:text="Already have an account?"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/LoginButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/LoginButton"
+            app:layout_constraintTop_toBottomOf="@+id/LoginButton"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/LoginText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="sans-serif"
+            android:text="Login"
+            android:textColor="#147076"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView24"
+            app:layout_constraintStart_toEndOf="@+id/textView24"
+            app:layout_constraintTop_toBottomOf="@+id/LoginButton" />
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView

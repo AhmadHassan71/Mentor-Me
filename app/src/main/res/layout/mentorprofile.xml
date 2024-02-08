@@ -121,7 +121,7 @@
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="377dp"
+            android:layout_width="350dp"
             android:layout_height="129dp"
             android:layout_marginTop="56dp"
 
@@ -132,6 +132,8 @@ projects that have shaped my understanding of design
 principles and user experience."
             android:textColor="@color/white"
             android:textSize="16dp"
+            app:flow_horizontalBias="0.0
+"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView3"
@@ -265,7 +267,7 @@ principles and user experience."
         android:textColor="#147076"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/reviewButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView40"
         app:layout_constraintHorizontal_bias="0.181"
         app:layout_constraintStart_toEndOf="@+id/reviewButton"
         app:layout_constraintTop_toTopOf="@+id/reviewButton"

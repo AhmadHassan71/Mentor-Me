@@ -54,7 +54,6 @@ class MyProfileActivity: AppCompatActivity() {
         val mentorsList = listOf(
             Mentors("John Doe", "Software Engineer", "$50/hr", "Available","Favorite"),
             Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable","Favorite"),
-            Mentors("Michael ", "UX Designer", "$55/hr", "Available","️Favorite"),
             Mentors("Jack Son", "Software Engineer", "$50/hr", "Available","Favorite"),
         )
         val adapter = CardAdapter(mentorsList, this)

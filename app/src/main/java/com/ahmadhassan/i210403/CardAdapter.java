@@ -42,6 +42,11 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         } else {
             holder.availability.setTextColor(Color.LTGRAY);
         }
+        if (mentor.getFavorite().equals("❤️")){
+            holder.Favorite.setTextColor(Color.parseColor("#f20010"));
+        }else {
+            holder.Favorite.setTextColor(Color.LTGRAY);
+        }
 
         // Set click listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {

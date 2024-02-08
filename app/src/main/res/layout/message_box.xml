@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/rounded_border"
     android:backgroundTint="#50C1C8"
@@ -49,7 +49,7 @@
 
         <EditText
             android:id="@+id/searchEditText"
-            android:layout_width="231dp"
+            android:layout_width="210dp"
             android:layout_height="31dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
@@ -86,14 +86,16 @@
             />
 
         <ImageView
-            app:tint="@color/white"
-
             android:id="@+id/sendButton"
+
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="Search"
             android:src="@android:drawable/ic_menu_send"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/micButton"
-            app:layout_constraintTop_toTopOf="@+id/micButton" />
+            app:layout_constraintTop_toTopOf="@+id/micButton"
+            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
