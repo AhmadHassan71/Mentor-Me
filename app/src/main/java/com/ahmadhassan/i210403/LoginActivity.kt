@@ -3,7 +3,9 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class LoginActivity : AppCompatActivity() {
@@ -13,10 +15,25 @@ class LoginActivity : AppCompatActivity() {
 
         val loginButton: Button = findViewById(R.id.LoginButton)
         loginButton.setOnClickListener {
-            // Start the HomeActivity when the login button is clicked
-            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-            startActivity(intent)
+            val emailEditText: EditText = findViewById(R.id.EmailEditText)
+            val passwordEditText: EditText = findViewById(R.id.PasswordEditText)
+
+            val email: String = emailEditText.text.toString().trim()
+            val password: String = passwordEditText.text.toString().trim()
+
+            if (email.isEmpty() || password.isEmpty()) {
+                // Check if email or password is empty
+                Toast.makeText(this@LoginActivity, "Please enter your email and password", Toast.LENGTH_SHORT).show()
+            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                // Check if email is in correct format using regex
+                Toast.makeText(this@LoginActivity, "Invalid email format", Toast.LENGTH_SHORT).show()
+            } else {
+                // Start the HomeActivity when the login button is clicked
+                val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                startActivity(intent)
+            }
         }
+
 
 
         val signUpTextView: TextView = findViewById(R.id.SignUpTextView)
@@ -32,5 +49,6 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
             startActivity(intent)
         }
+
     }
 }
