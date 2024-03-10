@@ -21,8 +21,7 @@ class SearchPageActivity : AppCompatActivity() {
         //on click listener for the back button go to home page
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
@@ -33,7 +32,7 @@ class SearchPageActivity : AppCompatActivity() {
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_search
-        bottomNavView.setOnNavigationItemSelectedListener { item ->
+        bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     startActivity(Intent(this, HomeActivity::class.java))

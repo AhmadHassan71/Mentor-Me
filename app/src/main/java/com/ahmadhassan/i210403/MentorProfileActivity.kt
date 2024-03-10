@@ -14,8 +14,7 @@ class MentorProfileActivity : AppCompatActivity() {
 
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val reviewButton = findViewById<Button>(R.id.reviewButton)

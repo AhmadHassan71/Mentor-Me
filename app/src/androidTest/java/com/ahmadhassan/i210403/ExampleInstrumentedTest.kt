@@ -90,14 +90,16 @@ class HomeAndLoginActivityTest {
     fun testLoginSuccess() {
         ActivityScenario.launch(LoginActivity::class.java).use {
             // Type email and password
-            onView(withId(R.id.EmailEditText)).perform(typeText("example@gmail.com"))
-            onView(withId(R.id.PasswordEditText)).perform(typeText("password"))
+            onView(withId(R.id.EmailEditText)).perform(typeText("ahmad@gmail.com"))
+            onView(withId(R.id.PasswordEditText)).perform(typeText("pass123"))
             Espresso.closeSoftKeyboard()
 
             // Click on the login button
             onView(withId(R.id.LoginButton)).perform(click())
 
-            // Verify that HomeActivity is launched
+            // wait for the home activity to be displayed
+            Thread.sleep(2000)
+
             onView(withId(R.id.home_activity)).check(matches(isDisplayed()))
 
         }

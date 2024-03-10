@@ -50,7 +50,7 @@ class HomeActivity : AppCompatActivity() {
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_home
 
-        bottomNavView.setOnNavigationItemSelectedListener { item ->
+        bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_search -> {
                     // highlight the search icon

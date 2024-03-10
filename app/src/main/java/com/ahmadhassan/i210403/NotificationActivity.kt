@@ -42,14 +42,13 @@ class NotificationActivity : AppCompatActivity() {
         //back button
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_home
 
-        bottomNavView.setOnNavigationItemSelectedListener { item ->
+        bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_search -> {
                     // highlight the search icon

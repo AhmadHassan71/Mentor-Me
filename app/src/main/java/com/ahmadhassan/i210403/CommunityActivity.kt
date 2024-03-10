@@ -33,7 +33,7 @@ class CommunityActivity : AppCompatActivity() {
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_search
 
-        bottomNavView.setOnNavigationItemSelectedListener { item ->
+        bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
                     startActivity(Intent(this, HomeActivity::class.java))
@@ -67,8 +67,7 @@ class CommunityActivity : AppCompatActivity() {
         }
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, MentorProfileActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
         // call

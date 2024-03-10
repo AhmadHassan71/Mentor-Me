@@ -1,6 +1,7 @@
 package com.ahmadhassan.i210403
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -19,12 +20,12 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_profile)
 
-        // back image view
-        val backImageView = findViewById<ImageView>(R.id.backButton)
-        backImageView.setOnClickListener {
-            val intent = Intent(this, MyProfileActivity::class.java)
-            startActivity(intent)
+        val backButton = findViewById<ImageView>(R.id.backButton)
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
+
+
 
         // save button
         val saveButton = findViewById<Button>(R.id.updateButton)
@@ -52,7 +53,13 @@ class EditProfileActivity : AppCompatActivity() {
             cities
         )
 
-
+        val logoutButton: Button = findViewById(R.id.LogOutButton)
+        logoutButton.setOnClickListener {
+            val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+            sharedPrefs.edit().putBoolean("isLoggedIn", false).apply()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 

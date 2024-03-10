@@ -210,13 +210,29 @@
         android:backgroundTint="#115E63"
         android:duplicateParentState="false"
         android:text="Update Profile"
-        app:layout_constraintWidth_percent="0.7"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/LogOutButton"
+        app:layout_constraintEnd_toEndOf="@+id/CityEditText"
+        app:layout_constraintStart_toStartOf="@+id/CityEditText"
+        app:layout_constraintTop_toBottomOf="@+id/CityEditText"
+        app:layout_constraintWidth_percent="0.7" />
+
+    <Button
+        android:id="@+id/LogOutButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/rectangle"
+        android:backgroundTint="#9e2808"
+        android:duplicateParentState="false"
+        android:text="Log Out"
         android:textAllCaps="false"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/CityEditText"
         app:layout_constraintStart_toStartOf="@+id/CityEditText"
-        app:layout_constraintTop_toBottomOf="@+id/CityEditText" />
+        app:layout_constraintWidth_percent="0.7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

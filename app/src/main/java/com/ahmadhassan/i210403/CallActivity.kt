@@ -14,8 +14,7 @@ class CallActivity  : AppCompatActivity() {
         //back button
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, ChatRoomActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
     }
