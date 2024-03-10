@@ -37,15 +37,19 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.availability.setText(mentor.getAvailability());
         holder.Favorite.setText(mentor.getFavorite());
 
-        if (mentor.getAvailability().equals(" 🟢 Available")) {
+        if (mentor.getAvailability().equals("Available")) {
             holder.availability.setTextColor(Color.parseColor("#359400"));
+            holder.availability.setText(" 🟢 Available");
         } else {
             holder.availability.setTextColor(Color.LTGRAY);
+            holder.availability.setText(" ⚪ Not Available");
+
         }
-        if (mentor.getFavorite().equals("❤️")){
-            holder.Favorite.setTextColor(Color.parseColor("#f20010"));
+        if (mentor.getFavorite().equals("Favorite")){
+            holder.Favorite.setText("❤️");
+
         }else {
-            holder.Favorite.setTextColor(Color.LTGRAY);
+            holder.Favorite.setText("🩶");
         }
 
         // Set click listener

@@ -13,6 +13,9 @@ class MyProfileActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_profile)
 
+
+
+
         // back button
         val backButton = findViewById<android.widget.ImageView>(R.id.backButton)
         backButton.setOnClickListener {

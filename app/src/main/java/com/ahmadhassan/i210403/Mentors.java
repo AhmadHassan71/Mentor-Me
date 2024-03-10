@@ -6,27 +6,31 @@ public class Mentors {
     private String name;
     private String jobTitle;
     private String rate;
-    private String Availability;
+    private String availability;
 
-    private String Favorite;
+    private String favorite;
 
     public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite) {
         this.name = name;
         this.jobTitle = jobTitle;
         this.rate = rate;
-        if(Availability.equals("Available")) {
-            this.Availability = " 🟢 Available";
+        if(Availability.equals("Available") || Availability.equals(" 🟢 Available")){
+            this.availability = " 🟢 Available";
             // make text color green
 
         } else {
-            this.Availability = " ⚪ Not Available";
+            this.availability = " ⚪ Not Available";
             // make text color silver
         }
-        if(Favorite.equals("Favorite")) {
-            this.Favorite = "❤️";
+        if(Favorite.equals("Favorite")){
+            this.favorite = "❤️";
         } else {
-            this.Favorite = "🩶";
+            this.favorite = "🩶";
         }
+
+    }
+
+    public Mentors(){
 
     }
 
@@ -41,10 +45,10 @@ public class Mentors {
         return rate;
     }
     public String getAvailability() {
-        return Availability;
+        return availability;
     }
 
     public String getFavorite() {
-        return Favorite;
+        return favorite;
     }
 }

@@ -1,28 +1,24 @@
 package com.ahmadhassan.i210403
+
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.FirebaseDatabase
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
-        // on click home item in the menu go to  SearchPageActivity
-
-
         val recyclerViewTopMentor: RecyclerView = findViewById(R.id.TopMentors)
         val recyclerViewEdMentor: RecyclerView = findViewById(R.id.EdMentors)
         val recyclerViewRecentMentor: RecyclerView = findViewById(R.id.RecentMentors)
 
-        // Set layout manager
         recyclerViewTopMentor.layoutManager =
             LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         recyclerViewEdMentor.layoutManager =
@@ -30,22 +26,45 @@ class HomeActivity : AppCompatActivity() {
         recyclerViewRecentMentor.layoutManager =
             LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
-        // Create dummy data
-        val mentorsList = listOf(
-            Mentors("John Doe", "Software Engineer", "$50/hr", "Available","Favorite"),
-            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable","Not Favorite"),
-            Mentors("Michael ", "UX Designer", "$55/hr", "Available","️Not Favorite"),
-            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available","Not Favorite"),
-        )
+        val mentorsList = mutableListOf<Mentors>()
+        val database = FirebaseDatabase.getInstance()
+        val ref = database.getReference("Mentors")
 
-        // Create adapter
-        val adapter = CardAdapter(mentorsList, this)
+        ref.get().addOnSuccessListener { dataSnapshot ->
+            for (mentorSnapshot in dataSnapshot.children) {
+                val mentorData = mentorSnapshot.getValue(Mentors::class.java)
 
-        // Set adapter
-        recyclerViewTopMentor.adapter = adapter
-        recyclerViewEdMentor.adapter = adapter
-        recyclerViewRecentMentor.adapter = adapter
+                mentorData?.let { mentorsList.add(it) }
+            }
+            // Create adapter after fetching data
+            val adapter = CardAdapter(mentorsList, this)
 
+            // Set adapter for each RecyclerView
+            recyclerViewTopMentor.adapter = adapter
+            recyclerViewEdMentor.adapter = adapter
+            recyclerViewRecentMentor.adapter = adapter
+
+            adapter.setOnItemClickListener {
+                val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
+                startActivity(intent)
+            }
+
+        }.addOnFailureListener { exception ->
+            // Handle failure
+            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+
+        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
+        addMentorButton.setOnClickListener {
+            val intent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(intent)
+        }
+
+        val notificationButton = findViewById<ImageView>(R.id.imageView2)
+        notificationButton.setOnClickListener {
+            val intent = Intent(this, NotificationActivity::class.java)
+            startActivity(intent)
+        }
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_home
@@ -77,22 +96,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        adapter.setOnItemClickListener {
-            val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
-            startActivity(intent)
-        }
 
-        val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
-        addMentorButton.setOnClickListener {
-            val intent = Intent(this, AddNewMentorActivity::class.java)
-            startActivity(intent)
-        }
-
-        val notificationButton = findViewById<ImageView>(R.id.imageView2)
-        notificationButton.setOnClickListener {
-            val intent = Intent(this, NotificationActivity::class.java)
-            startActivity(intent)
-        }
     }
-
 }

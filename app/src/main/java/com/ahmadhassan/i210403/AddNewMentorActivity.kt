@@ -162,6 +162,10 @@ class AddNewMentorActivity: AppCompatActivity() {
             databaseRef.child("Mentors").child(newMentorKey).setValue(mentor)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Mentor added successfully", Toast.LENGTH_SHORT).show()
+                    // empty the fields
+                    findViewById<EditText>(R.id.NameEditText).setText("")
+                    findViewById<EditText>(R.id.descriptionEditText).setText("")
+
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to add mentor", Toast.LENGTH_SHORT).show()
