@@ -3,10 +3,12 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.FirebaseDatabase
 
 
 class SearchResultActivity : AppCompatActivity() {
@@ -21,24 +23,53 @@ class SearchResultActivity : AppCompatActivity() {
 
 
         // Create dummy data
-        val mentorsList = listOf(
-            Mentors("John Doe", "Software Engineer", "$50/hr", "Available","Favorite"),
-            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable","Not Favorite"),
-            Mentors("Michael ", "UX Designer", "$55/hr", "Available","️Not Favorite"),
-            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available","Not Favorite"),
-            Mentors("Jung Li", "Data Engineer", "$70/hr", "Available","Favorite"),
-            Mentors("Emily Brown", "Frontend Developer", "$65/hr", "Available", "Favorite"),
-            Mentors("Alex Johnson", "Machine Learning Engineer", "$80/hr", "Unavailable", "Favorite"),
-            Mentors("Sarah Lee", "Product Manager", "$75/hr", "Available", "Not Favorite"),
-            Mentors("David Miller", "Full Stack Developer", "$70/hr", "Available", "Favorite")
+//        val mentorsList = listOf(
+//            Mentors("John Doe", "Software Engineer", "$50/hr", "Available","Favorite",""),
+//            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable","Not Favorite",""),
+//            Mentors("Michael ", "UX Designer", "$55/hr", "Available","️Not Favorite",""),
+//            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available","Not Favorite",""),
+//            Mentors("Jung Li", "Data Engineer", "$70/hr", "Available","Favorite",""),
+//            Mentors("Emily Brown", "Frontend Developer", "$65/hr", "Available", "Favorite",""),
+//            Mentors("Alex Johnson", "Machine Learning Engineer", "$80/hr", "Unavailable", "Favorite",""),
+//            Mentors("Sarah Lee", "Product Manager", "$75/hr", "Available", "Not Favorite",""),
+//            Mentors("David Miller", "Full Stack Developer", "$70/hr", "Available", "Favorite","")
+//
+//        )
+        val mentorsList = mutableListOf<Mentors>()
+        val database = FirebaseDatabase.getInstance()
+        val ref = database.getReference("Mentors")
+        ref.get().addOnSuccessListener { dataSnapshot ->
+            for (mentorSnapshot in dataSnapshot.children) {
+                val mentorData = mentorSnapshot.getValue(Mentors::class.java)
 
-        )
+                mentorData?.let { mentorsList.add(it) }
+            }
+            // Create adapter after fetching data
+            val adapter = VerticalCardAdapter(mentorsList, this)
 
-        // Create adapter
-        val adapter = VerticalCardAdapter(mentorsList, this)
 
-        // Set adapter
-        recyclerViewTopMentor.adapter = adapter
+
+            // Set adapter
+            recyclerViewTopMentor.adapter = adapter
+
+            adapter.setOnItemClickListener {
+                val intent = Intent(this, MentorProfileActivity::class.java)
+                startActivity(intent)
+            }
+
+//          adapter.setOnItemClickListener(object : VerticalCardAdapter.OnItemClickListener {
+//                override fun onItemClick(mentor: Mentors) {
+//                    val intent = Intent(this@SearchResultActivity, MentorProfileActivity::class.java)
+//                    startActivity(intent)
+//                }
+//            })
+
+        }.addOnFailureListener { exception ->
+            // Handle failure
+            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+
+
 
 
         val backButton = findViewById<ImageView>(R.id.backButton)
@@ -79,12 +110,8 @@ class SearchResultActivity : AppCompatActivity() {
             }
         }
 
-        adapter.setOnItemClickListener(object : VerticalCardAdapter.OnItemClickListener {
-            override fun onItemClick(mentor: Mentors) {
-                val intent = Intent(this@SearchResultActivity, MentorProfileActivity::class.java)
-                startActivity(intent)
-            }
-        })
+
+
 
     }
 

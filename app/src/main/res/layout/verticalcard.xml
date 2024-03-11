@@ -18,7 +18,7 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/mentorProfilePic"
                 android:layout_width="142dp"
                 android:layout_height="127dp"
                 android:layout_marginStart="12dp"
@@ -36,7 +36,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.25"
-                app:layout_constraintStart_toEndOf="@+id/imageView6"
+                app:layout_constraintStart_toEndOf="@+id/mentorProfilePic"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.971"
                 app:srcCompat="@drawable/rounded_border" />
@@ -94,7 +94,7 @@
                 android:text="❤️"
                 android:textColor="#A60606"
                 android:textSize="14dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintBottom_toBottomOf="@+id/mentorProfilePic"
                 app:layout_constraintEnd_toEndOf="@+id/imageView7"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/Rate" />

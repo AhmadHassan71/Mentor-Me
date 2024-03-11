@@ -200,8 +200,9 @@ class RegisterActivity : AppCompatActivity() {
             val fullName = findViewById<EditText>(R.id.NameEditText).text.toString()
             val city = spinner.selectedItem.toString()
             val country = spinner2.selectedItem.toString()
+            val contact = findViewById<EditText>(R.id.ContactEditText).text.toString()
             val email = findViewById<EditText>(R.id.EmailEditText).text.toString()
-            val user = User(email, fullName, city, country)
+            val user = User(email, fullName, city, country,"","")
             database = FirebaseDatabase.getInstance()
             databaseRef = database.getReference("Users")
             val userId = databaseRef.push().key
@@ -215,5 +216,4 @@ class RegisterActivity : AppCompatActivity() {
                 }
         }
 
-        data class User(val email: String, val fullName: String? = null, val city: String, val country: String)
 }

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/mentorProfilePic"
                 android:layout_width="142dp"
                 android:layout_height="127dp"
                 android:layout_marginStart="12dp"
@@ -33,9 +33,9 @@
                 android:layout_width="133dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="68dp"
-                app:layout_constraintEnd_toEndOf="@+id/imageView6"
-                app:layout_constraintStart_toStartOf="@+id/imageView6"
-                app:layout_constraintTop_toTopOf="@+id/imageView6"
+                app:layout_constraintEnd_toEndOf="@+id/mentorProfilePic"
+                app:layout_constraintStart_toStartOf="@+id/mentorProfilePic"
+                app:layout_constraintTop_toTopOf="@+id/mentorProfilePic"
                 app:srcCompat="@drawable/rounded_border" />
 
             <TextView
@@ -91,7 +91,7 @@
                 android:text="❤️"
                 android:textColor="#A60606"
                 android:textSize="10dp"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView6"
+                app:layout_constraintBottom_toBottomOf="@+id/mentorProfilePic"
                 app:layout_constraintEnd_toEndOf="@+id/imageView7"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@+id/Rate" />

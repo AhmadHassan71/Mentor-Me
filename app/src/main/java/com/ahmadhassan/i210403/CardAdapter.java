@@ -37,7 +37,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.availability.setText(mentor.getAvailability());
         holder.Favorite.setText(mentor.getFavorite());
 
-        if (mentor.getAvailability().equals("Available")) {
+        if (mentor.getAvailability().equals("Available")|| mentor.getAvailability().equals(" 🟢 Available")) {
             holder.availability.setTextColor(Color.parseColor("#359400"));
             holder.availability.setText(" 🟢 Available");
         } else {
@@ -45,7 +45,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
             holder.availability.setText(" ⚪ Not Available");
 
         }
-        if (mentor.getFavorite().equals("Favorite")){
+        if (mentor.getFavorite().equals("Favorite") || mentor.getFavorite().equals("❤️")){
             holder.Favorite.setText("❤️");
 
         }else {

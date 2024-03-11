@@ -10,7 +10,10 @@ public class Mentors {
 
     private String favorite;
 
-    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite) {
+    private String profilePicture;
+
+
+    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite, String ProfilePic) {
         this.name = name;
         this.jobTitle = jobTitle;
         this.rate = rate;
@@ -28,12 +31,13 @@ public class Mentors {
             this.favorite = "🩶";
         }
 
+        this.profilePicture = ProfilePic;
+
     }
 
     public Mentors(){
 
     }
-
     // Getters
     public String getName() {
         return name;
@@ -46,6 +50,10 @@ public class Mentors {
     }
     public String getAvailability() {
         return availability;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
     }
 
     public String getFavorite() {

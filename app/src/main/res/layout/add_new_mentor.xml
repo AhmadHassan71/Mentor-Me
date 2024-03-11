@@ -147,7 +147,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/availabilityTextView" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/uploadVideoLaout"
+                android:id="@+id/uploadVideoLayout"
                 android:layout_width="158dp"
                 android:layout_height="104dp"
                 android:background="@drawable/outline_borders"

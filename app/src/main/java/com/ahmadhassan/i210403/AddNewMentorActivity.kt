@@ -1,6 +1,7 @@
 package com.ahmadhassan.i210403
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.ArrayAdapter
@@ -10,17 +11,19 @@ import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 
 class AddNewMentorActivity: AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseRef: DatabaseReference
-
+    private lateinit var pfpURL:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_new_mentor)
@@ -72,7 +75,7 @@ class AddNewMentorActivity: AppCompatActivity() {
             }
         }
 
-        findViewById<ConstraintLayout>(R.id.uploadVideoLaout).setOnClickListener {
+        findViewById<ConstraintLayout>(R.id.uploadVideoLayout).setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
             startActivity(intent)
         }
@@ -88,16 +91,13 @@ class AddNewMentorActivity: AppCompatActivity() {
         }
 
         findViewById<ConstraintLayout>(R.id.uploadImageLayout).setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivity(intent)
+            uploadImage()
         }
         findViewById<ImageView>(R.id.cameraImage).setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivity(intent)
+            uploadImage()
         }
         findViewById<TextView>(R.id.cameraTextView).setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivity(intent)
+            uploadImage()
         }
 
 //        findViewById<Button>(R.id.uploadButton).setOnClickListener {
@@ -120,6 +120,46 @@ class AddNewMentorActivity: AppCompatActivity() {
             }
         }
 
+    }
+    private fun uploadToFirebase(imageUri: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val imagesRef = storageRef.child("profilepics").child("Mentors").child(imageUri.toString())
+
+        imageUri.let {
+            val uploadTask = imagesRef.putFile(it)
+
+            uploadTask.addOnSuccessListener {
+                // Image uploaded successfully
+                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+                    pfpURL = uri.toString()
+                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    // Handle failure to get download URL
+                }
+            }.addOnFailureListener { exception ->
+                // Handle unsuccessful upload
+                Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        } ?: run {
+            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.data?.let { uri ->
+                // Pick and show the image on the screen in the constraint layout
+                uploadToFirebase(uri)
+            } ?: run {
+                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Failed to pick image", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun uploadImage(){
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        pickImage.launch(intent)
     }
     private fun validateInputs(): Boolean {
         // name validation
@@ -149,23 +189,23 @@ class AddNewMentorActivity: AppCompatActivity() {
         val jobTitle = findViewById<EditText>(R.id.descriptionEditText).text.toString()
         val rate = "55$/hr"
         val availability = findViewById<Spinner>(R.id.availabilityEditText).selectedItem.toString()
-
+        val profilePicture = pfpURL
         val isFavorite = false // Set to true if mentor is a favorite
 
-        return Mentors(name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite")
+        return Mentors(name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite",profilePicture)
     }
 
     private fun storeMentorData(mentor: Mentors) {
         val newMentorKey = databaseRef.push().key // Create a unique key for the mentor
 
         if (newMentorKey != null) {
+
             databaseRef.child("Mentors").child(newMentorKey).setValue(mentor)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Mentor added successfully", Toast.LENGTH_SHORT).show()
                     // empty the fields
                     findViewById<EditText>(R.id.NameEditText).setText("")
                     findViewById<EditText>(R.id.descriptionEditText).setText("")
-
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to add mentor", Toast.LENGTH_SHORT).show()
