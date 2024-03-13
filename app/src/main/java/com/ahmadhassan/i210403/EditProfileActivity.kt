@@ -1,5 +1,6 @@
 package com.ahmadhassan.i210403
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -7,15 +8,20 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.FirebaseDatabase
+import com.squareup.picasso.Picasso
 
 class EditProfileActivity : AppCompatActivity() {
     private var isCitySelected = false
 
 
+    @SuppressLint("CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_profile)
@@ -27,12 +33,7 @@ class EditProfileActivity : AppCompatActivity() {
 
 
 
-        // save button
-        val saveButton = findViewById<Button>(R.id.updateButton)
-        saveButton.setOnClickListener {
-            val intent = Intent(this, MyProfileActivity::class.java)
-            startActivity(intent)
-        }
+
 
 
         val spinner: Spinner = findViewById(R.id.CityEditText)
@@ -57,6 +58,8 @@ class EditProfileActivity : AppCompatActivity() {
         logoutButton.setOnClickListener {
             val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
             sharedPrefs.edit().putBoolean("isLoggedIn", false).apply()
+            val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+            userIdSharedPreferences.edit().putString("userId", null).apply()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
@@ -77,11 +80,11 @@ class EditProfileActivity : AppCompatActivity() {
                     if (position == 0) return
 
                     val selectedCity = parent.getItemAtPosition(position).toString()
-                    Toast.makeText(
-                        applicationContext,
-                        "Selected city: $selectedCity",
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "Selected city: $selectedCity",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
 
                     isCitySelected = true
 
@@ -121,11 +124,11 @@ class EditProfileActivity : AppCompatActivity() {
                     if (position == 0) return
 
                     val selectedCountry = parent.getItemAtPosition(position).toString()
-                    Toast.makeText(
-                        applicationContext,
-                        "Selected country: $selectedCountry",
-                        Toast.LENGTH_SHORT
-                    ).show()
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "Selected country: $selectedCountry",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
 
                     isCitySelected = true
 
@@ -144,5 +147,63 @@ class EditProfileActivity : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
         }
+        val profilePicture = findViewById<ImageView>(R.id.pfpimage)
+        var user = User()
+        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+        val userId = userIdSharedPreferences.getString("userId", null)
+        if (userId != null) {
+            val database = FirebaseDatabase.getInstance()
+            val dbref = database.getReference("Users").child(userId)
+            dbref.get().addOnSuccessListener { dataSnapshot ->
+                user = dataSnapshot.getValue(User::class.java)!!
+                user?.let {
+                    val profile = user.profilePic
+
+
+                    // Load profile picture using Picasso
+                    Picasso.get().load(profile).into(profilePicture)
+
+                    val nameTextView = findViewById<EditText>(R.id.NameEditText)
+                    nameTextView.setText(user.fullName)
+
+                    val emailTextView = findViewById<TextView>(R.id.EmailEditText)
+                    emailTextView.text = (user.email)
+
+                    spinner.setSelection(cities.indexOf(user.city))
+                    spinner2.setSelection(countries.indexOf(user.country))
+
+
+                }
+            }
+        }
+
+        // save button
+        val saveButton = findViewById<Button>(R.id.updateButton)
+        saveButton.setOnClickListener {
+            val nameEditText = findViewById<EditText>(R.id.NameEditText)
+            val name = nameEditText.text.toString()
+            val city = spinner.selectedItem.toString()
+            val country = spinner2.selectedItem.toString()
+
+            val updatedUser = User(
+                user.userId,
+                user.email,
+                name,
+                city,
+                country,
+                user.profilePic,
+                user.bannerPic,
+
+            )
+            val database = FirebaseDatabase.getInstance()
+            val dbref = database.getReference("Users").child(userId!!)
+            dbref.setValue(updatedUser).addOnSuccessListener {
+                Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MyProfileActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+
     }
 }

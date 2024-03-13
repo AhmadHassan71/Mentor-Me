@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -13,13 +14,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 
 class MyProfileActivity: AppCompatActivity() {
 
-    private lateinit var pfpURL:String
-    private lateinit var coverURL:String
-    private var isPfp : Boolean = false
+    private lateinit var pfpURL: String
+    private lateinit var coverURL: String
+    private var isPfp: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,14 +31,32 @@ class MyProfileActivity: AppCompatActivity() {
         // set the profile picture and cover picture
         val profilePicture = findViewById<ImageView>(R.id.profilePicture)
         val coverPicture = findViewById<ImageView>(R.id.coverPicture)
-        val user = FirebaseAuth.getInstance().currentUser
-        val profile = user?.photoUrl
-        val cover = user?.photoUrl
-        if (profile != null) {
-            profilePicture.setImageURI(profile)
-        }
-        if (cover != null) {
-            coverPicture.setImageURI(cover)
+
+        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+        val userId = userIdSharedPreferences.getString("userId", null)
+        if (userId != null) {
+            val database = FirebaseDatabase.getInstance()
+            val dbref = database.getReference("Users").child(userId)
+            dbref.get().addOnSuccessListener { dataSnapshot ->
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let {
+                    val profile = user.profilePic
+                    val cover = user.bannerPic
+
+                    // Load profile picture using Picasso
+                    if(profile != "")
+                        Picasso.get().load(profile).into(profilePicture)
+                    // Load cover picture using Picasso
+                    if(cover != "")
+                        Picasso.get().load(cover).into(coverPicture)
+
+                    val nameTextView = findViewById<TextView>(R.id.myNameTextView)
+                    nameTextView.text = user.fullName
+                    val locationTextView = findViewById<TextView>(R.id.locationTextView)
+                    locationTextView.text = user.city
+
+                }
+            }
         }
 
 
@@ -65,10 +86,12 @@ class MyProfileActivity: AppCompatActivity() {
                     startActivity(Intent(this, SearchPageActivity::class.java))
                     true
                 }
+
                 R.id.navigation_chat -> {
                     startActivity(Intent(this, ChatActivity::class.java))
                     true
                 }
+
                 else -> false
             }
         }
@@ -77,9 +100,9 @@ class MyProfileActivity: AppCompatActivity() {
         recyclerViewTopMentor.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         val mentorsList = listOf(
-            Mentors("John Doe", "Software Engineer", "$50/hr", "Available","Favorite",""),
-            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable","Favorite",""),
-            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available","Favorite",""),
+            Mentors("John Doe", "Software Engineer", "$50/hr", "Available", "Favorite", ""),
+            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable", "Favorite", ""),
+            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available", "Favorite", ""),
         )
         val adapter = CardAdapter(mentorsList, this)
         recyclerViewTopMentor.adapter = adapter
@@ -90,12 +113,12 @@ class MyProfileActivity: AppCompatActivity() {
             androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
         val reviews = listOf(
-            Review( "Mentor 1", 4.5f, "Great mentor! taught me everything I know."),
-            Review( "Mentor 2", 3.0f, "Average mentor. Could be better."),
-            Review( "Mentor 3", 5.0f, "Best mentor ever!"),
-            Review( "Mentor 4", 2.5f, "Not a good mentor. Waste of time."),
+            Review("Mentor 1", 4.5f, "Great mentor! taught me everything I know."),
+            Review("Mentor 2", 3.0f, "Average mentor. Could be better."),
+            Review("Mentor 3", 5.0f, "Best mentor ever!"),
+            Review("Mentor 4", 2.5f, "Not a good mentor. Waste of time."),
 
-        )
+            )
         val adapter2 = ReviewAdapter(reviews)
         recyclerView.adapter = adapter2
 
@@ -135,7 +158,8 @@ class MyProfileActivity: AppCompatActivity() {
     private fun uploadPfPToFirebase(imageUri: Uri) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val imagesRef = storageRef.child("profilepics").child("Users").child("profilepics").child(imageUri.toString())
+        val imagesRef = storageRef.child("profilepics").child("Users").child("profilepics")
+            .child(imageUri.toString())
 
         imageUri.let {
             val uploadTask = imagesRef.putFile(it)
@@ -153,7 +177,11 @@ class MyProfileActivity: AppCompatActivity() {
                 }
             }.addOnFailureListener { exception ->
                 // Handle unsuccessful upload
-                Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Failed to upload image: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } ?: run {
             Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
@@ -163,15 +191,38 @@ class MyProfileActivity: AppCompatActivity() {
 
     private fun updateProfilePicture(pfpURL: String): Uri? {
         // update the profile picture in the database
+        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+        val userId = userIdSharedPreferences.getString("userId", null)
+        if (userId != null) {
+            val database = FirebaseDatabase.getInstance()
+            val dbref = database.getReference("Users").child(userId)
+            dbref.get().addOnSuccessListener { dataSnapshot ->
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let {
+                    val updatedUser = User(
+                        user.userId,
+                        user.email,
+                        user.fullName,
+                        user.city,
+                        user.country,
+                        pfpURL,
+                        user.bannerPic
+                    )
+                    dbref.setValue(updatedUser)
 
+                }
+            }
+        }
 
         return null
     }
 
+
     private fun uploadCoverToFirebase(imageUri: Uri) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val imagesRef = storageRef.child("profilepics").child("Users").child("coverpics").child(imageUri.toString())
+        val imagesRef = storageRef.child("profilepics").child("Users").child("coverpics")
+            .child(imageUri.toString())
 
         imageUri.let {
             val uploadTask = imagesRef.putFile(it)
@@ -181,43 +232,67 @@ class MyProfileActivity: AppCompatActivity() {
                 imagesRef.downloadUrl.addOnSuccessListener { uri ->
                     coverURL = uri.toString()
                     Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
+                    updateBannerPicture(coverURL)
                 }.addOnFailureListener {
                     // Handle failure to get download URL
                 }
             }.addOnFailureListener { exception ->
                 // Handle unsuccessful upload
-                Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Failed to upload image: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         } ?: run {
             Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
         }
     }
-    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            result.data?.data?.let { uri ->
-                // Pick and show the image on the screen in the constraint layout
-                if(isPfp){
-                    uploadPfPToFirebase(uri)
-                    findViewById<ImageView>(R.id.profilePicture).setImageURI(uri)
-//                    Toast.makeText(this, "Profile Picture has been saved", Toast.LENGTH_SHORT).show()
 
+    private fun updateBannerPicture(coverURL: String): Uri? {
+        // update the profile picture in the database
+        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+        val userId = userIdSharedPreferences.getString("userId", null)
+        if (userId != null) {
+            val database = FirebaseDatabase.getInstance()
+            val dbref = database.getReference("Users").child(userId)
+            dbref.get().addOnSuccessListener { dataSnapshot ->
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let {
+                    val updatedUser = User(
+                        user.userId,
+                        user.email,
+                        user.fullName,
+                        user.city,
+                        user.country,
+                        user.profilePic,
+                        coverURL
+                    )
+                    dbref.setValue(updatedUser)
 
                 }
-                else{
-                    uploadCoverToFirebase(uri)
-                    findViewById<ImageView>(R.id.coverPicture).setImageURI(uri)
-//                    Toast.makeText(this, "Cover Picture has been saved", Toast.LENGTH_SHORT).show()
-                }
-
-            } ?: run {
-                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, "Failed to pick image", Toast.LENGTH_SHORT).show()
+        }
+
+        return null
+    }
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            if (isPfp) {
+                uploadPfPToFirebase(uri)
+                findViewById<ImageView>(R.id.profilePicture).setImageURI(uri)
+            } else {
+                uploadCoverToFirebase(uri)
+                findViewById<ImageView>(R.id.coverPicture).setImageURI(uri)
+            }
+        } ?: run {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun uploadImage(){
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickImage.launch(intent)
+//        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        pickImage.launch("image/*")
     }
 }

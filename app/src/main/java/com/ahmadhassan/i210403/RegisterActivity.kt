@@ -182,9 +182,13 @@ class RegisterActivity : AppCompatActivity() {
                         // Signup successful
                         val userId = auth.currentUser!!.uid
                         saveUserDataToDatabase(userId)
-
+                        val isLoggedInSharedPref = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+                        isLoggedInSharedPref.edit().putBoolean("isLoggedIn", true).apply()
+                        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+                        userIdSharedPreferences.edit().putString("userId", userId).apply()
                         // Start VerifyActivity
                         val intent = Intent(this,MyProfileActivity::class.java)
+
                         startActivity(intent)
                         finish()
                     } else {
@@ -202,10 +206,10 @@ class RegisterActivity : AppCompatActivity() {
             val country = spinner2.selectedItem.toString()
             val contact = findViewById<EditText>(R.id.ContactEditText).text.toString()
             val email = findViewById<EditText>(R.id.EmailEditText).text.toString()
-            val user = User(email, fullName, city, country,"","")
+            val user = User(userId,email, fullName, city, country,"","")
             database = FirebaseDatabase.getInstance()
             databaseRef = database.getReference("Users")
-            val userId = databaseRef.push().key
+            databaseRef.push().key
 
             databaseRef.child(userId.toString()).setValue(user)
                 .addOnSuccessListener {

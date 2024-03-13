@@ -9,9 +9,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var database : FirebaseDatabase
+    private lateinit var dbref : DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
@@ -77,12 +81,24 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Login successful
-                    val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
-                    sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
 
-                    val intent = Intent(this, HomeActivity::class.java)
-                    startActivity(intent)
+                    val loggedInUser : String = emailEditText.text.toString()
+                    database = FirebaseDatabase.getInstance()
+                    dbref = auth.currentUser?.uid?.let { database.getReference("Users").child(it) }!!
+                    dbref.get().addOnSuccessListener {
+                        if (it.key != null) {
+                            // Login successful
+                            val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+                            sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
+                            val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+                            userIdSharedPreferences.edit().putString("userId", it.key).apply()
+                            val intent = Intent(this, HomeActivity::class.java)
+                            intent.putExtra("currentUser", it.key)
+                            startActivity(intent)  // Start activity here
+                        }
+                    }
+                    // put currentUser in the intent
+
                     finish()
                 } else {
                     // Handle error
