@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -19,19 +20,23 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home)
 
+
+
         val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
 
 //        Toast.makeText(this, "User ID: $userId", Toast.LENGTH_SHORT).show()
 
         if (userId != null) {
-            val database = FirebaseDatabase.getInstance()
-            val dbref = database.getReference("Users").child(userId)
-            dbref.get().addOnSuccessListener { dataSnapshot ->
-                val user = dataSnapshot.getValue(User::class.java)
-                val username = user?.fullName
-                val welcomeText = findViewById<TextView>(R.id.nameText)
-                welcomeText.text = "$username!"
+            UserInstance.fetchUser(userId) { user ->
+                if (user != null) {
+                    // User data fetched successfully
+                    val welcomeText = findViewById<TextView>(R.id.nameText)
+                    welcomeText.text = "${user.fullName}!"
+                } else {
+                    // Handle case where user data couldn't be fetched
+                    Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

@@ -34,28 +34,26 @@ class MyProfileActivity: AppCompatActivity() {
 
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
-        if (userId != null) {
-            val database = FirebaseDatabase.getInstance()
-            val dbref = database.getReference("Users").child(userId)
-            dbref.get().addOnSuccessListener { dataSnapshot ->
-                val user = dataSnapshot.getValue(User::class.java)
-                user?.let {
-                    val profile = user.profilePic
-                    val cover = user.bannerPic
+        UserInstance.fetchUser(userId ?: "") { user ->
+            if (user != null) {
+                // User data fetched successfully
+                val profileUrl = user.profilePic
+                val coverUrl = user.bannerPic
 
-                    // Load profile picture using Picasso
-                    if(profile != "")
-                        Picasso.get().load(profile).into(profilePicture)
-                    // Load cover picture using Picasso
-                    if(cover != "")
-                        Picasso.get().load(cover).into(coverPicture)
+                // Load profile picture using Picasso
+                if (profileUrl.isNotEmpty())
+                    Picasso.get().load(profileUrl).into(profilePicture)
+                // Load cover picture using Picasso
+                if (coverUrl.isNotEmpty())
+                    Picasso.get().load(coverUrl).into(coverPicture)
 
-                    val nameTextView = findViewById<TextView>(R.id.myNameTextView)
-                    nameTextView.text = user.fullName
-                    val locationTextView = findViewById<TextView>(R.id.locationTextView)
-                    locationTextView.text = user.city
-
-                }
+                val nameTextView = findViewById<TextView>(R.id.myNameTextView)
+                nameTextView.text = user.fullName
+                val locationTextView = findViewById<TextView>(R.id.locationTextView)
+                locationTextView.text = user.city
+            } else {
+                // Handle case where user data couldn't be fetched
+                Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -189,18 +187,15 @@ class MyProfileActivity: AppCompatActivity() {
 
     }
 
-    private fun updateProfilePicture(pfpURL: String): Uri? {
-        // update the profile picture in the database
+    private fun updateProfilePicture(pfpURL: String) {
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
         if (userId != null) {
-            val database = FirebaseDatabase.getInstance()
-            val dbref = database.getReference("Users").child(userId)
-            dbref.get().addOnSuccessListener { dataSnapshot ->
-                val user = dataSnapshot.getValue(User::class.java)
-                user?.let {
-                    val updatedUser = User(
-                        user.userId,
+            var updatedUser: User? = User()
+            UserInstance.fetchUser(userId){ user ->
+                updatedUser = user?.let {
+                    User(
+                        it.userId,
                         user.email,
                         user.fullName,
                         user.city,
@@ -208,13 +203,20 @@ class MyProfileActivity: AppCompatActivity() {
                         pfpURL,
                         user.bannerPic
                     )
-                    dbref.setValue(updatedUser)
-
+                }
+            }
+            updatedUser?.let {
+                UserInstance.updateUser(it) { success ->
+                    if (success) {
+                        // Update successful
+                        Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Update failed
+                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
-
-        return null
     }
 
 
@@ -249,18 +251,16 @@ class MyProfileActivity: AppCompatActivity() {
         }
     }
 
-    private fun updateBannerPicture(coverURL: String): Uri? {
+    private fun updateBannerPicture(coverURL: String) {
         // update the profile picture in the database
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
         if (userId != null) {
-            val database = FirebaseDatabase.getInstance()
-            val dbref = database.getReference("Users").child(userId)
-            dbref.get().addOnSuccessListener { dataSnapshot ->
-                val user = dataSnapshot.getValue(User::class.java)
-                user?.let {
-                    val updatedUser = User(
-                        user.userId,
+            var updatedUser: User? = User()
+            UserInstance.fetchUser(userId) { user ->
+                updatedUser = user?.let {
+                    User(
+                        it.userId,
                         user.email,
                         user.fullName,
                         user.city,
@@ -268,14 +268,24 @@ class MyProfileActivity: AppCompatActivity() {
                         user.profilePic,
                         coverURL
                     )
-                    dbref.setValue(updatedUser)
-
+                }
+            }
+            updatedUser?.let {
+                UserInstance.updateUser(it) { success ->
+                    if (success) {
+                        // Update successful
+                        Toast.makeText(this, "Cover photo updated", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Update failed
+                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
         }
 
-        return null
     }
+
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {

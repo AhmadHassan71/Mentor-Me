@@ -3,6 +3,7 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -65,6 +66,52 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
+//    private fun loginUser() {
+//        val emailEditText: EditText = findViewById(R.id.EmailEditText)
+//        val passwordEditText: EditText = findViewById(R.id.PasswordEditText)
+//
+//        val email = emailEditText.text.toString().trim()
+//        val password = passwordEditText.text.toString().trim()
+//
+//        if (email.isEmpty() || password.isEmpty()) {
+//            Toast.makeText(this, "Please enter your email and password", Toast.LENGTH_SHORT).show()
+//            return  // Exit the function
+//        }
+//
+//
+//        auth.signInWithEmailAndPassword(email, password)
+//            .addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//
+//                    val loggedInUser : String = emailEditText.text.toString()
+//                    database = FirebaseDatabase.getInstance()
+//                    dbref = auth.currentUser?.uid?.let { database.getReference("Users").child(it) }!!
+//                    dbref.get().addOnSuccessListener {
+//                        if (it.key != null) {
+//                            // Login successful
+//                            val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+//                            sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
+//                            val currentUser = UserInstance.getInstance(it.key!!)
+//                            Log.d("Login Activity",currentUser.fullName.toString())
+//                            val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+//                            userIdSharedPreferences.edit().putString("userId", it.key).apply()
+//                            val intent = Intent(this, HomeActivity::class.java)
+//                            intent.putExtra("currentUser", it.key)
+//                            startActivity(intent)  // Start activity here
+//                        }
+//                    }
+//                    // put currentUser in the intent
+//
+//                    finish()
+//                } else {
+//                    // Handle error
+////                    Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(this, "Invalid Credentials!", Toast.LENGTH_SHORT).show()
+//
+//                }
+//            }
+//    }
+
     private fun loginUser() {
         val emailEditText: EditText = findViewById(R.id.EmailEditText)
         val passwordEditText: EditText = findViewById(R.id.PasswordEditText)
@@ -77,35 +124,31 @@ class LoginActivity : AppCompatActivity() {
             return  // Exit the function
         }
 
-
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-
-                    val loggedInUser : String = emailEditText.text.toString()
-                    database = FirebaseDatabase.getInstance()
-                    dbref = auth.currentUser?.uid?.let { database.getReference("Users").child(it) }!!
-                    dbref.get().addOnSuccessListener {
-                        if (it.key != null) {
-                            // Login successful
+                    // Fetch user data after successful authentication
+                    UserInstance.fetchUser(auth.currentUser?.uid ?: "") { user ->
+                        if (user != null) {
+                            // User fetched successfully
                             val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
                             sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
+
                             val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-                            userIdSharedPreferences.edit().putString("userId", it.key).apply()
+                            userIdSharedPreferences.edit().putString("userId", user.userId).apply()
                             val intent = Intent(this, HomeActivity::class.java)
-                            intent.putExtra("currentUser", it.key)
-                            startActivity(intent)  // Start activity here
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            // Handle case where user data couldn't be fetched
+                            Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    // put currentUser in the intent
-
-                    finish()
                 } else {
-                    // Handle error
-//                    Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    // Handle authentication failure
                     Toast.makeText(this, "Invalid Credentials!", Toast.LENGTH_SHORT).show()
-
                 }
             }
     }
+
 }
