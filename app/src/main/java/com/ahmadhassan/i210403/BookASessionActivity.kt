@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.squareup.picasso.Picasso
 
 class BookASessionActivity : AppCompatActivity() {
     private var selectedTimeSlot: TextView? = null
@@ -18,7 +19,23 @@ class BookASessionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.book_a_session)
+
+
+        val mentor = intent.getSerializableExtra("mentor") as? Mentors
+        val mentorname = findViewById<TextView>(R.id.MentorNameTextView)
+        val mentorPFP = findViewById<ImageView>(R.id.mentorPFP)
+        if (mentor != null) {
+            mentor.name.also { mentorname.text = it }
+            if (mentor.profilePicture.isNotEmpty()){
+                // it should fill the image view with the mentor's profile picture
+                mentorPFP.scaleType = ImageView.ScaleType.FIT_CENTER
+                Picasso.get().load(mentor.profilePicture).into(mentorPFP)
+            }
+            // it should fill the image view with the mentor's profile picture
+        }
+
         val calendarView: CalendarView = findViewById(R.id.calendarView)
+
 
         val today = Calendar.getInstance()
         calendarView.date = today.timeInMillis
@@ -27,13 +44,13 @@ class BookASessionActivity : AppCompatActivity() {
         val submitReviewButton = findViewById<Button>(R.id.submitFeedbackButton)
         submitReviewButton.setOnClickListener {
             val intent = Intent(this, MentorProfileActivity::class.java)
+            intent.putExtra("mentor", mentor)
             startActivity(intent)
         }
 
         // on back button go to  MentorProfileActivity
         findViewById<ImageView>(R.id.backButton).setOnClickListener {
-            val intent = Intent(this, MentorProfileActivity::class.java)
-            startActivity(intent)
+            onBackPressedDispatcher.onBackPressed()
         }
 
         val timeSlot1 = findViewById<TextView>(R.id.timeSlot1)

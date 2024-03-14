@@ -46,7 +46,7 @@
             app:layout_constraintVertical_bias="0.41" />
 
         <ImageView
-            android:id="@+id/imageView17"
+            android:id="@+id/mentorPFP"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@drawable/circle"
@@ -62,8 +62,8 @@
             android:layout_height="20dp"
             android:src="@drawable/circle"
             app:tint="#f5c542"
-            app:layout_constraintTop_toTopOf="@id/imageView17"
-            app:layout_constraintEnd_toEndOf="@id/imageView17"
+            app:layout_constraintTop_toTopOf="@id/mentorPFP"
+            app:layout_constraintEnd_toEndOf="@id/mentorPFP"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="2dp"
             android:background="@drawable/circle"

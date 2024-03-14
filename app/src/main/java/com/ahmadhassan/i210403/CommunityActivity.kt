@@ -6,15 +6,30 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.squareup.picasso.Picasso
 
 class CommunityActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.community)
+
+        val mentor = intent.getSerializableExtra("mentor") as? Mentors
+        val mentorname = findViewById<TextView>(R.id.MentorNameTextView)
+        val mentorPFP = findViewById<ImageView>(R.id.mentorPFP)
+        if (mentor != null) {
+            "${mentor.name}'s".also { mentorname.text = it }
+            if (mentor.profilePicture.isNotEmpty()){
+                // it should fill the image view with the mentor's profile picture
+                mentorPFP.scaleType = ImageView.ScaleType.FIT_CENTER
+                Picasso.get().load(mentor.profilePicture).into(mentorPFP)
+            }
+            // it should fill the image view with the mentor's profile picture
+        }
 
         val messageList = mutableListOf<Message>()
         messageList.add(Message("1", "Hello!", "10:20", imageUrl = R.drawable.paul_personpic))

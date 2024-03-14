@@ -78,6 +78,7 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+
         }.addOnFailureListener { exception ->
             // Handle failure
             Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
@@ -97,6 +98,9 @@ class HomeActivity : AppCompatActivity() {
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_home
+
+
+
 
         bottomNavView.setOnItemSelectedListener { item ->
             when (item.itemId) {

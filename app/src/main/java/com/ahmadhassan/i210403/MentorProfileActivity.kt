@@ -43,17 +43,20 @@ class MentorProfileActivity : AppCompatActivity() {
         val reviewButton = findViewById<Button>(R.id.reviewButton)
         reviewButton.setOnClickListener {
             val intent = Intent(this, ReviewActivity::class.java)
+            intent.putExtra("mentor", mentor)
             startActivity(intent)
         }
 
         val bookSession = findViewById<Button>(R.id.bookButton)
         bookSession.setOnClickListener {
             val intent = Intent(this,BookASessionActivity::class.java)
+            intent.putExtra("mentor", mentor)
             startActivity(intent)
         }
         val joinCommunityButton = findViewById<Button>(R.id.joinCommunityButton)
         joinCommunityButton.setOnClickListener {
             val intent = Intent(this, CommunityActivity::class.java)
+            intent.putExtra("mentor", mentor)
             startActivity(intent)
         }
 

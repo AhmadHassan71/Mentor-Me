@@ -91,7 +91,7 @@
             app:layout_constraintTop_toBottomOf="@id/view" />
 
         <ImageView
-            android:id="@+id/imageView17"
+            android:id="@+id/mentorPFP"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:background="@drawable/transparent_circle"
@@ -112,7 +112,7 @@
             android:backgroundTint="#FEC809"
             android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="@+id/rateTextView"
-            app:layout_constraintStart_toStartOf="@+id/imageView17"
+            app:layout_constraintStart_toStartOf="@+id/mentorPFP"
             app:layout_constraintTop_toTopOf="@+id/rateTextView"
             app:srcCompat="@drawable/chat"
             app:tint="#147076"/>
@@ -126,7 +126,7 @@
             android:backgroundTint="#FEC809"
             android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="@+id/ChatImageView"
-            app:layout_constraintEnd_toEndOf="@+id/imageView17"
+            app:layout_constraintEnd_toEndOf="@+id/mentorPFP"
             app:layout_constraintStart_toEndOf="@+id/ChatImageView"
             app:layout_constraintTop_toTopOf="@+id/ChatImageView"
             app:srcCompat="@drawable/call"
@@ -142,7 +142,7 @@
             android:backgroundTint="#FEC809"
             android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="@+id/CallImageView"
-            app:layout_constraintEnd_toEndOf="@+id/imageView17"
+            app:layout_constraintEnd_toEndOf="@+id/mentorPFP"
             app:layout_constraintStart_toEndOf="@+id/CallImageView"
             app:layout_constraintTop_toTopOf="@+id/CallImageView"
             app:layout_constraintVertical_bias="0.416"
