@@ -19,25 +19,25 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/transparent_circle" />
 
-        <ImageView
-            android:id="@+id/TopCircleImageView"
-            android:layout_width="119dp"
-            android:layout_height="114dp"
-            android:layout_marginStart="36dp"
-            app:layout_constraintBottom_toBottomOf="@+id/backButton"
-            app:layout_constraintStart_toStartOf="@+id/BottomCircleImageView"
-            app:srcCompat="@drawable/transparent_circle" />
-
 
         <!-- Bottom Navigation View -->
 
         <!-- ImageView positioned on top of BottomNavigationView -->
 
+        <ImageView
+            android:id="@+id/TopCircleImageView"
+            android:layout_width="119dp"
+            android:layout_height="114dp"
+            android:layout_marginStart="52dp"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toStartOf="@+id/BottomCircleImageView"
+            app:srcCompat="@drawable/transparent_circle" />
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
             android:text="Add New Mentor"
             android:textColor="#1D757C"
@@ -54,18 +54,31 @@
             android:orientation="vertical"
             android:paddingTop="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
-            app:layout_constraintHeight_percent=".75"
+            app:layout_constraintEnd_toEndOf="parent"
 
+            app:layout_constraintHeight_percent=".85"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView46"
+            app:layout_constraintVertical_bias="0.333"
             app:layout_constraintWidth_percent="1">
+
+            <TextView
+                android:id="@+id/priceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Price per hour"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@+id/descriptionEditText"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
 
             <TextView
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="136dp"
+                android:layout_marginTop="112dp"
                 android:text="Name"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
@@ -76,7 +89,7 @@
                 android:id="@+id/NameEditText"
 
                 android:layout_width="346dp"
-                android:layout_height="47dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/rounded_border"
                 android:backgroundTint="@color/white"
@@ -118,6 +131,23 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="@+id/descriptionTextView"
                 app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
+
+            <EditText
+                android:id="@+id/priceEditText"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="Enter Price in Dollars"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/priceTextView"
+                app:layout_constraintTop_toBottomOf="@+id/priceTextView" />
+
             <TextView
                 android:id="@+id/availabilityTextView"
                 android:layout_width="wrap_content"
@@ -128,7 +158,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
+                app:layout_constraintTop_toBottomOf="@+id/priceEditText" />
 
             <Spinner
                 android:id="@+id/availabilityEditText"
@@ -146,10 +176,66 @@
                 app:layout_constraintStart_toStartOf="@+id/availabilityTextView"
                 app:layout_constraintTop_toBottomOf="@+id/availabilityTextView" />
 
+            <TextView
+                android:id="@+id/employerTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Company"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/availabilityTextView"
+                app:layout_constraintTop_toBottomOf="@+id/availabilityEditText" />
+
+            <EditText
+                android:id="@+id/employerEditText"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="Enter Company Name"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/employerTextView"
+                app:layout_constraintTop_toBottomOf="@+id/employerTextView" />
+
+            <TextView
+                android:id="@+id/jobTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Job Title"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="@id/employerEditText"
+                app:layout_constraintTop_toBottomOf="@+id/employerEditText" />
+
+            <EditText
+                android:id="@+id/jobTitleEditText"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/rounded_border"
+                android:backgroundTint="@color/white"
+                android:ems="10"
+                android:hint="Enter Job Title"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/material_dynamic_neutral50"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/jobTitleTextView"
+                app:layout_constraintTop_toBottomOf="@+id/jobTitleTextView" />
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/uploadVideoLayout"
                 android:layout_width="158dp"
-                android:layout_height="104dp"
+                android:layout_height="95dp"
                 android:background="@drawable/outline_borders"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/textView2"
@@ -187,11 +273,15 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!--                app:layout_constraintStart_toStartOf="@+id/availabilityEditText"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/availabilityEditText"-->
+
+
             <Button
                 android:id="@+id/uploadButton"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/rounded_border"
                 android:backgroundTint="#147076"
                 android:fontFamily="sans-serif-medium"
@@ -199,20 +289,22 @@
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="18dp"
+                android:layout_marginVertical="10dp"
                 app:layout_constraintEnd_toEndOf="@+id/availabilityEditText"
-                app:layout_constraintStart_toStartOf="@+id/availabilityEditText"
-                app:layout_constraintTop_toBottomOf="@+id/availabilityEditText" />
+                app:layout_constraintStart_toStartOf="@id/employerEditText"
+                app:layout_constraintTop_toBottomOf="@+id/jobTitleEditText" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/uploadImageLayout"
                 android:layout_width="158dp"
-                android:layout_height="104dp"
+                android:layout_height="95dp"
                 android:layout_marginEnd="32dp"
                 android:background="@drawable/outline_borders"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toTopOf="@+id/textView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:id="@+id/cameraImage"
                     android:layout_width="50dp"
@@ -231,7 +323,7 @@
                     android:id="@+id/cameraTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Upload Camera"
+                    android:text="Upload Photo"
 
                     app:layout_column="0"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -258,29 +350,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_navigation_menu" />
 
-        <ImageView
-            android:id="@+id/addMentorButton"
-            android:layout_width="66dp"
-            android:layout_height="63dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginStart="172dp"
-            android:layout_marginBottom="28dp"
-            android:background="@drawable/circle"
-            android:backgroundTint="#1D757C"
-            android:elevation="4dp"
-            android:padding="4dp"
-            android:translationZ="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"
-            app:layout_constraintStart_toStartOf="parent"
+<!--        <ImageView-->
+<!--            android:id="@+id/addMentorButton"-->
+<!--            android:layout_width="66dp"-->
+<!--            android:layout_height="63dp"-->
+<!--            android:layout_gravity="bottom|center_horizontal"-->
+<!--            android:layout_marginStart="172dp"-->
+<!--            android:layout_marginBottom="28dp"-->
+<!--            android:background="@drawable/circle"-->
+<!--            android:backgroundTint="#1D757C"-->
+<!--            android:elevation="4dp"-->
+<!--            android:padding="4dp"-->
+<!--            android:translationZ="4dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation_view"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
 
-            app:srcCompat="@drawable/plus" />
+<!--            app:srcCompat="@drawable/plus" />-->
 
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="56dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/back"

@@ -72,8 +72,9 @@ class HomeActivity : AppCompatActivity() {
             recyclerViewEdMentor.adapter = adapter
             recyclerViewRecentMentor.adapter = adapter
 
-            adapter.setOnItemClickListener {
+            adapter.setOnItemClickListener {mentor ->
                 val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
+                intent.putExtra("mentor", mentor) // Pass mentor object
                 startActivity(intent)
             }
 

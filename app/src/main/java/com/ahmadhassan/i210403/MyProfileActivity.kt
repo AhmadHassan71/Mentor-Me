@@ -98,9 +98,9 @@ class MyProfileActivity: AppCompatActivity() {
         recyclerViewTopMentor.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         val mentorsList = listOf(
-            Mentors("John Doe", "Software Engineer", "$50/hr", "Available", "Favorite", ""),
-            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable", "Favorite", ""),
-            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available", "Favorite", ""),
+            Mentors("John Doe", "Software Engineer", "$50/hr", "Available", "Favorite", "","Hard Worker",""),
+            Mentors("Jane Smith", "Data Scientist", "$60/hr", "Unavailable", "Favorite", "","",""),
+            Mentors("Jack Son", "Software Engineer", "$50/hr", "Available", "Favorite", "","",""),
         )
         val adapter = CardAdapter(mentorsList, this)
         recyclerViewTopMentor.adapter = adapter

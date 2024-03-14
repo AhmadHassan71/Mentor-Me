@@ -1,6 +1,7 @@
 package com.ahmadhassan.i210403;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,10 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     TextView rate;
     TextView availability;
     TextView Favorite;
+
+
+
+
 
     private OnItemClickListener itemClickListener;
 

@@ -13,7 +13,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private final LayoutInflater inflater;
     private final List<Mentors> mentors;
-    private OnItemClickListener itemClickListener;
+    private OnItemClickListener onItemClickListener;
 
     public CardAdapter(List<Mentors> mentors, Context context) {
         this.mentors = mentors;
@@ -52,12 +52,14 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
             holder.Favorite.setText("🩶");
         }
 
+
+
         // Set click listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClick(mentor);
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(mentor);
                 }
             }
         });
@@ -70,7 +72,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     // Setter method for the item click listener
     public void setOnItemClickListener(OnItemClickListener listener) {
-        itemClickListener = listener;
+        this.onItemClickListener = listener;
     }
 
     // Interface for click listener

@@ -50,7 +50,7 @@ public class VerticalCardAdapter extends RecyclerView.Adapter<ViewHolder> {
             public void onItemClick(int position) {
                 if (itemClickListener != null) {
                     // Pass the clicked mentor to the activity
-                    itemClickListener.onItemClick(mentors.get(position));
+                    itemClickListener.onItemClick(mentor);
                 }
             }
         });

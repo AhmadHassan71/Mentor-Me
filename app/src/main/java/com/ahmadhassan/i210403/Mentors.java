@@ -1,8 +1,8 @@
 package com.ahmadhassan.i210403;
-
+import java.io.Serializable;
 import android.graphics.Color;
 
-public class Mentors {
+public class Mentors implements  Serializable {
     private String name;
     private String jobTitle;
     private String rate;
@@ -10,10 +10,14 @@ public class Mentors {
 
     private String favorite;
 
+    private String description;
+
+    private String company;
+
     private String profilePicture;
 
 
-    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite, String ProfilePic) {
+    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite, String ProfilePic, String Description, String Company)  {
         this.name = name;
         this.jobTitle = jobTitle;
         this.rate = rate;
@@ -32,6 +36,9 @@ public class Mentors {
         }
 
         this.profilePicture = ProfilePic;
+
+        this.description = Description;
+        this.company = Company;
 
     }
 
@@ -58,5 +65,12 @@ public class Mentors {
 
     public String getFavorite() {
         return favorite;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public String getCompany() {
+        return company;
     }
 }

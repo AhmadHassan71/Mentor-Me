@@ -145,21 +145,17 @@ class AddNewMentorActivity: AppCompatActivity() {
             Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
         }
     }
-    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            result.data?.data?.let { uri ->
-                // Pick and show the image on the screen in the constraint layout
-                uploadToFirebase(uri)
-            } ?: run {
+    private val pickImage =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+                    // Pick and show the image on the screen in the constraint layout
+                    uploadToFirebase(uri)
+                }
+            ?: run {
                 Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
             }
-        } else {
-            Toast.makeText(this, "Failed to pick image", Toast.LENGTH_SHORT).show()
-        }
     }
     private fun uploadImage(){
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickImage.launch(intent)
+        pickImage.launch("image/*")
     }
     private fun validateInputs(): Boolean {
         // name validation
@@ -186,13 +182,17 @@ class AddNewMentorActivity: AppCompatActivity() {
 
     private fun createMentorObject(): Mentors {
         val name = findViewById<EditText>(R.id.NameEditText).text.toString()
-        val jobTitle = findViewById<EditText>(R.id.descriptionEditText).text.toString()
-        val rate = "55$/hr"
+        val jobTitle = findViewById<EditText>(R.id.jobTitleEditText).text.toString()
+        val _rate = findViewById<EditText>(R.id.priceEditText).text.toString()
+        // add $/hr at the end of _rate
+        val rate = "$$_rate/hr"
         val availability = findViewById<Spinner>(R.id.availabilityEditText).selectedItem.toString()
         val profilePicture = pfpURL
         val isFavorite = false // Set to true if mentor is a favorite
+        val description = findViewById<EditText>(R.id.descriptionEditText).text.toString()
+        val company = findViewById<EditText>(R.id.employerEditText).text.toString()
 
-        return Mentors(name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite",profilePicture)
+        return Mentors(name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite",profilePicture,description,company)
     }
 
     private fun storeMentorData(mentor: Mentors) {
@@ -206,6 +206,10 @@ class AddNewMentorActivity: AppCompatActivity() {
                     // empty the fields
                     findViewById<EditText>(R.id.NameEditText).setText("")
                     findViewById<EditText>(R.id.descriptionEditText).setText("")
+                    findViewById<EditText>(R.id.jobTitleEditText).setText("")
+                    findViewById<EditText>(R.id.priceEditText).setText("")
+                    findViewById<EditText>(R.id.employerEditText).setText("")
+
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to add mentor", Toast.LENGTH_SHORT).show()
