@@ -79,4 +79,8 @@ public class Mentors implements  Serializable {
     public String getCompany() {
         return company;
     }
+
+    public void setFavorite(String favorite) {
+        this.favorite = favorite;
+    }
 }

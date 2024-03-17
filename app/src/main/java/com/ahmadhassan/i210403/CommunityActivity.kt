@@ -13,11 +13,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.Date
 
 class CommunityActivity : AppCompatActivity() {
+    val database = FirebaseDatabase.getInstance().getReference("messages")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.community)
@@ -48,7 +52,7 @@ class CommunityActivity : AppCompatActivity() {
         val sendMessageButton: ImageView = messageBox.findViewById(R.id.sendButton)
 
         val recyclerView: RecyclerView = findViewById(R.id.communityRecyclerView)
-        val adapter = ChatAdapter(messageList)
+        val adapter = ChatAdapter(messageList,database )
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 

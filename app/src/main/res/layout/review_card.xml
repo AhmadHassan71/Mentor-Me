@@ -23,8 +23,8 @@
                 android:layout_height="127dp"
                 android:background="@drawable/rounded_border"
                 android:backgroundTint="#50C1C8"
-                app:layout_constraintEnd_toEndOf="@+id/ratingBar"
-                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,18 +42,15 @@
                 app:layout_constraintStart_toStartOf="@+id/imageView6"
                 app:layout_constraintTop_toTopOf="@+id/imageView6" />
 
-            <androidx.appcompat.widget.AppCompatRatingBar
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
                 android:id="@+id/ratingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:numStars="5"
-                android:progressTint="#FFC909"
-                android:rating="3"
-                android:scaleX="0.3"
-                android:scaleY="0.3"
-                android:stepSize="1"
+                style="@style/Widget.MaterialRatingBar.RatingBar"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:progressTint="#ebcf34"
+
                 app:layout_constraintBottom_toTopOf="@+id/reviewDescription"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/imageView6"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/MentorName" />
 

@@ -8,6 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ReviewViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val mentorName: TextView = itemView.findViewById(R.id.MentorName)
-    val ratingBar: AppCompatRatingBar = itemView.findViewById(R.id.ratingBar)
+    val ratingBar: me.zhanghai.android.materialratingbar.MaterialRatingBar  = itemView.findViewById(R.id.ratingBar)
     val reviewDescription: TextView = itemView.findViewById(R.id.reviewDescription)
 }

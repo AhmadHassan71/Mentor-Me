@@ -5,7 +5,7 @@ import android.os.Parcelable
 
 data class Message(
     val id: String,
-    val text: String,
+    var text: String,
     val timestamp: String,
     val imageUrl: String?,
     val sentByCurrentUser: Boolean

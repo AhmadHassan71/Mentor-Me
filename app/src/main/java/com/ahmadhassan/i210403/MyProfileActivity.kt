@@ -3,7 +3,6 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,19 +10,19 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.ahmadhassan.i210403.UserInstance.getInstance
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import java.util.Objects
 
 class MyProfileActivity: AppCompatActivity() {
 
     private lateinit var pfpURL: String
     private lateinit var coverURL: String
     private var isPfp: Boolean = false
-
+    private val databaseReference = FirebaseDatabase.getInstance().getReference("Reviews")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_profile)
@@ -97,28 +96,68 @@ class MyProfileActivity: AppCompatActivity() {
         val recyclerViewTopMentor: RecyclerView = findViewById(R.id.favMentorsRecyclerView)
         recyclerViewTopMentor.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        val mentorsList = listOf(
-            Mentors("","John Doe", "Software Engineer", "$50/hr", "Available", "Favorite", "","Hard Worker",""),
-            Mentors("","Jane Smith", "Data Scientist", "$60/hr", "Unavailable", "Favorite", "","",""),
-            Mentors("","Jack Son", "Software Engineer", "$50/hr", "Available", "Favorite", "","",""),
-        )
-        val adapter = CardAdapter(mentorsList, this)
-        recyclerViewTopMentor.adapter = adapter
+        val database = FirebaseDatabase.getInstance()
+        val ref = database.getReference("Favorite")
+        val mentorsList = mutableListOf<Mentors>()
+        val favList = mutableListOf<Favorite>()
+        ref.get().addOnSuccessListener { dataSnapshot ->
+            for (favSnapshot in dataSnapshot.children) {
+                val favData = favSnapshot.getValue(Favorite::class.java)
+                favData?.let { favList.add(it) }
+            }
+            for (fav in favList){
+                if(fav.userId == getInstance()!!.userId) {
+                    val mentorRef = database.getReference("Mentors").child(fav.mentorId)
+                    mentorRef.get().addOnSuccessListener { mentorSnapshot ->
+                        val mentorData = mentorSnapshot.getValue(Mentors::class.java)
+                        mentorData?.let { mentorsList.add(it) }
+                    }
+                }
+            }
+            val adapter = CardAdapter(mentorsList, this)
+            recyclerViewTopMentor.adapter = adapter
+            adapter.setOnItemClickListener { mentor ->
+                val intent = Intent(this@MyProfileActivity, MentorProfileActivity::class.java)
+                intent.putExtra("mentor", mentor) // Pass mentor object
+                startActivity(intent)
+            }
+        }.addOnFailureListener { exception ->
+            // Handle failure
+            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
 
 
         val recyclerView: RecyclerView = findViewById(R.id.reviewRecycleView)
         recyclerView.layoutManager =
             androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
-        val reviews = listOf(
-            Review("Mentor 1", 4.5f, "Great mentor! taught me everything I know."),
-            Review("Mentor 2", 3.0f, "Average mentor. Could be better."),
-            Review("Mentor 3", 5.0f, "Best mentor ever!"),
-            Review("Mentor 4", 2.5f, "Not a good mentor. Waste of time."),
+        val reviews:MutableList<Review> = mutableListOf()
+        databaseReference.get().addOnSuccessListener {
+            val snapshots = it.children
+            for (review in snapshots){
+                val reviewObj = review.getValue(Review::class.java)
+                if (reviewObj != null){
+                    if (reviewObj.userId == userId){
+                        reviews.add(reviewObj)
+                    }
+                }
+            }
+            val adapter2 = ReviewAdapter(reviews)
+            recyclerView.adapter = adapter2
 
-            )
-        val adapter2 = ReviewAdapter(reviews)
-        recyclerView.adapter = adapter2
+        }
+//            listOf(
+//            Review("Mentor 1", 4.5f, "Great mentor! taught me everything I know."),
+//            Review("Mentor 2", 3.0f, "Average mentor. Could be better."),
+//            Review("Mentor 3", 5.0f, "Best mentor ever!"),
+//            Review("Mentor 4", 2.5f, "Not a good mentor. Waste of time."),
+//
+//            )
+
 
 
         // optionsImageView opens EditProfileActivity
@@ -146,10 +185,7 @@ class MyProfileActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
-        adapter.setOnItemClickListener {
-            val intent = Intent(this@MyProfileActivity, MentorProfileActivity::class.java)
-            startActivity(intent)
-        }
+
 
     }
 

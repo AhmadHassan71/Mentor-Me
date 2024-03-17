@@ -1,13 +1,26 @@
 package com.ahmadhassan.i210403
+
+import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DatabaseReference
 import com.squareup.picasso.Picasso
 
-class ChatAdapter(private val messageList: List<Message>) :
+
+interface MessageEditListener {
+    fun onEditMessage(message: Message)
+}
+
+interface MessageDeleteListener {
+    fun onDeleteMessage(message: Message)
+}
+class ChatAdapter(private val messageList: MutableList<Message>, private val database: DatabaseReference) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_MESSAGE = 0
@@ -63,6 +76,75 @@ class ChatAdapter(private val messageList: List<Message>) :
         fun bind(message: Message) {
             messageTextView.text = message.text
             timestampTextView.text = message.timestamp
+            // Implement edit and delete functionality here
+            itemView.setOnLongClickListener {
+                showEditDeleteDialog(message)
+                true // Consume the long click event
+            }
+        }
+        private fun showEditDeleteDialog(message: Message) {
+            val dialogBuilder = AlertDialog.Builder(itemView.context)
+            dialogBuilder.setTitle("Edit or Delete Message")
+            dialogBuilder.setMessage("Choose an action for the message.")
+
+            dialogBuilder.setPositiveButton("Edit") { _, _ ->
+                // Handle edit action
+                editMessage(message)
+            }
+
+            dialogBuilder.setNegativeButton("Delete") { _, _ ->
+                // Handle delete action
+                deleteMessage(message)
+            }
+
+            dialogBuilder.setNeutralButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog = dialogBuilder.create()
+            dialog.show()
+        }
+
+
+
+
+
+        private fun editMessage(message: Message) {
+            val editText = EditText(itemView.context)
+            editText.setText(message.text)
+            val dialogBuilder = AlertDialog.Builder(itemView.context)
+            dialogBuilder.setTitle("Edit Message")
+            dialogBuilder.setView(editText)
+
+            dialogBuilder.setPositiveButton("Save") { _, _ ->
+                val newText = editText.text.toString()
+                if (newText.isNotEmpty()) {
+                    // Update the message in the database
+                   messageList[adapterPosition].text = newText
+                    notifyItemChanged(adapterPosition)
+                    val messageId = message.id
+                    database.child(messageId).child("text").setValue(newText)
+                }
+            }
+
+            dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            val dialog = dialogBuilder.create()
+            dialog.show()
+        }
+
+        private fun deleteMessage(message: Message) {
+            // Implement logic to delete the message
+            // Remove the message from the messageList and notify the adapter
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val messageId = messageList[position].id
+                messageList.removeAt(position)
+                notifyItemRemoved(position)
+                database.child(messageId).removeValue()
+            }
         }
     }
 
@@ -77,9 +159,16 @@ class ChatAdapter(private val messageList: List<Message>) :
             timestampTextView.text = message.timestamp.toString()
             // Load image if available
             // Replace "R.drawable.placeholder_image" with your actual placeholder image resource
-//            messageImageView.setImageResource(message.imageUrl !!)
-            if(message.imageUrl != "")
+            if (message.imageUrl != "")
                 Picasso.get().load(message.imageUrl).into(messageImageView)
+            // Implement edit and delete functionality here
+            itemView.setOnLongClickListener {
+                // Implement edit and delete logic here
+                true // Consume the long click event
+            }
         }
     }
+
+
+
 }

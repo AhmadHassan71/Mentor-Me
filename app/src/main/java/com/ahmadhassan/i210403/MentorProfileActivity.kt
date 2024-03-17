@@ -7,6 +7,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 
 class MentorProfileActivity : AppCompatActivity() {
@@ -20,6 +22,7 @@ class MentorProfileActivity : AppCompatActivity() {
         val profileImage = findViewById<ImageView>(R.id.mentorProfilePicture)
         val company = findViewById<TextView>(R.id.companyTextView)
         val description = findViewById<TextView>(R.id.descriptionTextView)
+        val rating = findViewById<TextView>(R.id.RatingTextView)
         if (mentor != null) {
             name.text = mentor.name
             jobTitle.text = "${mentor.jobTitle} at"
@@ -32,7 +35,30 @@ class MentorProfileActivity : AppCompatActivity() {
 
                 Picasso.get().load(mentorPfp).into(profileImage)
 
-        }}
+        }
+
+            val databaseReference : DatabaseReference = FirebaseDatabase.getInstance().getReference("Reviews")
+            // get the reviews for this specific mentor
+            databaseReference.get().addOnSuccessListener {
+                val reviews = it.children
+                var totalRating = 0.0
+                var count = 0
+                for (review in reviews){
+                    val reviewObj = review.getValue(Review::class.java)
+                    if (reviewObj != null){
+                        if (reviewObj.mentorId == mentor.mentorId){
+                            totalRating += reviewObj.rating
+                            count++
+                        }
+                    }
+                }
+                if (count > 0){
+                    val averageRating = totalRating / count
+                    rating.text = "⭐ %.1f".format(averageRating)
+                }
+            }
+
+        }
 
 
         val backButton = findViewById<ImageView>(R.id.backButton)

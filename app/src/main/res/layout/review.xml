@@ -93,7 +93,7 @@
 
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/DescriptionText"
         android:layout_width="344dp"
         android:layout_height="153dp"
         android:layout_marginTop="40dp"
@@ -119,22 +119,22 @@
         android:textColor="#FFFFFF"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="@+id/DescriptionText"
         app:layout_constraintHorizontal_bias="0.488"
-        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintStart_toStartOf="@+id/DescriptionText"
         app:layout_constraintVertical_bias="0.7" />
 
-    <RatingBar
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:numStars="5"
-        android:rating="0"
-        android:stepSize="1"
+
+        style="@style/Widget.MaterialRatingBar.RatingBar"
         app:layout_constraintBottom_toTopOf="@+id/submitFeedbackButton"
-        app:layout_constraintEnd_toEndOf="@+id/editText"
+        app:layout_constraintEnd_toEndOf="@+id/DescriptionText"
         app:layout_constraintHorizontal_bias="0.488"
-        app:layout_constraintStart_toStartOf="@+id/editText"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        android:progressTint="#147076"
+        app:layout_constraintStart_toStartOf="@+id/DescriptionText"
+        app:layout_constraintTop_toBottomOf="@+id/DescriptionText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

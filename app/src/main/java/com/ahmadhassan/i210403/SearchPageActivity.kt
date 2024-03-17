@@ -89,7 +89,11 @@ class SearchPageActivity : AppCompatActivity() {
                         mentor.jobTitle.contains(searchText, ignoreCase = true)
             }
 
-            callback(filteredList)
+            // order the list by alphabetical order
+            val sortedList = filteredList.sortedBy { it.name }
+
+            callback(sortedList)
+
         }.addOnFailureListener { exception ->
             // Handle failure
             Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()

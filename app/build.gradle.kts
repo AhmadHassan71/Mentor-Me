@@ -56,6 +56,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.5.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("me.zhanghai.android.materialratingbar:library:1.4.0")
 
 
 }

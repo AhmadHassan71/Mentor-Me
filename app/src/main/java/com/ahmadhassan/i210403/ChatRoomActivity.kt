@@ -3,10 +3,8 @@ package com.ahmadhassan.i210403
 
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -14,19 +12,17 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.IntentCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.Firebase
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -82,7 +78,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
 
         val recyclerView: RecyclerView = findViewById(R.id.communityRecyclerView)
-        val adapter = ChatAdapter(messageList)
+        val adapter = ChatAdapter(messageList, database)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -123,6 +119,8 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
 
+
+
         database.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val message = snapshot.getValue(Message::class.java)
@@ -133,8 +131,28 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                // Handle message update here
+                val message = snapshot.getValue(Message::class.java)
+                message?.let { it ->
+                    val messageId = snapshot.key
+                    val index = messageList.indexOfFirst { it.id == messageId }
+                    if (index != -1) {
+                        messageList[index] = it
+                        adapter.notifyItemChanged(index)
+                    }
+                }
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                // Handle message deletion here
+                val messageId = snapshot.key
+                val index = messageList.indexOfFirst { it.id == messageId }
+                if (index != -1) {
+                    messageList.removeAt(index)
+                    adapter.notifyItemRemoved(index)
+                }
+            }
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
             override fun onCancelled(error: DatabaseError) {}
         })
@@ -172,8 +190,8 @@ class ChatRoomActivity : AppCompatActivity() {
 
         val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
         addMentorButton.setOnClickListener {
-            val intent = Intent(this, AddNewMentorActivity::class.java)
-            startActivity(intent)
+            val addMentorIntent = Intent(this, AddNewMentorActivity::class.java)
+            startActivity(addMentorIntent)
         }
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
@@ -182,41 +200,54 @@ class ChatRoomActivity : AppCompatActivity() {
 
         // call
         findViewById<ImageView>(R.id.CallImageView).setOnClickListener {
-            val intent = Intent(this, CallActivity::class.java)
-            startActivity(intent)
+            val callIntent = Intent(this, CallActivity::class.java)
+            startActivity(callIntent)
         }
 
         findViewById<ImageView>(R.id.VideoCallImageView).setOnClickListener {
-            val intent = Intent(this, VideoCallActivity::class.java)
-            startActivity(intent)
+            val videoCallIntent = Intent(this, VideoCallActivity::class.java)
+            startActivity(videoCallIntent)
         }
         // For gallery access
         findViewById<ImageView>(R.id.imageButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivity(intent)
+            pickImage.launch("image/*")
+
         }
 
         // For camera access
         findViewById<ImageView>(R.id.cameraButton).setOnClickListener {
-            val intent = Intent(this,CameraActivity::class.java)
-            startActivity(intent)
+            val cameraIntent = Intent(this,CameraActivity::class.java)
+            startActivity(cameraIntent)
         }
 
         findViewById<ImageView>(R.id.micButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
-            startActivity(intent)
+            val audioIntent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
+            startActivity(audioIntent)
         }
 
 
 // For accessing files
         findViewById<ImageView>(R.id.attachmentButton).setOnClickListener {
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val fileIntent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "*/*" // This will allow any type of file
-            startActivity(intent)
+            startActivity(fileIntent)
         }
 
 
+
+
     }
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            findViewById<ImageView>(R.id.userMessageImage).setImageURI(uri)
+
+        } ?: run {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
 
 }
