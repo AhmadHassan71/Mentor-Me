@@ -5,5 +5,5 @@ class Session (
     val jobTitle: String,
     val date: String,
     val time: String,
-    val mentorProfilePic: Int
+    val mentorProfilePic: String
 )

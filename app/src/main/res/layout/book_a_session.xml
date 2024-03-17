@@ -164,7 +164,7 @@
         app:layout_constraintWidth_percent=".9" />
 
     <Button
-        android:id="@+id/submitFeedbackButton"
+        android:id="@+id/bookAppointmentButton"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"

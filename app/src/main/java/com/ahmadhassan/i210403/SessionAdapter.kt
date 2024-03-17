@@ -3,6 +3,7 @@ package com.ahmadhassan.i210403
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class SessionAdapter(private val sessions: List<Session>) :
     RecyclerView.Adapter<SessionViewHolder>() {
@@ -25,7 +26,8 @@ class SessionAdapter(private val sessions: List<Session>) :
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val currentSession = sessions[position]
-        holder.profilePicture.setImageResource(currentSession.mentorProfilePic)
+        if(currentSession.mentorProfilePic != "")
+            Picasso.get().load(currentSession.mentorProfilePic).into(holder.profilePicture)
         holder.mentorName.text = currentSession.mentorName
         holder.jobTitle.text = currentSession.jobTitle
         holder.date.text = currentSession.date
