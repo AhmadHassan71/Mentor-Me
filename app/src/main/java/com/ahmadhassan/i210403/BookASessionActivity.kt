@@ -28,7 +28,6 @@ class BookASessionActivity : AppCompatActivity() {
             mentor.name.also { mentorname.text = it }
             if (mentor.profilePicture.isNotEmpty()){
                 // it should fill the image view with the mentor's profile picture
-                mentorPFP.scaleType = ImageView.ScaleType.FIT_CENTER
                 Picasso.get().load(mentor.profilePicture).into(mentorPFP)
             }
             // it should fill the image view with the mentor's profile picture

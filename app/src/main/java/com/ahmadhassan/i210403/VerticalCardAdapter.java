@@ -8,7 +8,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
+import java.util.Objects;
 
 public class VerticalCardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -42,6 +46,10 @@ public class VerticalCardAdapter extends RecyclerView.Adapter<ViewHolder> {
             holder.availability.setTextColor(Color.parseColor("#359400"));
         } else {
             holder.availability.setTextColor(Color.LTGRAY);
+        }
+
+        if(!Objects.equals(mentor.getProfilePicture(), "")) {
+            Picasso.get().load(mentor.getProfilePicture()).into(holder.ProfilePic);
         }
 
         // Set click listener

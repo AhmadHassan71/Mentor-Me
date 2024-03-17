@@ -7,7 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
+import java.util.Objects;
 
 public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -31,7 +35,8 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Mentors mentor = mentors.get(position);
 
-        holder.name.setText(mentor.getName());
+        holder.name.setText(mentor.getName().split(" ")[0]);
+
         holder.jobTitle.setText(mentor.getJobTitle());
         holder.rate.setText(mentor.getRate());
         holder.availability.setText(mentor.getAvailability());
@@ -50,6 +55,10 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         }else {
             holder.Favorite.setText("🩶");
+        }
+
+        if(!Objects.equals(mentor.getProfilePicture(), "")) {
+            Picasso.get().load(mentor.getProfilePicture()).into(holder.ProfilePic);
         }
 
 

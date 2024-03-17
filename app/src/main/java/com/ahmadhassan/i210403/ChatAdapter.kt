@@ -1,11 +1,11 @@
+package com.ahmadhassan.i210403
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.ahmadhassan.i210403.Message
-import com.ahmadhassan.i210403.R
+import com.squareup.picasso.Picasso
 
 class ChatAdapter(private val messageList: List<Message>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -62,7 +62,7 @@ class ChatAdapter(private val messageList: List<Message>) :
 
         fun bind(message: Message) {
             messageTextView.text = message.text
-            timestampTextView.text = message.timestamp.toString()
+            timestampTextView.text = message.timestamp
         }
     }
 
@@ -77,7 +77,9 @@ class ChatAdapter(private val messageList: List<Message>) :
             timestampTextView.text = message.timestamp.toString()
             // Load image if available
             // Replace "R.drawable.placeholder_image" with your actual placeholder image resource
-            messageImageView.setImageResource(message.imageUrl !!)
+//            messageImageView.setImageResource(message.imageUrl !!)
+            if(message.imageUrl != "")
+                Picasso.get().load(message.imageUrl).into(messageImageView)
         }
     }
 }

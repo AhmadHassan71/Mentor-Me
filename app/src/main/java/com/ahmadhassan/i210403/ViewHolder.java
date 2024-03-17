@@ -13,6 +13,8 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     TextView availability;
     TextView Favorite;
 
+    ImageView ProfilePic;
+
 
 
 
@@ -26,6 +28,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         rate = itemView.findViewById(R.id.Rate);
         availability = itemView.findViewById(R.id.Availability);
         Favorite = itemView.findViewById(R.id.Favorite);
+        ProfilePic = itemView.findViewById(R.id.mentorProfilePic);
 
         // Set click listener for the itemView
         itemView.setOnClickListener(new View.OnClickListener() {

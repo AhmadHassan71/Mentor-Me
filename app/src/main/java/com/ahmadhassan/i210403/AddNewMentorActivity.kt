@@ -107,8 +107,13 @@ class AddNewMentorActivity: AppCompatActivity() {
 
         findViewById<Button>(R.id.uploadButton).setOnClickListener {
             if (validateInputs()) { // Add a validation function
-                val mentor = createMentorObject()
-                storeMentorData(mentor)  // Implement based on your storage choice
+                val mentorId = databaseRef.child("Mentors").push().key // Generate a unique mentor ID
+                mentorId?.let {
+                    val mentor = createMentorObject(mentorId)
+                    storeMentorData(mentor, mentorId)  // Pass mentor ID along with mentor object
+                } ?: run {
+                    Toast.makeText(this, "Error creating mentor ID", Toast.LENGTH_SHORT).show()
+                }
 
                 // After successful storage
 //                val intent = Intent(this, HomeActivity::class.java)
@@ -180,7 +185,8 @@ class AddNewMentorActivity: AppCompatActivity() {
         return true // Replace with actual validation
     }
 
-    private fun createMentorObject(): Mentors {
+    private fun createMentorObject(mentorId:String): Mentors {
+
         val name = findViewById<EditText>(R.id.NameEditText).text.toString()
         val jobTitle = findViewById<EditText>(R.id.jobTitleEditText).text.toString()
         val _rate = findViewById<EditText>(R.id.priceEditText).text.toString()
@@ -192,11 +198,10 @@ class AddNewMentorActivity: AppCompatActivity() {
         val description = findViewById<EditText>(R.id.descriptionEditText).text.toString()
         val company = findViewById<EditText>(R.id.employerEditText).text.toString()
 
-        return Mentors(name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite",profilePicture,description,company)
+        return Mentors(mentorId,name, jobTitle, rate, availability, if (isFavorite) "Favorite" else "Not Favorite",profilePicture,description,company)
     }
 
-    private fun storeMentorData(mentor: Mentors) {
-        val newMentorKey = databaseRef.push().key // Create a unique key for the mentor
+    private fun storeMentorData(mentor: Mentors, newMentorKey: String?) {
 
         if (newMentorKey != null) {
 

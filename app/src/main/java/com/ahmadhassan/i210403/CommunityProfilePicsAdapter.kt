@@ -5,15 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
-class CommunityProfilePicsAdapter(private val profilePics: List<Int>) :
+class CommunityProfilePicsAdapter(private val profilePics: List<String>) :
     RecyclerView.Adapter<CommunityProfilePicsAdapter.ProfilePicViewHolder>() {
 
     inner class ProfilePicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val communityProfilePic: ImageView = itemView.findViewById(R.id.communityProfilePic)
 
-        fun bind(profilePic: Int) {
-            communityProfilePic.setImageResource(profilePic)
+        fun bind(profilePic: String) {
+            Picasso.get().load(profilePic).into(communityProfilePic)
         }
     }
 

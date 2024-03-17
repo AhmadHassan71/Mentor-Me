@@ -137,7 +137,7 @@ principles and user experience."
             app:layout_constraintStart_toStartOf="@+id/textView3"
             app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-        <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/mentorProfilePicture"
             app:layout_constraintVertical_bias="0.883"
             app:layout_constraintStart_toEndOf="@+id/MentorNameTextView"

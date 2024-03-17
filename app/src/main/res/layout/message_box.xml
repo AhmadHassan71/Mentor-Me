@@ -48,7 +48,7 @@
             app:layout_constraintTop_toTopOf="@+id/attachmentButton" />
 
         <EditText
-            android:id="@+id/searchEditText"
+            android:id="@+id/messageEditText"
             android:layout_width="210dp"
             android:layout_height="31dp"
             android:layout_weight="1"
@@ -71,8 +71,8 @@
             android:src="@android:drawable/ic_menu_camera"
             app:tint="@color/white"
 
-            app:layout_constraintStart_toEndOf="@+id/searchEditText"
-            app:layout_constraintTop_toTopOf="@+id/searchEditText" />
+            app:layout_constraintStart_toEndOf="@+id/messageEditText"
+            app:layout_constraintTop_toTopOf="@+id/messageEditText" />
 
         <ImageView
             android:id="@+id/micButton"

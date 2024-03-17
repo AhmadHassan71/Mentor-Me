@@ -3,6 +3,8 @@ import java.io.Serializable;
 import android.graphics.Color;
 
 public class Mentors implements  Serializable {
+
+    private String mentorId;
     private String name;
     private String jobTitle;
     private String rate;
@@ -17,7 +19,8 @@ public class Mentors implements  Serializable {
     private String profilePicture;
 
 
-    public Mentors(String name, String jobTitle, String rate, String Availability, String Favorite, String ProfilePic, String Description, String Company)  {
+    public Mentors(String mentorId, String name, String jobTitle, String rate, String Availability, String Favorite, String ProfilePic, String Description, String Company)  {
+        this.mentorId = mentorId;
         this.name = name;
         this.jobTitle = jobTitle;
         this.rate = rate;
@@ -46,6 +49,9 @@ public class Mentors implements  Serializable {
 
     }
     // Getters
+    public String getMentorId() {
+        return mentorId;
+    }
     public String getName() {
         return name;
     }

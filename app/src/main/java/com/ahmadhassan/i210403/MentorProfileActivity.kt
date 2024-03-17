@@ -27,8 +27,8 @@ class MentorProfileActivity : AppCompatActivity() {
             val mentorPfp = mentor.profilePicture
             description.text = mentor.description
             if (mentorPfp.isNotEmpty()){
-                // it should fill the image view with the mentor's profile picture
-                profileImage.scaleType = ImageView.ScaleType.FIT_CENTER
+//                // it should fill the image view with the mentor's profile picture
+//                profileImage.scaleType = ImageView.ScaleType.CENTER_CROP
 
                 Picasso.get().load(mentorPfp).into(profileImage)
 

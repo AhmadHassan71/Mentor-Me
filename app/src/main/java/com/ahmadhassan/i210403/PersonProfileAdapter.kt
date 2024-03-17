@@ -1,5 +1,6 @@
 package com.ahmadhassan.i210403
 
+import PersonProfile
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 
 class PersonProfileAdapter(private val profiles: List<PersonProfile>) :
     RecyclerView.Adapter<PersonProfileAdapter.ProfileViewHolder>() {
@@ -34,7 +36,8 @@ class PersonProfileAdapter(private val profiles: List<PersonProfile>) :
         }
 
         fun bind(personProfile: PersonProfile) {
-            profilePictureImageView.setImageResource(personProfile.profilePicture)
+//            profilePictureImageView.setImageResource(personProfile.profilePicture)
+            Picasso.get().load(personProfile.profilePicture).into(profilePictureImageView)
             personNameTextView.text = personProfile.personName
             if (personProfile.unreadMessages == 1) {
                 "${personProfile.unreadMessages} New Message".also { unreadMessagesTextView.text = it }

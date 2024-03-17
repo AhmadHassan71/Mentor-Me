@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#DDF7F7">
+
 
     <androidx.cardview.widget.CardView
-        android:layout_width="164dp"
-        android:layout_height="129dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="#DDF7F7"
+        app:cardCornerRadius="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
         tools:layout_editor_absoluteX="3dp"
         tools:layout_editor_absoluteY="76dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="164dp"
+            android:layout_height="129dp"
+            android:backgroundTint="#DDf7f7"
+            >
 
             <ImageView
                 android:id="@+id/mentorProfilePic"
-                android:layout_width="142dp"
-                android:layout_height="127dp"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/rounded_border"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:backgroundTint="#D9D9D9"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="#D9D9D9" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView7"
-                android:layout_width="133dp"
+                android:layout_width="135dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="68dp"
                 app:layout_constraintEnd_toEndOf="@+id/mentorProfilePic"
@@ -97,4 +100,3 @@
                 app:layout_constraintStart_toStartOf="@+id/Rate" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
