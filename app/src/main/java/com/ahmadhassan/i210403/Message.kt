@@ -8,7 +8,7 @@ data class Message(
     var text: String,
     val timestamp: String,
     val imageUrl: String?,
-    val sentByCurrentUser: Boolean
+    val sentByCurrentUser: Boolean,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",

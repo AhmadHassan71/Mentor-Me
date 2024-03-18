@@ -3,6 +3,7 @@ package com.ahmadhassan.i210403
 
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,12 +24,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.Date
 
 
 class ChatRoomActivity : AppCompatActivity() {
-    private lateinit var messageList: MutableList<Message>
     private lateinit var adapter: ChatAdapter
     private lateinit var messageEditText: EditText
     private lateinit var sendMessageButton: ImageView
@@ -39,6 +40,10 @@ class ChatRoomActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_room)
 
+//
+//        Log.d("ChatRoomActivity", "MessageImageUri: $messageImageUri")
+
+
         // get intent from previous activity
         val intent = intent
 //        val personProfile: PersonProfile? = intent.getParcelableExtra("personProfile")
@@ -46,12 +51,14 @@ class ChatRoomActivity : AppCompatActivity() {
         val chatRoom: ChatRoom = intent.getParcelableExtra("chatRoom")!!
         Log.d("ChatRoomActivityR", "ChatRoom: $chatRoom")
 
-        database = FirebaseDatabase.getInstance().getReference("ChatRooms").child(chatRoom.roomId).child("messages")
+        database = FirebaseDatabase.getInstance().getReference("ChatRooms").child(chatRoom.roomId)
+            .child("messages")
 
         val personName = findViewById<TextView>(R.id.MentorNameTextView)
         var personProfilePic = ""
 
-        val mentorDb = FirebaseDatabase.getInstance().getReference("Mentors").child(chatRoom.mentorId)
+        val mentorDb =
+            FirebaseDatabase.getInstance().getReference("Mentors").child(chatRoom.mentorId)
         mentorDb.get().addOnSuccessListener {
             val mentor = it.getValue(Mentors::class.java)
             if (mentor != null) {
@@ -61,9 +68,8 @@ class ChatRoomActivity : AppCompatActivity() {
         }
 
 
-
         // Message Service
-        val messageList :MutableList<Message> = mutableListOf()
+        val messageList: MutableList<Message> = mutableListOf()
 //        messageList.add(Message("1", "Hello!", "10:20", imageUrl = personProfile!!.profilePicture))
 //        messageList.add(Message("2", "Hi there!", "11:15", imageUrl = personProfile.profilePicture, sentByCurrentUser = false))
 //        messageList.add(Message("3", "How are you?", "11:20", imageUrl = personProfile.profilePicture, sentByCurrentUser = false))
@@ -83,41 +89,117 @@ class ChatRoomActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         sendMessageButton.setOnClickListener {
+
+            val messageImageUri = CameraImageObject.getImageUri()
+            Log.d("ChatRoomActivity", "MessageImageUri: $messageImageUri")
             val messageContent = messageEditText.text.toString().trim()
-            if (messageContent.isNotEmpty()) {
-                val currTime = System.currentTimeMillis()
-                val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
-                val lastMessage = messageList.lastOrNull()
-                val newId = (lastMessage?.id?.toIntOrNull() ?: 0) + 1
-                val newMessage = Message(newId.toString(), messageContent, currentTime
-                    ,imageUrl = UserInstance.getInstance()?.profilePic ?: ""
-                    , sentByCurrentUser = true)
 
 
-                database.child(newId.toString()).setValue(newMessage)
-                messageEditText.text.clear()
+            if (messageImageUri.isNotEmpty()) {
+                //upload image to firebase
+                // upload message image uri to storage and get the uri
+                Log.d("ChatRoomActivity", "ImageUri: $messageImageUri")
+                var imageUri = ""
+                val storage = FirebaseStorage.getInstance()
+                val storageRef = storage.reference
+                val imagesRef =
+                    storageRef.child("messageData").child("Users").child("messageImages")
+                        .child(messageImageUri)
+                val uri = Uri.parse(messageImageUri)
+                val uploadTask = imagesRef.putFile(uri)
+
+                uploadTask.addOnSuccessListener { _ ->
+                    imagesRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        val imageUrl =
+                            downloadUri.toString() // Get the download URL of the uploaded image
+                        Log.d("ChatRoomActivity", "Image uploaded successfully: $imageUrl")
+
+                        // Continue with saving the message with the download URL
+                        val messageContent =
+                            findViewById<EditText>(R.id.messageEditText).text.toString().trim()
+                        val currTime = System.currentTimeMillis()
+                        val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
+                        val lastMessage = messageList.lastOrNull()
+                        val newId = (lastMessage?.id?.toIntOrNull() ?: 0) + 1
+                        val newMessage = Message(
+                            newId.toString(), messageContent, currentTime,
+                            sentByCurrentUser = true, imageUrl = imageUrl
+                        )
+
+                        database.child(newId.toString()).setValue(newMessage)
+                        CameraImageObject.resetInstance()
+                    }
+                }.addOnFailureListener { exception ->
+                    // Handle unsuccessful upload
+                    Toast.makeText(
+                        this,
+                        "Failed to upload image: ${exception.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return@setOnClickListener
+            } else {
+
+
+                if (messageContent.isNotEmpty()) {
+                    val currTime = System.currentTimeMillis()
+                    val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
+                    val lastMessage = messageList.lastOrNull()
+                    val newId = (lastMessage?.id?.toIntOrNull() ?: 0) + 1
+                    val newMessage = Message(
+                        newId.toString(),
+                        messageContent,
+                        currentTime,
+                        imageUrl = "",
+                        sentByCurrentUser = true
+                    )
+
+
+                    database.child(newId.toString()).setValue(newMessage)
+                    messageEditText.text.clear()
 //                messageList.add(newMessage)
 //                adapter.notifyItemInserted(messageList.size - 1)
 //                recyclerView.scrollToPosition(messageList.size - 1)
-                messageEditText.text.clear()
-                val mentorResponse = when {
-                    messageContent.contains("help", ignoreCase = true) -> "I'm here to help."
-                    messageContent.contains("thank", ignoreCase = true) -> "Let me know if there's anything else."
-                    messageContent.contains("happy", ignoreCase = true) -> "That's great to hear! "
-                    messageContent.contains("sad", ignoreCase = true) -> "You can talk to me?"
-                    messageContent.contains("stress", ignoreCase = true) -> "Stress can be tough."
-                    else -> "Interesting. Tell me more."
+                    messageEditText.text.clear()
+                    val mentorResponse = when {
+                        messageContent.contains("help", ignoreCase = true) -> "I'm here to help."
+                        messageContent.contains(
+                            "thank",
+                            ignoreCase = true
+                        ) -> "Let me know if there's anything else."
+
+                        messageContent.contains(
+                            "happy",
+                            ignoreCase = true
+                        ) -> "That's great to hear! "
+
+                        messageContent.contains("sad", ignoreCase = true) -> "You can talk to me?"
+                        messageContent.contains(
+                            "stress",
+                            ignoreCase = true
+                        ) -> "Stress can be tough."
+
+                        else -> "Interesting. Tell me more."
+                    }
+
+                    // Mentor's response
+                    val mentorMessage = Message(
+                        (newId + 1).toString(),
+                        mentorResponse,
+                        currentTime,
+                        imageUrl = personProfilePic,
+                        sentByCurrentUser = false
+                    )
+                    database.child((newId + 1).toString()).setValue(mentorMessage)
+
+
+                } else {
+                    Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show()
                 }
-
-                // Mentor's response
-                val mentorMessage = Message((newId + 1).toString(), mentorResponse, currentTime, imageUrl = personProfilePic, sentByCurrentUser = false)
-                database.child((newId+1).toString()).setValue(mentorMessage)
-
-            }
-            else {
-                Toast.makeText(this, "Message cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
 
 
@@ -217,6 +299,7 @@ class ChatRoomActivity : AppCompatActivity() {
         // For camera access
         findViewById<ImageView>(R.id.cameraButton).setOnClickListener {
             val cameraIntent = Intent(this,CameraActivity::class.java)
+            cameraIntent.putExtra("chatRoom", chatRoom)
             startActivity(cameraIntent)
         }
 
@@ -238,14 +321,12 @@ class ChatRoomActivity : AppCompatActivity() {
 
     }
 
+
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
-            findViewById<ImageView>(R.id.userMessageImage).setImageURI(uri)
-
-        } ?: run {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            CameraImageObject.setInstance(uri.toString(), ChatRoom())
+            }
         }
-    }
 
 
 

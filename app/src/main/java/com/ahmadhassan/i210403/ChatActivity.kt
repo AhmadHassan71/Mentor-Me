@@ -23,6 +23,8 @@ class ChatActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+
+
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
         bottomNavView.selectedItemId = R.id.navigation_chat
         bottomNavView.setOnItemSelectedListener { item ->
@@ -159,9 +161,9 @@ class ChatActivity : AppCompatActivity() {
         // Add initial messages to the chat room
         val initialMessages = listOf(
             Message("1", "Hello! ${UserInstance.getInstance()!!.fullName}", "10:20", imageUrl = currMentor.profilePicture,false),
-            Message("2", "Hi there!", "11:15", imageUrl = currMentor.profilePicture, sentByCurrentUser = true),
-            Message("3", "How are you?", "11:20", imageUrl = currMentor.profilePicture, sentByCurrentUser = false),
-            Message("4", "I'm fine, thanks! ${currMentor.name}", "12:00", imageUrl = currMentor.profilePicture, sentByCurrentUser = true)
+            Message("2", "Hi there!", "11:15", imageUrl ="", sentByCurrentUser = true),
+            Message("3", "How are you?", "11:20", imageUrl =currMentor.profilePicture, sentByCurrentUser = false),
+            Message("4", "I'm fine, thanks! ${currMentor.name}", "12:00", imageUrl = "", sentByCurrentUser = true)
             // Add more initial messages as needed
         )
 

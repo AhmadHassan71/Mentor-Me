@@ -72,10 +72,16 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
     private inner class UserMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val messageTextView: TextView = itemView.findViewById(R.id.userchatMessageTextView)
         private val timestampTextView: TextView = itemView.findViewById(R.id.usertimeTextView)
+        private val imageMessage: ImageView = itemView.findViewById(R.id.userMessageImage)
 
         fun bind(message: Message) {
             messageTextView.text = message.text
             timestampTextView.text = message.timestamp
+            // Load image if available
+            if(message.imageUrl != "") {
+                Picasso.get().load(message.imageUrl).into(imageMessage)
+                timestampTextView.text = ""
+            }
             // Implement edit and delete functionality here
             itemView.setOnLongClickListener {
                 showEditDeleteDialog(message)

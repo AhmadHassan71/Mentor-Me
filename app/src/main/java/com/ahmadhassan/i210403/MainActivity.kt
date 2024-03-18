@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
     private val SPLASH_DELAY: Long = 2000 // Delay in milliseconds
@@ -13,6 +14,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
+
+        FirebaseApp.initializeApp(this)
+
         val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false) // Check saved state
         Handler(Looper.getMainLooper()).postDelayed({
