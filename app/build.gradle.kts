@@ -39,7 +39,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.core:core-ktx:1.12.0"){
+        exclude("com.android.support")
+    }
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -69,6 +71,9 @@ dependencies {
 
     implementation ("androidx.camera:camera-view:1.3.2")
     implementation ("androidx.camera:camera-extensions:1.3.2")
+    implementation ("com.github.JagarYousef:ChatVoicePlayer:1.1.0")
+//    implementation("com.github.JagarYousef:ChatVoicePlayer:1.0.7")
+
 
 }
 
