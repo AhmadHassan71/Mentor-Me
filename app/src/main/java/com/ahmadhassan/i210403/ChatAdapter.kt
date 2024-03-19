@@ -1,6 +1,7 @@
 package com.ahmadhassan.i210403
 
 import android.app.AlertDialog
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DatabaseReference
 import com.squareup.picasso.Picasso
+import me.jagar.chatvoiceplayerlibrary.VoicePlayerView
 
 class ChatAdapter(private val messageList: MutableList<Message>, private val database: DatabaseReference) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -19,11 +21,11 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
     private val VIEW_TYPE_MESSAGE_AUDIO = 2
 
     override fun getItemViewType(position: Int): Int {
-        return if (messageList[position].sentByCurrentUser) {
+   return if (messageList[position].audioMessage) {
+                VIEW_TYPE_MESSAGE_AUDIO
+            } else if (messageList[position].sentByCurrentUser) {
             VIEW_TYPE_MESSAGE_USER
-        } else if (messageList[position].isAudioMessage) {
-            VIEW_TYPE_MESSAGE_AUDIO
-        } else {
+            } else {
             VIEW_TYPE_MESSAGE
         }
     }
@@ -77,6 +79,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
         private val imageMessage: ImageView = itemView.findViewById(R.id.userMessageImage)
 
         fun bind(message: Message) {
+            Log.d("ChatAdapter", "User message URL: ${message.imageUrl} ${message.audioMessage}")
             messageTextView.text = message.text
             timestampTextView.text = message.timestamp
             // Load image if available
@@ -155,8 +158,9 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
 
     // ViewHolder for audio messages
     private inner class AudioMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val audioPlayer = itemView.findViewById<me.jagar.chatvoiceplayerlibrary.VoicePlayerView>(R.id.voicePlayerView)
+        private val audioPlayer = itemView.findViewById<VoicePlayerView>(R.id.voicePlayerView)
         fun bind(message: Message) {
+            Log.d("ChatAdapter", "Audio message URL: ${message.imageUrl}")
             audioPlayer.setAudio(message.imageUrl)
 
         }

@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -29,14 +28,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import android.Manifest
-import androidx.core.content.FileProvider
 import java.io.File
-import java.util.Locale
 
 class ChatRoomActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
@@ -156,7 +152,8 @@ class ChatRoomActivity : AppCompatActivity() {
                         messageContent,
                         currentTime,
                         imageUrl = "",
-                        sentByCurrentUser = true
+                        sentByCurrentUser = true,
+                        audioMessage = false
                     )
 
 
@@ -414,7 +411,7 @@ class ChatRoomActivity : AppCompatActivity() {
     }private fun sendAudioMessage(audioUri: Uri) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
-        val audioRef = storageRef.child("audioMessages").child("${System.currentTimeMillis()}.3gp")
+        val audioRef = storageRef.child("isAudioMessage").child("${System.currentTimeMillis()}.3gp")
         val uploadTask = audioRef.putFile(audioUri)
         Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
         uploadTask.addOnSuccessListener { _ ->
@@ -428,7 +425,7 @@ class ChatRoomActivity : AppCompatActivity() {
                     currentTime,
                     audioUrl,
                     sentByCurrentUser = true,
-                    isAudioMessage = true
+                    audioMessage = true
                 )
                 database.child(message.id).setValue(message)
             }

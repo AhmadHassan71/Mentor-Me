@@ -104,14 +104,28 @@ class ChatActivity : AppCompatActivity() {
 
         chatRoomsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                Log.d("ChatActivityH", "DataSnapshot: $dataSnapshot")
                 for (roomSnapshot in dataSnapshot.children) {
-                    val chatRoom = roomSnapshot.getValue(ChatRoom::class.java)
-                    Log.d("ChatActivityH", "ChatRoom: $chatRoom")
+                    val roomId = roomSnapshot.key // Get the room ID
+                    val messagesSnapshot = roomSnapshot.child("messages") // Get the messages node
+                    val messagesList = mutableListOf<Message>() // Create a list to hold messages
+
+                    // Iterate through the child nodes under "messages"
+                    for (messageSnapshot in messagesSnapshot.children) {
+                        val message = messageSnapshot.getValue(Message::class.java) // Parse each message
+                        if (message != null) {
+                            messagesList.add(message) // Add the message to the list
+                        }
+                    }
+
                     // Assuming `mentorId` and `userId` are properties of the ChatRoom class
-                    if (chatRoom != null && chatRoom.mentorId == currMentor.mentorId && chatRoom.userId == currUser.userId) {
+                    val mentorId = roomSnapshot.child("mentorId").getValue(String::class.java)
+                    val userId = roomSnapshot.child("userId").getValue(String::class.java)
+
+                    if (roomId != null && mentorId != null && userId != null &&
+                        mentorId == currMentor.mentorId && userId == currUser.userId) {
                         // If a chat room exists for the selected mentor and user, navigate to it
                         val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)
+                        val chatRoom = ChatRoom(roomId,mentorId  , userId,messagesList) // Create ChatRoom instance
                         ChatRoomInstance.setInstance(chatRoom)
                         MentorChatInstance.setInstance(currMentor)
                         startActivity(intent)

@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginEnd="15dp"
+    android:layout_marginTop="25dp"
+    android:layout_marginBottom="20dp"
+    app:layout_constraintEnd_toEndOf="parent">
 
-    android:background="@drawable/rounded_border"
-    android:backgroundTint="#AFE9E3"
-    android:padding="16dp">
-
-    <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
+   <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
         android:id="@+id/voicePlayerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         app:enableVisualizer="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:playPauseBackgroundColor="#ff7700"
+        app:playPauseBackgroundColor="#018255"
         app:playPauseCornerRadius="100"
-        app:playProgressbarColor="#ff7700"
+        app:playProgressbarColor="#008c7e"
         app:progressTimeColor="#000"
-        app:seekBarProgressColor="#000"
-        app:seekBarThumbColor="#FFC107"
+        app:seekBarProgressColor="#008c7e"
+        app:seekBarThumbColor="#018255"
         app:shareBackgroundColor="#ff7700"
         app:shareCornerRadius="100"
         app:shareText="SHARE ME"
-        app:showShareButton="true"
+        app:showShareButton="false"
         app:showTiming="true"
-        app:timingBackgroundColor="#6AFF7700"
-        app:viewBackground="#C6C4CF"
+        app:timingBackgroundColor="#c1e0d5"
+        app:viewBackground="#c4f5e4"
         app:viewCornerRadius="100"
         app:visualizationNotPlayedColor="#727171"
         app:visualizationPlayedColor="#ff7700" />

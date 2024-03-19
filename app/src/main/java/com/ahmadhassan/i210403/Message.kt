@@ -9,7 +9,7 @@ data class Message(
     val timestamp: String,
     val imageUrl: String?,
     val sentByCurrentUser: Boolean,
-    val isAudioMessage: Boolean = false // Added isAudioMessage property with default value
+    val audioMessage: Boolean = false // Added isAudioMessage property with default value
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -28,7 +28,7 @@ data class Message(
         parcel.writeString(timestamp)
         parcel.writeString(imageUrl)
         parcel.writeByte(if (sentByCurrentUser) 1 else 0)
-        parcel.writeByte(if (isAudioMessage) 1 else 0) // Write isAudioMessage to parcel
+        parcel.writeByte(if (audioMessage) 1 else 0) // Write isAudioMessage to parcel
     }
 
     override fun describeContents(): Int {
