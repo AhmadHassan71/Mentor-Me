@@ -59,11 +59,18 @@ class ChatRoomActivity : AppCompatActivity() {
 
         val mentorDb =
             FirebaseDatabase.getInstance().getReference("Mentors").child(chatRoom.mentorId)
-        mentorDb.get().addOnSuccessListener {
-            val mentor = it.getValue(Mentors::class.java)
-            if (mentor != null) {
-                personName.text = mentor.name
-                personProfilePic = mentor.profilePicture
+        mentorDb.get().addOnCompleteListener {task->
+            if(!task.isSuccessful){
+                Log.e("firebase", "Error getting data", task.exception)
+            }
+            else {
+                val mentor = task.result.getValue(Mentors::class.java)
+                if (mentor != null) {
+                    personName.text = mentor.name
+                    if (mentor.profilePicture != null)
+                        personProfilePic = mentor.profilePicture
+
+                }
             }
         }
 
