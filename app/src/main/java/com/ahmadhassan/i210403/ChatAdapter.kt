@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,23 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DatabaseReference
 import com.squareup.picasso.Picasso
 
-
-interface MessageEditListener {
-    fun onEditMessage(message: Message)
-}
-
-interface MessageDeleteListener {
-    fun onDeleteMessage(message: Message)
-}
 class ChatAdapter(private val messageList: MutableList<Message>, private val database: DatabaseReference) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_MESSAGE = 0
     private val VIEW_TYPE_MESSAGE_USER = 1
+    private val VIEW_TYPE_MESSAGE_AUDIO = 2
 
     override fun getItemViewType(position: Int): Int {
         return if (messageList[position].sentByCurrentUser) {
             VIEW_TYPE_MESSAGE_USER
+        } else if (messageList[position].isAudioMessage) {
+            VIEW_TYPE_MESSAGE_AUDIO
         } else {
             VIEW_TYPE_MESSAGE
         }
@@ -46,6 +40,10 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
                 val view = inflater.inflate(R.layout.chat_message_user, parent, false)
                 UserMessageViewHolder(view)
             }
+            VIEW_TYPE_MESSAGE_AUDIO -> {
+                val view = inflater.inflate(R.layout.audio_message_user, parent, false)
+                AudioMessageViewHolder(view)
+            }
             else -> {
                 // Inflate layout for messages received from others
                 val view = inflater.inflate(R.layout.chat_message, parent, false)
@@ -60,6 +58,10 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
             VIEW_TYPE_MESSAGE_USER -> {
                 val userHolder = holder as UserMessageViewHolder
                 userHolder.bind(message)
+            }
+            VIEW_TYPE_MESSAGE_AUDIO -> {
+                val audioHolder = holder as AudioMessageViewHolder
+                audioHolder.bind(message)
             }
             else -> {
                 val messageHolder = holder as MessageViewHolder
@@ -88,6 +90,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
                 true // Consume the long click event
             }
         }
+
         private fun showEditDeleteDialog(message: Message) {
             val dialogBuilder = AlertDialog.Builder(itemView.context)
             dialogBuilder.setTitle("Edit or Delete Message")
@@ -111,10 +114,6 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
             dialog.show()
         }
 
-
-
-
-
         private fun editMessage(message: Message) {
             val editText = EditText(itemView.context)
             editText.setText(message.text)
@@ -126,7 +125,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
                 val newText = editText.text.toString()
                 if (newText.isNotEmpty()) {
                     // Update the message in the database
-                   messageList[adapterPosition].text = newText
+                    messageList[adapterPosition].text = newText
                     notifyItemChanged(adapterPosition)
                     val messageId = message.id
                     database.child(messageId).child("text").setValue(newText)
@@ -154,6 +153,15 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
         }
     }
 
+    // ViewHolder for audio messages
+    private inner class AudioMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val audioPlayer = itemView.findViewById<me.jagar.chatvoiceplayerlibrary.VoicePlayerView>(R.id.voicePlayerView)
+        fun bind(message: Message) {
+            audioPlayer.setAudio(message.imageUrl)
+
+        }
+    }
+
     // ViewHolder for messages received from others
     private inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val messageTextView: TextView = itemView.findViewById(R.id.chatMessageTextView)
@@ -174,7 +182,4 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
             }
         }
     }
-
-
-
 }

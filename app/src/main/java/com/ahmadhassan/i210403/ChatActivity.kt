@@ -14,6 +14,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
 
 class ChatActivity : AppCompatActivity() {
+    private val database = FirebaseDatabase.getInstance()
+    private val chatRoomsRef = database.getReference("ChatRooms")
+    private val ref = database.getReference("Mentors")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_menu)
@@ -58,8 +61,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val mentorsList = mutableListOf<Mentors>()
-        val database = FirebaseDatabase.getInstance()
-        val ref = database.getReference("Mentors")
+
 
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -97,41 +99,39 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun checkOrCreateChatRoom(currUser: User, currMentor: Mentors) {
-        val database = FirebaseDatabase.getInstance()
-        val chatRoomsRef = database.getReference("ChatRooms")
+
         Log.d("ChatActivityH", "chatRoomRef: $chatRoomsRef")
 
-        chatRoomsRef.orderByChild("userId").equalTo(UserInstance.getInstance()!!.userId)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (roomSnapshot in dataSnapshot.children) {
-                        Log.d("ChatActivityH", "roomSnapshot: $roomSnapshot")
-                        val chatRoom = roomSnapshot.getValue(ChatRoom::class.java)
-                        Log.d("ChatActivityH", "chatRoom: $chatRoom")
-                        Log.d("ChatActivityH", "chatRoom: $chatRoom")
-                        // log the current mentor id and user id
-                        Log.d("ChatActivityH", "currMentor.mentorId: ${currMentor.mentorId}")
-                        Log.d("ChatActivityH", "currUser.userId: ${currUser.userId}")
-
-                        if (chatRoom != null && chatRoom.mentorId == currMentor.mentorId) {
-                            // If a chat room exists, navigate to the chat room activity
-                            val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)
-                            intent.putExtra("chatRoom", chatRoom)
-                            startActivity(intent)
-                            finish()
-                            return
-                        }
+        chatRoomsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("ChatActivityH", "DataSnapshot: $dataSnapshot")
+                for (roomSnapshot in dataSnapshot.children) {
+                    val chatRoom = roomSnapshot.getValue(ChatRoom::class.java)
+                    Log.d("ChatActivityH", "ChatRoom: $chatRoom")
+                    // Assuming `mentorId` and `userId` are properties of the ChatRoom class
+                    if (chatRoom != null && chatRoom.mentorId == currMentor.mentorId && chatRoom.userId == currUser.userId) {
+                        // If a chat room exists for the selected mentor and user, navigate to it
+                        val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)
+                        ChatRoomInstance.setInstance(chatRoom)
+                        MentorChatInstance.setInstance(currMentor)
+                        startActivity(intent)
+                        finish()
+                        return
                     }
-                    // If no chat room exists, create a new one
-                    createNewChatRoom(currUser, currMentor)
                 }
+                // If no chat room exists for the selected mentor and user, create a new one
+                createNewChatRoom(currUser, currMentor)
+            }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle database error
-                    Toast.makeText(this@ChatActivity, "Failed to check chat rooms", Toast.LENGTH_SHORT).show()
-                }
-            })
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle database error
+                Log.e("ChatActivityH", "Failed to check chat rooms: ${databaseError.message}")
+                Toast.makeText(this@ChatActivity, "Failed to check chat rooms", Toast.LENGTH_SHORT).show()
+            }
+        })
+
     }
+
 
 
     private fun createNewChatRoom(currUser: User, currMentor: Mentors) {
@@ -172,8 +172,9 @@ class ChatActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 // If the messages are successfully saved, navigate to the chat room activity
                 val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)
-                val newChatRoom = ChatRoom(chatRoomId, "", "", initialMessages) // Provide only the ID and messages
-                intent.putExtra("chatRoom", newChatRoom)
+                val newChatRoom = ChatRoom(chatRoomId,UserInstance.getInstance()!!.userId ,currMentor.mentorId , initialMessages) // Provide only the ID and messages
+                ChatRoomInstance.setInstance(newChatRoom)
+                MentorChatInstance.setInstance(currMentor)
                 startActivity(intent)
             } else {
                 Toast.makeText(this@ChatActivity, "Failed to open chat", Toast.LENGTH_SHORT).show()

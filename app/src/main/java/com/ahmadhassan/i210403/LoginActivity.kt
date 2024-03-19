@@ -21,6 +21,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login)
 
+        val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+        val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false) // Check saved state
+
+        if (isLoggedIn) {
+            // If the user is already logged in, start the HomeActivity
+            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
         auth = FirebaseAuth.getInstance() // Initialize Firebase Auth
 
         val loginButton: Button = findViewById(R.id.LoginButton)

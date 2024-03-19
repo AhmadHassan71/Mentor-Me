@@ -1,8 +1,10 @@
 package com.ahmadhassan.i210403
 
 
+import android.media.MediaRecorder
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +18,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,15 +29,24 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
-
+import android.Manifest
+import androidx.core.content.FileProvider
+import java.io.File
+import java.util.Locale
 
 class ChatRoomActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
     private lateinit var messageEditText: EditText
     private lateinit var sendMessageButton: ImageView
     private lateinit var database: DatabaseReference
+    private var mediaRecorder: MediaRecorder ?= null
+    private lateinit var audioPath: String
+    private lateinit var audioFile: File
+    private var isRecording = false
 
     @RequiresExtension(extension = Build.VERSION_CODES.R, version = 2)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,31 +61,16 @@ class ChatRoomActivity : AppCompatActivity() {
         val intent = intent
 //        val personProfile: PersonProfile? = intent.getParcelableExtra("personProfile")
 //        val personProfile: PersonProfile? = intent.getParcelableExtra("personProfile", PersonProfile::class.java)
-        val chatRoom: ChatRoom = intent.getParcelableExtra("chatRoom")!!
-        Log.d("ChatRoomActivityR", "ChatRoom: $chatRoom")
+        val chatRoom: ChatRoom = ChatRoomInstance.getInstance()
+        Log.d("ChatRoomActivity", "ChatRoom: $chatRoom")
 
         database = FirebaseDatabase.getInstance().getReference("ChatRooms").child(chatRoom.roomId)
             .child("messages")
 
         val personName = findViewById<TextView>(R.id.MentorNameTextView)
-        var personProfilePic = ""
+        personName.text = MentorChatInstance.getInstance().name
+        val personProfilePic = MentorChatInstance.getInstance().profilePicture
 
-        val mentorDb =
-            FirebaseDatabase.getInstance().getReference("Mentors").child(chatRoom.mentorId)
-        mentorDb.get().addOnCompleteListener {task->
-            if(!task.isSuccessful){
-                Log.e("firebase", "Error getting data", task.exception)
-            }
-            else {
-                val mentor = task.result.getValue(Mentors::class.java)
-                if (mentor != null) {
-                    personName.text = mentor.name
-                    if (mentor.profilePicture != null)
-                        personProfilePic = mentor.profilePicture
-
-                }
-            }
-        }
 
 
         // Message Service
@@ -284,6 +282,8 @@ class ChatRoomActivity : AppCompatActivity() {
         }
         val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
+            ChatRoomInstance.clearInstance()
+            MentorChatInstance.clearInstance()
             onBackPressedDispatcher.onBackPressed()
         }
 
@@ -311,8 +311,35 @@ class ChatRoomActivity : AppCompatActivity() {
         }
 
         findViewById<ImageView>(R.id.micButton).setOnClickListener {
-            val audioIntent = Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
-            startActivity(audioIntent)
+            Log.d("ChatRoomActivityD", "Mic button clicked")
+            audioFile = File(
+                externalMediaDirs.firstOrNull(),
+                "${UserInstance.getInstance()!!.userId}.3gp"
+            )
+            audioPath = audioFile.absolutePath
+            if (!isRecording) {
+                // Check if permissions are granted
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Log.d("ChatRoomActivityD", "Requesting permissions")
+                    // Request both RECORD_AUDIO and WRITE_EXTERNAL_STORAGE permissions
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_MEDIA_AUDIO),
+                        10
+                    )
+                    startRecording()
+
+                } else {
+                    // Permission already granted, start recording
+                    Log.d("ChatRoomActivityD", "Start recording")
+                    startRecording()
+                }
+            } else {
+                // Stop recording if it's already recording
+                stopRecording()
+            }
         }
 
 
@@ -334,9 +361,84 @@ class ChatRoomActivity : AppCompatActivity() {
             CameraImageObject.setInstance(uri.toString(), ChatRoom())
             }
         }
+    private fun createRecorder(): MediaRecorder {
+        return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            MediaRecorder(this@ChatRoomActivity)
+        } else MediaRecorder()
+    }
+    private fun startRecording() {
+        mediaRecorder = createRecorder().apply {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            Log.d("ChatRoomActivityD", "AudioPath: $audioPath")
+            setOutputFile(audioPath)
+            audioFile = File(
+                externalMediaDirs.firstOrNull(),
+                audioPath
+            )
+            Log.d("ChatRoomActivityD", "AudioFile: $audioFile")
+            try {
+                prepare()
+                start()
+                isRecording = true
+                mediaRecorder = this
+                Log.d("ChatRoomActivityD", "Recording started")
+                Toast.makeText(this@ChatRoomActivity, "Recording started", Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Toast.makeText(this@ChatRoomActivity, "Failed to start recording: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ChatRoomActivityD", "Failed to start recording: ${e.message}")
+            } catch (e: IllegalStateException) {
+                Toast.makeText(this@ChatRoomActivity, "Failed to start recording: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
+    private fun stopRecording() {
+        Log.d("ChatRoomActivityD", "Stop recording")
+        mediaRecorder?.stop()
+        mediaRecorder?.reset()
+        mediaRecorder = null
+        isRecording = false
+        Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
+//        val audioFile = File(
+//            externalMediaDirs.firstOrNull(),
+//            audioPath
+//        )
 
+        val audioUri = Uri.fromFile(audioFile)
+        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
+        sendAudioMessage(audioUri)
+        // Now you can handle the recorded audio file, e.g., upload it to Firebase.
+    }private fun sendAudioMessage(audioUri: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val audioRef = storageRef.child("audioMessages").child("${System.currentTimeMillis()}.3gp")
+        val uploadTask = audioRef.putFile(audioUri)
+        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
+        uploadTask.addOnSuccessListener { _ ->
+            audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                val audioUrl = downloadUri.toString()
+                val currTime = System.currentTimeMillis()
+                val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
+                val message = Message(
+                    (currTime % Int.MAX_VALUE).toString(),
+                    "",
+                    currentTime,
+                    audioUrl,
+                    sentByCurrentUser = true,
+                    isAudioMessage = true
+                )
+                database.child(message.id).setValue(message)
+            }
+        }.addOnFailureListener { exception ->
+            Toast.makeText(this, "Failed to upload audio: ${exception.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    companion object {
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+    }
 }
 

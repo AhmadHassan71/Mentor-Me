@@ -11,6 +11,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -91,34 +93,41 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         holder.Favorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Toggle the favorite state
                 if (mentor.getFavorite().equals("Favorite") || mentor.getFavorite().equals("❤️")) {
-                    mentor.setFavorite("🩶");
-                    // Remove from the database
-                    DatabaseRef.child(Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId()).child(mentor.getMentorId()).removeValue()
+                    // Remove from favorites
+                    DatabaseRef.child(Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId())
+                            .child(mentor.getMentorId()).removeValue()
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Log.d("Favorite", "Removed from favorites");
+                                    // Update favorite status
+                                    mentor.setFavorite("🩶");
+                                    // Notify adapter that data set has changed
+                                    notifyItemChanged(position);
                                 } else {
                                     Log.d("Favorite", "Failed to remove from favorites");
                                 }
                             });
                 } else {
-                    mentor.setFavorite("❤️");
-                    // Add to the database
-                    Favorite favorite = new Favorite(mentor.getMentorId(), (Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId()));
-                    DatabaseRef.child(UserInstance.INSTANCE.getInstance().getUserId()).child(mentor.getMentorId()).setValue(favorite)
+                    // Add to favorites
+                    Favorite favorite = new Favorite(mentor.getMentorId(), Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId());
+                    DatabaseRef.child(UserInstance.INSTANCE.getInstance().getUserId())
+                            .child(mentor.getMentorId()).setValue(favorite)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     Log.d("Favorite", "Added to favorites");
+                                    // Update favorite status
+                                    mentor.setFavorite("❤️");
+                                    // Notify adapter that data set has changed
+                                    notifyItemChanged(position);
                                 } else {
                                     Log.d("Favorite", "Failed to add to favorites");
                                 }
                             });
                 }
-                notifyItemChanged(position); // Notify adapter that data set has changed
             }
         });
+
 
         if (!Objects.equals(mentor.getProfilePicture(), "")) {
             Picasso.get().load(mentor.getProfilePicture()).into(holder.ProfilePic);
