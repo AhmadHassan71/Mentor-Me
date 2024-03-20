@@ -54,6 +54,7 @@ class EditProfileActivity : AppCompatActivity() {
             sharedPrefs.edit().putBoolean("isLoggedIn", false).apply()
             val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
             userIdSharedPreferences.edit().putString("userId","").apply()
+
             UserInstance.clearInstance()
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)

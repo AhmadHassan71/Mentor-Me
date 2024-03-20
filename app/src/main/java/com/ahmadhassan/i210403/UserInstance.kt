@@ -45,6 +45,19 @@ object UserInstance {
         }
     }
 
+    fun setFCMToken(token: String, callback: (Boolean) -> Unit) {
+        val dbref = database.getReference("Users").child(currentUser!!.userId).child("fcmToken")
+        dbref.setValue(token).addOnSuccessListener {
+            currentUser?.fcmToken = token
+            callback(true)
+        }.addOnFailureListener { error ->
+            Log.d("UserInstance", "Error: ${error.message}")
+            // Handle failure
+            callback(false)
+        }
+    }
+
+
     fun clearInstance() {
         currentUser = null
     }

@@ -61,6 +61,7 @@ dependencies {
     androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1")
     androidTestImplementation("androidx.test:rules:1.5.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("me.zhanghai.android.materialratingbar:library:1.4.0")
 

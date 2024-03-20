@@ -32,6 +32,15 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import android.Manifest
+import android.os.Handler
+import android.os.Looper
+import okhttp3.Call
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.json.JSONObject
 import java.io.File
 
 class ChatRoomActivity : AppCompatActivity() {
@@ -129,6 +138,8 @@ class ChatRoomActivity : AppCompatActivity() {
 
                         database.child(newId.toString()).setValue(newMessage)
                         CameraImageObject.resetInstance()
+
+                        SendNotification(newMessage)
                     }
                 }.addOnFailureListener { exception ->
                     // Handle unsuccessful upload
@@ -158,6 +169,7 @@ class ChatRoomActivity : AppCompatActivity() {
 
 
                     database.child(newId.toString()).setValue(newMessage)
+                    SendNotification(newMessage)
                     messageEditText.text.clear()
 //                messageList.add(newMessage)
 //                adapter.notifyItemInserted(messageList.size - 1)
@@ -183,16 +195,22 @@ class ChatRoomActivity : AppCompatActivity() {
 
                         else -> "Interesting. Tell me more."
                     }
+                    // Add delay in mentor's response
 
                     // Mentor's response
-                    val mentorMessage = Message(
-                        (newId + 1).toString(),
-                        mentorResponse,
-                        currentTime,
-                        imageUrl = personProfilePic,
-                        sentByCurrentUser = false
-                    )
-                    database.child((newId + 1).toString()).setValue(mentorMessage)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val mentorMessage = Message(
+                            (newId + 1).toString(),
+                            mentorResponse,
+                            currentTime,
+                            imageUrl = personProfilePic,
+                            sentByCurrentUser = false
+                        )
+                        database.child((newId + 1).toString()).setValue(mentorMessage)
+
+                        SendNotification(mentorMessage)
+                    }, 5000)
+
 
 
                 } else {
@@ -428,14 +446,60 @@ class ChatRoomActivity : AppCompatActivity() {
                     audioMessage = true
                 )
                 database.child(message.id).setValue(message)
+                SendNotification(message)
+
             }
         }.addOnFailureListener { exception ->
             Toast.makeText(this, "Failed to upload audio: ${exception.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
+    private fun SendNotification(message: Message) {
+
+        if(!message.sentByCurrentUser){
+            Log.d("SendNotification", "Sending Notification")
+            val jsonObject = JSONObject()
+            val notification = JSONObject()
+            val data = JSONObject()
+            notification.put("title", MentorChatInstance.getInstance().name)
+            notification.put("body", message.text)
+            notification.put("click_action", "ChatRoomActivity")
+            data.put("message", message.text)
+            data.put("title", MentorChatInstance.getInstance().name)
+            data.put("click_action", "ChatRoomActivity")
+            jsonObject.put("notification", notification)
+            jsonObject.put("data", data)
+            jsonObject.put("to", UserInstance.getInstance()!!.fcmToken)
+
+            callAPI(jsonObject)
+        }
+
+    }
+
+    private fun callAPI(jsonObject: JSONObject){
+        val JSON : MediaType = "application/json; charset=utf-8".toMediaType()
+        val client : OkHttpClient = OkHttpClient()
+        val url : String = "https://fcm.googleapis.com/fcm/send"
+        val body : RequestBody = RequestBody.create(JSON, jsonObject.toString())
+        val request : Request = Request.Builder()
+            .url(url)
+            .post(body)
+            .header("Authorization", "Bearer AAAAAI0jfrw:APA91bGSfgKDPAesmtlFLNRqVJkoAKUd3PrfUFDS9WvyOit0TFmFTjCDi6tsjEVOyA_bJmVMMHgYcYExwvQCHknLbBPrjH-BXD1vmqJvYsgQ4Y9eKzcVsQLxrBkhMACcsQfhQqleSgHu")
+            .build()
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("NotificationStatus", "Failed to send notification: ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: okhttp3.Response) {
+                Log.d("NotificationStatus", "Notification sent successfully")
+            }
+        })
+    }
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }
+
+
 

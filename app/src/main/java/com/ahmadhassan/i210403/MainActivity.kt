@@ -21,13 +21,13 @@ class MainActivity : AppCompatActivity() {
         FirebaseDatabase.getInstance().setPersistenceCacheSizeBytes(40 * 1024 * 1024); // 40 MB cache size
 
 
-          Handler(Looper.getMainLooper()).postDelayed({
+
 
             // If the user is not logged in, start the LoginActivity
             val intent = Intent(this@MainActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
 
-        }, SPLASH_DELAY)
+
     }
 }

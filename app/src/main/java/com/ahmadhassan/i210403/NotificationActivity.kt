@@ -18,10 +18,10 @@ class NotificationActivity : AppCompatActivity() {
         setContentView(R.layout.notification)
 
         val notifications = mutableListOf(
-            Notification("Ali has accepted your request"),
-            Notification("Mentor is available"),
-            Notification("Your Profile is updated"),
-            Notification("Are you looking for a mentor?"),
+            Notification("","Ali has accepted your request"),
+            Notification("","Mentor is available"),
+            Notification("","Your Profile is updated"),
+            Notification("","Are you looking for a mentor?"),
         )
 
         adapter = NotificationAdapter(notifications) { position ->

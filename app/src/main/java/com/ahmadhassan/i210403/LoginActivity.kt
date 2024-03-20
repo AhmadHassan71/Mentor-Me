@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -19,23 +20,51 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var dbref : DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login)
 
         val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false) // Check saved state
 
         if (isLoggedIn) {
-            // If the user is already logged in, start the HomeActivity
-            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        auth = FirebaseAuth.getInstance() // Initialize Firebase Auth
+            // do not show login screen if user is already logged in
+            setContentView(R.layout.loading)
+            val userIdSharedPreferences: SharedPreferences =
+                getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+            val userId = userIdSharedPreferences.getString("userId", null)
 
-        val loginButton: Button = findViewById(R.id.LoginButton)
-        loginButton.setOnClickListener {
-            loginUser()
-        }
+
+            // If the user is already logged in, start the HomeActivity
+            UserInstance.fetchUser(userId!!) { user ->
+                if (user != null) {
+//                    if(intent.extras!=null){
+//                        Log.d("INTENT_OKAY", "User fetched successfully")
+//                        intent.extras!!.getString("userId")
+//                        val intent = Intent(this@LoginActivity, ChatActivity::class.java)
+//                        startActivity(intent)
+//                        finish()
+//                    }
+//                    else{
+                        Log.d("INTENT_NULL", "User fetched successfully")
+                        getFCMToken()
+                        val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
+//                    }
+                } else {
+                    // Handle case where user data couldn't be fetched
+                    Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        } else {
+            setContentView(R.layout.login)
+
+
+            auth = FirebaseAuth.getInstance() // Initialize Firebase Auth
+
+            val loginButton: Button = findViewById(R.id.LoginButton)
+            loginButton.setOnClickListener {
+                loginUser()
+            }
 
 //        val loginButton: Button = findViewById(R.id.LoginButton)
 //        loginButton.setOnClickListener {
@@ -59,21 +88,21 @@ class LoginActivity : AppCompatActivity() {
 //        }
 
 
+            val signUpTextView: TextView = findViewById(R.id.SignUpTextView)
+            signUpTextView.setOnClickListener {
+                // Start the RegisterActivity when the sign up text view is clicked
+                val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
+                startActivity(intent)
+            }
 
-        val signUpTextView: TextView = findViewById(R.id.SignUpTextView)
-        signUpTextView.setOnClickListener {
-            // Start the RegisterActivity when the sign up text view is clicked
-            val intent = Intent(this@LoginActivity, RegisterActivity::class.java)
-            startActivity(intent)
+            val forgotPasswordTextView: TextView = findViewById(R.id.ForgotPasswordTextView)
+            forgotPasswordTextView.setOnClickListener {
+                // Start the ForgotPasswordActivity when the forgot password text view is clicked
+                val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
+                startActivity(intent)
+            }
+
         }
-
-        val forgotPasswordTextView: TextView = findViewById(R.id.ForgotPasswordTextView)
-        forgotPasswordTextView.setOnClickListener {
-            // Start the ForgotPasswordActivity when the forgot password text view is clicked
-            val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
-            startActivity(intent)
-        }
-
     }
 //    private fun loginUser() {
 //        val emailEditText: EditText = findViewById(R.id.EmailEditText)
@@ -145,7 +174,22 @@ class LoginActivity : AppCompatActivity() {
 
                             val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
                             userIdSharedPreferences.edit().putString("userId", user.userId).apply()
+
                             val intent = Intent(this, HomeActivity::class.java)
+                            UserInstance.fetchUser(user.userId) { user ->
+                                if (user != null) {
+                                   getFCMToken()
+                                } else {
+                                    // Handle case where user data couldn't be fetched
+                                    Toast.makeText(
+                                        this,
+                                        "Failed to fetch user data",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
+
                             startActivity(intent)
                             finish()
                         } else {
@@ -158,6 +202,21 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, "Invalid Credentials!", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    private fun getFCMToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful){
+                val token = it.result
+                UserInstance.setFCMToken(token) { success ->
+                    if (success) {
+                        Log.d("LoginActivity", "FCM Token updated successfully")
+                    } else {
+                        Log.d("LoginActivity", "Failed to update FCM Token")
+                    }
+                }
+            }
+        }
     }
 
 }
