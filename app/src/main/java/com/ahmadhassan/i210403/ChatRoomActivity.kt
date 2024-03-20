@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
@@ -16,7 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresExtension
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,9 +44,15 @@ import org.json.JSONObject
 import java.io.File
 import android.hardware.display.DisplayManager
 import androidx.annotation.RequiresApi
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.akexorcist.screenshotdetection.ScreenshotDetectionDelegate
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 
-class ChatRoomActivity : AppCompatActivity() {
+class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.ScreenshotDetectionListener {
+    private val screenshotDetectionDelegate = ScreenshotDetectionDelegate(this, this)
     private lateinit var adapter: ChatAdapter
     private lateinit var messageEditText: EditText
     private lateinit var sendMessageButton: ImageView
@@ -57,24 +61,18 @@ class ChatRoomActivity : AppCompatActivity() {
     private lateinit var audioPath: String
     private lateinit var audioFile: File
     private var isRecording = false
-    private val screenshotCallback =Activity.ScreenCaptureCallback() {
-            Log.d("ChatRoomActivity", "Screenshot taken by ${UserInstance.getInstance()!!.fullName}")
-            SendScreenShotNotification("Screenshot taken by ${UserInstance.getInstance()!!.fullName}")
-    }
 
 
 
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     @RequiresExtension(extension = Build.VERSION_CODES.R, version = 2)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_room)
 
-
+        checkReadExternalStoragePermission()
 //
 //        Log.d("ChatRoomActivity", "MessageImageUri: $messageImageUri")
-        registerScreenCaptureCallback(mainExecutor, screenshotCallback)
 
         // get intent from previous activity
         val intent = intent
@@ -528,14 +526,57 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
     }
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    override fun onStop() {
-        super.onStop()
-        unregisterScreenCaptureCallback(screenshotCallback)
-    }
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION = 3009
+
+    }
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    override fun onStart() {
+        super.onStart()
+        screenshotDetectionDelegate.startScreenshotDetection()
+    }
+    override fun onStop() {
+        super.onStop()
+        screenshotDetectionDelegate.stopScreenshotDetection()
+    }
+
+    override fun onScreenCaptured(path: String) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            SendScreenShotNotification("${UserInstance.getInstance()!!.fullName} took a screenshot")
+        }, 5000)
+
+    }
+
+    override fun onScreenCapturedWithDeniedPermission() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            SendScreenShotNotification("${UserInstance.getInstance()!!.fullName} took a screenshot")
+        }, 5000)
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION -> {
+                if (grantResults.getOrNull(0) == PackageManager.PERMISSION_DENIED) {
+                    showReadExternalStoragePermissionDeniedMessage()
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+    private fun checkReadExternalStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestReadExternalStoragePermission()
+        }
+    }
+
+    private fun requestReadExternalStoragePermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION)
+    }
+
+    private fun showReadExternalStoragePermissionDeniedMessage() {
+//        Toast.makeText(this, "Read external storage permission has denied", Toast.LENGTH_SHORT).show()
+        Log.d("ChatRoomActivity", "Read external storage permission has denied")
     }
 }
 

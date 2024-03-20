@@ -4,6 +4,8 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import java.util.Calendar
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.CalendarView
@@ -18,6 +20,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
+import okhttp3.Call
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import org.json.JSONObject
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -91,6 +101,12 @@ class BookASessionActivity : AppCompatActivity() {
             newRef.setValue(bookedSession).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Session Booked", Toast.LENGTH_SHORT).show()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                    // delay
+                    SendNotification("You have booked a session with ${mentor.name} on $dateString at $timeString.")
+                    }, 5000)
+
+
                     onBackPressedDispatcher.onBackPressed()
                 } else {
                     Toast.makeText(this, "Failed to book session", Toast.LENGTH_SHORT).show()
@@ -115,6 +131,46 @@ class BookASessionActivity : AppCompatActivity() {
             val currMentor = mentor!!
             checkOrCreateChatRoom(currUser, currMentor)
         }
+    }
+
+    private fun SendNotification(message: String) {
+
+            Log.d("SendNotification", "Sending Notification")
+            val jsonObject = JSONObject()
+            val notification = JSONObject()
+            val data = JSONObject()
+            notification.put("title","New Session Booked")
+            notification.put("body", message)
+            notification.put("click_action", "ChatRoomActivity")
+            data.put("message", message)
+            data.put("title", MentorChatInstance.getInstance().name)
+            data.put("click_action", "ChatRoomActivity")
+            jsonObject.put("notification", notification)
+            jsonObject.put("data", data)
+            jsonObject.put("to", UserInstance.getInstance()!!.fcmToken)
+
+            callAPI(jsonObject)
+
+    }
+    private fun callAPI(jsonObject: JSONObject){
+        val JSON : MediaType = "application/json; charset=utf-8".toMediaType()
+        val client : OkHttpClient = OkHttpClient()
+        val url : String = "https://fcm.googleapis.com/fcm/send"
+        val body : RequestBody = RequestBody.create(JSON, jsonObject.toString())
+        val request : Request = Request.Builder()
+            .url(url)
+            .post(body)
+            .header("Authorization", "Bearer AAAAAI0jfrw:APA91bGSfgKDPAesmtlFLNRqVJkoAKUd3PrfUFDS9WvyOit0TFmFTjCDi6tsjEVOyA_bJmVMMHgYcYExwvQCHknLbBPrjH-BXD1vmqJvYsgQ4Y9eKzcVsQLxrBkhMACcsQfhQqleSgHu")
+            .build()
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("NotificationStatus", "Failed to send notification: ${e.message}")
+            }
+
+            override fun onResponse(call: Call, response: okhttp3.Response) {
+                Log.d("NotificationStatus", "Notification sent successfully")
+            }
+        })
     }
     fun selectTimeSlot(timeSlot: TextView) {
         // Reset background tint of previously selected time slot, if any
