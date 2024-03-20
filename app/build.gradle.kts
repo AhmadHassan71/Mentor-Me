@@ -64,8 +64,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("me.zhanghai.android.materialratingbar:library:1.4.0")
-
+//    implementation ("com.github.nisrulz:sensey:1.9.0")
     implementation ("androidx.camera:camera-core:1.3.2")
+//    implementation ("com.akexorcist:screenshot-detection:1.0.2")
+
     implementation ("androidx.camera:camera-camera2:1.3.2")
     implementation ("androidx.camera:camera-lifecycle:1.3.2")
     implementation ("androidx.camera:camera-video:1.3.2")

@@ -32,6 +32,8 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import okhttp3.Call
@@ -42,6 +44,9 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONObject
 import java.io.File
+import android.hardware.display.DisplayManager
+import androidx.annotation.RequiresApi
+
 
 class ChatRoomActivity : AppCompatActivity() {
     private lateinit var adapter: ChatAdapter
@@ -52,15 +57,24 @@ class ChatRoomActivity : AppCompatActivity() {
     private lateinit var audioPath: String
     private lateinit var audioFile: File
     private var isRecording = false
+    private val screenshotCallback =Activity.ScreenCaptureCallback() {
+            Log.d("ChatRoomActivity", "Screenshot taken by ${UserInstance.getInstance()!!.fullName}")
+            SendScreenShotNotification("Screenshot taken by ${UserInstance.getInstance()!!.fullName}")
+    }
 
+
+
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     @RequiresExtension(extension = Build.VERSION_CODES.R, version = 2)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.chat_room)
 
+
 //
 //        Log.d("ChatRoomActivity", "MessageImageUri: $messageImageUri")
-
+        registerScreenCaptureCallback(mainExecutor, screenshotCallback)
 
         // get intent from previous activity
         val intent = intent
@@ -475,6 +489,24 @@ class ChatRoomActivity : AppCompatActivity() {
         }
 
     }
+    private fun SendScreenShotNotification(message: String) {
+
+        Log.d("SendNotification", "Sending Notification")
+
+        val jsonObject = JSONObject()
+        val notification = JSONObject()
+        val data = JSONObject()
+        notification.put("title", "Screenshot Detected")
+        notification.put("body", message)
+        notification.put("click_action", "ChatRoomActivity")
+        data.put("message", message)
+        data.put("title", "Screenshot Detected")
+        data.put("click_action", "ChatRoomActivity")
+        jsonObject.put("notification", notification)
+        jsonObject.put("data", data)
+        jsonObject.put("to", UserInstance.getInstance()!!.fcmToken)
+        callAPI(jsonObject)
+    }
 
     private fun callAPI(jsonObject: JSONObject){
         val JSON : MediaType = "application/json; charset=utf-8".toMediaType()
@@ -496,6 +528,12 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         })
     }
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    override fun onStop() {
+        super.onStop()
+        unregisterScreenCaptureCallback(screenshotCallback)
+    }
+
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
