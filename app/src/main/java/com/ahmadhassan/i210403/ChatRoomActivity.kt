@@ -376,7 +376,14 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
             intent.type = "*/*" // This will allow any type of file
             startActivity(fileIntent)
         }
-
+        findViewById<ImageView>(R.id.VideoCallImageView).setOnClickListener{
+            val videoCallIntent = Intent(this, VideoCallActivity::class.java)
+            startActivity(videoCallIntent)
+        }
+        findViewById<ImageView>(R.id.CallImageView).setOnClickListener{
+            val callIntent = Intent(this, CallActivity::class.java)
+            startActivity(callIntent)
+        }
 
 
 

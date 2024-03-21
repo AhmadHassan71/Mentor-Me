@@ -113,10 +113,10 @@
         app:srcCompat="@drawable/personpic" />
 
     <TextView
-        android:id="@+id/textView57"
+        android:id="@+id/callTimer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:28"
+        android:text="Calling"
         android:textColor="@color/black"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintEnd_toEndOf="@+id/callerTextView"

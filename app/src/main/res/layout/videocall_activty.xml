@@ -6,18 +6,17 @@
     android:layout_height="match_parent"
     android:background="#DDF7F7">
 
-    <View
-        android:id="@+id/view5"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/remoteView"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#CBCBCB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.294" />
+        app:layout_constraintVertical_bias="0.315" />
 
     <View
         android:id="@+id/textView51"
@@ -30,13 +29,13 @@
         android:backgroundTint="#C1ECEE"
         android:text="Video"
         android:textColor="#147076"
-        app:layout_constraintEnd_toEndOf="@+id/view5"
-        app:layout_constraintStart_toStartOf="@+id/view5"
-        app:layout_constraintTop_toBottomOf="@+id/view5" />
+        app:layout_constraintEnd_toEndOf="@+id/remoteView"
+        app:layout_constraintStart_toStartOf="@+id/remoteView"
+        app:layout_constraintTop_toBottomOf="@+id/remoteView" />
 
 
     <ImageView
-        android:id="@+id/imageView20"
+        android:id="@+id/VideoSwitch"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/circle"
@@ -51,29 +50,29 @@
         app:tint="@color/white" />
 
     <ImageView
-        android:id="@+id/GalleryImageView"
+        android:id="@+id/muteButton"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/circle"
         android:padding="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView20"
-        app:layout_constraintEnd_toStartOf="@+id/imageView20"
+        app:layout_constraintBottom_toBottomOf="@+id/VideoSwitch"
+        app:layout_constraintEnd_toStartOf="@+id/VideoSwitch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView20"
+        app:layout_constraintTop_toTopOf="@+id/VideoSwitch"
         app:srcCompat="@android:drawable/stat_notify_call_mute"
         app:tint="@color/white" />
     <ImageView
-        android:id="@+id/videoImage"
+        android:id="@+id/switchCamera"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/circle"
         android:padding="4dp"
         android:src="@drawable/swap"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView20"
+        app:layout_constraintBottom_toBottomOf="@+id/VideoSwitch"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.313"
-        app:layout_constraintStart_toEndOf="@+id/imageView20"
-        app:layout_constraintTop_toTopOf="@+id/imageView20"
+        app:layout_constraintStart_toEndOf="@+id/VideoSwitch"
+        app:layout_constraintTop_toTopOf="@+id/VideoSwitch"
         app:tint="@color/white" />
     <ImageView
         android:id="@+id/backButton"
@@ -81,10 +80,10 @@
         android:layout_height="40dp"
         android:background="@drawable/circle"
         android:backgroundTint="@color/red"
-        app:layout_constraintBottom_toBottomOf="@+id/videoImage"
+        app:layout_constraintBottom_toBottomOf="@+id/switchCamera"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/videoImage"
-        app:layout_constraintTop_toTopOf="@+id/videoImage"
+        app:layout_constraintStart_toEndOf="@+id/switchCamera"
+        app:layout_constraintTop_toTopOf="@+id/switchCamera"
         app:srcCompat="@drawable/cross"
         app:tint="@color/white" />
 
@@ -99,28 +98,27 @@
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view5" />
+        app:layout_constraintTop_toTopOf="@+id/remoteView" />
 
     <TextView
-        android:id="@+id/textView57"
+        android:id="@+id/callDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:28"
+        android:text="Calling..."
         android:textColor="@color/black"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintEnd_toEndOf="@+id/callerTextView"
         app:layout_constraintStart_toStartOf="@+id/callerTextView"
         app:layout_constraintTop_toBottomOf="@+id/callerTextView" />
 
-    <ImageView
-        android:id="@+id/imageView26"
+    <FrameLayout
+        android:id="@+id/localView"
         android:layout_width="90dp"
         android:layout_height="130dp"
         android:layout_marginBottom="38dp"
         android:layout_marginEnd="30dp"
-        app:layout_constraintBottom_toBottomOf="@+id/view5"
+        app:layout_constraintBottom_toBottomOf="@+id/remoteView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="#F1F1F1"
         app:srcCompat="@drawable/rectangle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
