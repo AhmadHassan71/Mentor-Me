@@ -24,7 +24,7 @@ class VideoCallActivity  : AppCompatActivity() {
 
     private val appId ="b622bd5b7cfa4de1bcc3f41d5467c6e6"
     private val channelName = "MentorMe"
-    private val token = "007eJxTYDD6/Wn+v/xVy44KvBRs1DMLWmz+a9tlxnsncyRvr56yRcxegSHJzMgoKcU0yTw5LdEkJdUwKTnZOM3EMMXUxMw82SzV7Oav36kNgYwMGxRZWBgZIBDE52DwTc0ryS/yTWVgAACsjiPO"
+    private val token = "007eJxTYDDotXV4nbU0lekHb911z6nrFi2aanzue+RH2ZRG/oWfa1crMCSZGRklpZgmmSenJZqkpBomJScbp5kYppiamJknm6Wa7fr4L7UhkJFBPEiHiZEBAkF8Dgbf1LyS/CLfVAYGAD4TIqI="
     private val uid = 0
     private var isJoined = true // Status of the video call
     private var agoraEngine: RtcEngine? = null // Agora engine
