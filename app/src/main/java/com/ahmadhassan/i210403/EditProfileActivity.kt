@@ -145,7 +145,7 @@ class EditProfileActivity : AppCompatActivity() {
             }
         }
 
-        UserInstance.fetchUser(userId!!) { _user ->
+        UserInstance.fetchUser(this,userId!!) { _user ->
             if (_user != null) {
                 user = _user
                 updateUI(user)
@@ -172,7 +172,7 @@ class EditProfileActivity : AppCompatActivity() {
                 user!!.bannerPic
             )
 
-            UserInstance.updateUser(updatedUser) { success ->
+            UserInstance.updateUser(this,updatedUser) { success ->
                 if (success) {
                     // Update successful
                     Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()

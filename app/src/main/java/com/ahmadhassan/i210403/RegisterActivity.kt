@@ -2,6 +2,7 @@ package com.ahmadhassan.i210403
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,21 +12,19 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
     private var isCitySelected = false
-    private lateinit var database: FirebaseDatabase
-    private lateinit var databaseRef: DatabaseReference
-    private lateinit var auth: FirebaseAuth
     private lateinit var spinner: Spinner
     private lateinit var spinner2: Spinner
     override fun onCreate(savedInstanceState: Bundle?) {
-        database = FirebaseDatabase.getInstance()
-        databaseRef = database.getReference("Users")
-        auth = FirebaseAuth.getInstance()
+
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.signup)
@@ -155,13 +154,25 @@ class RegisterActivity : AppCompatActivity() {
         private fun signupUser() {
             val email = findViewById<EditText>(R.id.EmailEditText).text.toString()
             val password = findViewById<EditText>(R.id.PasswordEditText).text.toString()
-
-            if (validateInput(email, password)) {
-                createAccount(email, password)
-            }
+            createAccount(email, password)
         }
 
-        private fun validateInput(email: String, password: String): Boolean {
+        private fun validateInput(fullName: String, city: String, country: String, email: String, password: String): Boolean {
+            if (TextUtils.isEmpty(fullName)) {
+                Toast.makeText(this, "Please enter full name", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (TextUtils.isEmpty(city)) {
+                Toast.makeText(this, "Please select a city", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
+            if (TextUtils.isEmpty(country)) {
+                Toast.makeText(this, "Please select a country", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show()
                 return false
@@ -176,48 +187,63 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         private fun createAccount(email: String, password: String) {
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Signup successful
-                        val userId = auth.currentUser!!.uid
-                        saveUserDataToDatabase(userId)
-                        val isLoggedInSharedPref = getSharedPreferences("loginPrefs", MODE_PRIVATE)
-                        isLoggedInSharedPref.edit().putBoolean("isLoggedIn", true).apply()
-                        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-                        userIdSharedPreferences.edit().putString("userId", userId).apply()
-                        // Start VerifyActivity
-                        val intent = Intent(this,MyProfileActivity::class.java)
-
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        // Handle Error
-//                        Toast.makeText(this, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                        Toast.makeText(this, "This Account already exists", Toast.LENGTH_SHORT).show()
-
-                    }
-                }
-        }
-
-        private fun saveUserDataToDatabase(userId: String) {
             val fullName = findViewById<EditText>(R.id.NameEditText).text.toString()
             val city = spinner.selectedItem.toString()
             val country = spinner2.selectedItem.toString()
-            val contact = findViewById<EditText>(R.id.ContactEditText).text.toString()
-            val email = findViewById<EditText>(R.id.EmailEditText).text.toString()
-            val user = User(userId,email, fullName, city, country,"","")
-            database = FirebaseDatabase.getInstance()
-            databaseRef = database.getReference("Users")
-            databaseRef.push().key
 
-            databaseRef.child(userId.toString()).setValue(user)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "User data saved", Toast.LENGTH_SHORT).show()
+
+            if (validateInput(fullName, city, country, email, password)) {
+                val url = "http://${DatabaseIP.IP}/registeruser.php"
+                val requestQueue = Volley.newRequestQueue(this)
+                val stringRequest = object : StringRequest(Method.POST, url,
+                    Response.Listener { response ->
+                        // Handle response from the server
+                        Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
+                        Log.d("RegisterActivity", "Response: $response")
+                        if (response.contains("User registered successfully")) {
+                            // Registration successful, navigate to next activity
+                            // Set UserInstance
+                            val userId = response.split(":")[1].trim()
+                            val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+                            userIdSharedPreferences.edit().putString("userId", userId).apply()
+                            UserInstance.fetchUser(this, userId) { user ->
+                                if (user != null) {
+                                    // User data fetched successfully
+                                    val welcomeText = findViewById<TextView>(R.id.nameText)
+                                    welcomeText.text = "${user.fullName}!"
+                                } else {
+                                    // Handle case where user data couldn't be fetched
+                                    Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            val intent = Intent(this, MyProfileActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    },
+                    Response.ErrorListener { error ->
+                        // Handle error
+//                        Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                    }) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val params = HashMap<String, String>()
+                        params["fullName"] = fullName
+                        params["city"] = city
+                        params["country"] = country
+                        params["email"] = email
+                        params["password"] = password
+
+                        return params
+                    }
                 }
-                .addOnFailureListener {
-                   Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
-                }
+
+                requestQueue.add(stringRequest)
+
+
+
+
+            }
         }
+
 
 }

@@ -33,7 +33,7 @@ class MyProfileActivity: AppCompatActivity() {
 
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
-        UserInstance.fetchUser(userId ?: "") { user ->
+        UserInstance.fetchUser(this,userId ?: "") { user ->
             if (user != null) {
                 // User data fetched successfully
                 val profileUrl = user.profilePic
@@ -228,7 +228,7 @@ class MyProfileActivity: AppCompatActivity() {
         val userId = userIdSharedPreferences.getString("userId", null)
         if (userId != null) {
             var updatedUser: User? = User()
-            UserInstance.fetchUser(userId){ user ->
+            UserInstance.fetchUser(this,userId){ user ->
                 updatedUser = user?.let {
                     User(
                         it.userId,
@@ -242,7 +242,7 @@ class MyProfileActivity: AppCompatActivity() {
                 }
             }
             updatedUser?.let {
-                UserInstance.updateUser(it) { success ->
+                UserInstance.updateUser(this,it) { success ->
                     if (success) {
                         // Update successful
                         Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
@@ -293,7 +293,7 @@ class MyProfileActivity: AppCompatActivity() {
         val userId = userIdSharedPreferences.getString("userId", null)
         if (userId != null) {
             var updatedUser: User? = User()
-            UserInstance.fetchUser(userId) { user ->
+            UserInstance.fetchUser(this,userId) { user ->
                 updatedUser = user?.let {
                     User(
                         it.userId,
@@ -307,7 +307,7 @@ class MyProfileActivity: AppCompatActivity() {
                 }
             }
             updatedUser?.let {
-                UserInstance.updateUser(it) { success ->
+                UserInstance.updateUser(this,it) { success ->
                     if (success) {
                         // Update successful
                         Toast.makeText(this, "Cover photo updated", Toast.LENGTH_SHORT).show()

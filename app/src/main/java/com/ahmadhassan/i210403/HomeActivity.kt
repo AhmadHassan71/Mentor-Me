@@ -41,7 +41,7 @@ class HomeActivity : AppCompatActivity() {
 //        Toast.makeText(this, "User ID: $userId", Toast.LENGTH_SHORT).show()
 
         if (userId != null) {
-            UserInstance.fetchUser(userId) { user ->
+            UserInstance.fetchUser(this,userId) { user ->
                 if (user != null) {
                     // User data fetched successfully
                     val welcomeText = findViewById<TextView>(R.id.nameText)

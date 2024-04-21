@@ -76,6 +76,7 @@ dependencies {
     implementation ("androidx.camera:camera-extensions:1.3.2")
     implementation ("com.github.JagarYousef:ChatVoicePlayer:1.1.0")
     implementation("io.agora.rtc:full-sdk:4.2.6")
+    implementation("com.android.volley:volley:1.2.1")
 
 //    implementation("com.github.JagarYousef:ChatVoicePlayer:1.0.7")
 

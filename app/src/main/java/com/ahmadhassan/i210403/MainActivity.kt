@@ -16,9 +16,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
 
-        FirebaseApp.initializeApp(this)
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        FirebaseDatabase.getInstance().setPersistenceCacheSizeBytes(40 * 1024 * 1024); // 40 MB cache size
+//        FirebaseApp.initializeApp(this)
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+//        FirebaseDatabase.getInstance().setPersistenceCacheSizeBytes(40 * 1024 * 1024); // 40 MB cache size
 
 
 

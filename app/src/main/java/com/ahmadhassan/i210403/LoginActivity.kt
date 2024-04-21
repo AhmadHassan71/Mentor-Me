@@ -9,10 +9,15 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
+import org.json.JSONException
+import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -24,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
         val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false) // Check saved state
 
-        if (isLoggedIn) {
+        if (false) {
             // do not show login screen if user is already logged in
             setContentView(R.layout.loading)
             val userIdSharedPreferences: SharedPreferences =
@@ -33,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
 
             // If the user is already logged in, start the HomeActivity
-            UserInstance.fetchUser(userId!!) { user ->
+            UserInstance.fetchUser(this,userId!!) { user ->
                 if (user != null) {
 //                    if(intent.extras!=null){
 //                        Log.d("INTENT_OKAY", "User fetched successfully")
@@ -59,7 +64,6 @@ class LoginActivity : AppCompatActivity() {
             setContentView(R.layout.login)
 
 
-            auth = FirebaseAuth.getInstance() // Initialize Firebase Auth
 
             val loginButton: Button = findViewById(R.id.LoginButton)
             loginButton.setOnClickListener {
@@ -162,53 +166,63 @@ class LoginActivity : AppCompatActivity() {
             return  // Exit the function
         }
 
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Fetch user data after successful authentication
-                    UserInstance.fetchUser(auth.currentUser?.uid ?: "") { user ->
-                        if (user != null) {
-                            // User fetched successfully
-                            val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
-                            sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
+        val url = "https://${DatabaseIP.IP}/loginuser.php"
 
-                            val userIdSharedPreferences : SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-                            userIdSharedPreferences.edit().putString("userId", user.userId).apply()
+        val params = HashMap<String, String>()
+        params["email"] = email
+        params["password"] = password
 
-                            val intent = Intent(this, HomeActivity::class.java)
-                            UserInstance.fetchUser(user.userId) { user ->
-                                if (user != null) {
-                                   getFCMToken()
-                                } else {
-                                    // Handle case where user data couldn't be fetched
-                                    Toast.makeText(
-                                        this,
-                                        "Failed to fetch user data",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.POST, url, (params as Map<*, *>?)?.let { JSONObject(it) },
+            { response ->
+                try {
+                    val success = response.getBoolean("success")
+                    if (success) {
+                        val userId = response.getString("userId")
+
+                        // Fetch user data after successful authentication
+                        UserInstance.fetchUser(this,userId) { user ->
+                            if (user != null) {
+                                // User fetched successfully
+                                val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
+                                sharedPrefs.edit().putBoolean("isLoggedIn", true).apply()
+
+                                val userIdSharedPreferences: SharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+                                userIdSharedPreferences.edit().putString("userId", userId).apply()
+
+                                getFCMToken()
+
+                                val intent = Intent(this, HomeActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                // Handle case where user data couldn't be fetched
+                                Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
                             }
-
-
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            // Handle case where user data couldn't be fetched
-                            Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
                         }
+                    } else {
+                        // Handle authentication failure
+                        Toast.makeText(this, "Invalid Credentials!", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    // Handle authentication failure
-                    Toast.makeText(this, "Invalid Credentials!", Toast.LENGTH_SHORT).show()
+                } catch (e: JSONException) {
+                    Log.d("LoginActivity", "Error parsing JSON: ${e.message}")
+                    Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
+            },
+            { error ->
+                Log.d("LoginActivity", "Error: ${error.message}")
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
+        )
+
+        Volley.newRequestQueue(this).add(jsonObjectRequest)
     }
 
     private fun getFCMToken(){
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful){
                 val token = it.result
-                UserInstance.setFCMToken(token) { success ->
+                UserInstance.setFCMToken(this,token) { success ->
                     if (success) {
                         Log.d("LoginActivity", "FCM Token updated successfully")
                     } else {
