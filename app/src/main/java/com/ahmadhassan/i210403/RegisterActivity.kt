@@ -208,17 +208,16 @@ class RegisterActivity : AppCompatActivity() {
                             userIdSharedPreferences.edit().putString("userId", userId).apply()
                             UserInstance.fetchUser(this, userId) { user ->
                                 if (user != null) {
-                                    // User data fetched successfully
-                                    val welcomeText = findViewById<TextView>(R.id.nameText)
-                                    welcomeText.text = "${user.fullName}!"
+
+                                    val intent = Intent(this, MyProfileActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
                                 } else {
                                     // Handle case where user data couldn't be fetched
                                     Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
                                 }
                             }
-                            val intent = Intent(this, MyProfileActivity::class.java)
-                            startActivity(intent)
-                            finish()
+
                         }
                     },
                     Response.ErrorListener { error ->

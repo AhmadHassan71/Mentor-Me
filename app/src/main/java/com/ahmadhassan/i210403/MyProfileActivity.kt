@@ -33,28 +33,25 @@ class MyProfileActivity: AppCompatActivity() {
 
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
-        UserInstance.fetchUser(this,userId ?: "") { user ->
-            if (user != null) {
+        val user = getInstance()
+
                 // User data fetched successfully
-                val profileUrl = user.profilePic
-                val coverUrl = user.bannerPic
+                val profileUrl = user?.profilePic
+                val coverUrl = user?.bannerPic
 
                 // Load profile picture using Picasso
-                if (profileUrl.isNotEmpty())
+                if (profileUrl!!.isNotEmpty())
                     Picasso.get().load(profileUrl).into(profilePicture)
                 // Load cover picture using Picasso
-                if (coverUrl.isNotEmpty())
+                if (coverUrl!!.isNotEmpty())
                     Picasso.get().load(coverUrl).into(coverPicture)
 
                 val nameTextView = findViewById<TextView>(R.id.myNameTextView)
                 nameTextView.text = user.fullName
                 val locationTextView = findViewById<TextView>(R.id.locationTextView)
                 locationTextView.text = user.city
-            } else {
-                // Handle case where user data couldn't be fetched
-                Toast.makeText(this, "Failed to fetch user data", Toast.LENGTH_SHORT).show()
-            }
-        }
+
+
 
 
         // back button
@@ -227,29 +224,17 @@ class MyProfileActivity: AppCompatActivity() {
         val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
         val userId = userIdSharedPreferences.getString("userId", null)
         if (userId != null) {
-            var updatedUser: User? = User()
-            UserInstance.fetchUser(this,userId){ user ->
-                updatedUser = user?.let {
-                    User(
-                        it.userId,
-                        user.email,
-                        user.fullName,
-                        user.city,
-                        user.country,
-                        pfpURL,
-                        user.bannerPic
-                    )
-                }
-            }
-            updatedUser?.let {
-                UserInstance.updateUser(this,it) { success ->
-                    if (success) {
-                        // Update successful
-                        Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
-                    } else {
-                        // Update failed
-                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT).show()
-                    }
+            UserInstance.updateUser(this, User(userId,
+                getInstance()!!.email, getInstance()?.fullName,
+                getInstance()!!.city, getInstance()!!.country, pfpURL, getInstance()!!.bannerPic,
+                getInstance()!!.fcmToken )) { success ->
+                if (success) {
+                    // Update successful
+                    Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Update failed
+                    Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
