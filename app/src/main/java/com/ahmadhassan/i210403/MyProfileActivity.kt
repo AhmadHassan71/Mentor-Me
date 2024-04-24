@@ -1,20 +1,32 @@
 package com.ahmadhassan.i210403
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhassan.i210403.UserInstance.getInstance
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.util.Objects
 
 class MyProfileActivity: AppCompatActivity() {
@@ -23,6 +35,9 @@ class MyProfileActivity: AppCompatActivity() {
     private lateinit var coverURL: String
     private var isPfp: Boolean = false
     private val databaseReference = FirebaseDatabase.getInstance().getReference("Reviews")
+    private var selectedImage: String? = null // Variable to store base64 encoded image
+
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.my_profile)
@@ -36,8 +51,8 @@ class MyProfileActivity: AppCompatActivity() {
         val user = getInstance()
 
                 // User data fetched successfully
-                val profileUrl = user?.profilePic
-                val coverUrl = user?.bannerPic
+                val profileUrl = "http://${DatabaseIP.IP}/UserPfPs/${user?.profilePic}"
+                val coverUrl ="http://${DatabaseIP.IP}/UserCovers/${user?.bannerPic}"
 
                 // Load profile picture using Picasso
                 if (profileUrl!!.isNotEmpty())
@@ -47,7 +62,7 @@ class MyProfileActivity: AppCompatActivity() {
                     Picasso.get().load(coverUrl).into(coverPicture)
 
                 val nameTextView = findViewById<TextView>(R.id.myNameTextView)
-                nameTextView.text = user.fullName
+                nameTextView.text = user!!.fullName
                 val locationTextView = findViewById<TextView>(R.id.locationTextView)
                 locationTextView.text = user.city
 
@@ -186,144 +201,314 @@ class MyProfileActivity: AppCompatActivity() {
 
     }
 
-    private fun uploadPfPToFirebase(imageUri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
-        val imagesRef = storageRef.child("profilepics").child("Users").child("profilepics")
-            .child(imageUri.toString())
+//    private fun uploadPfPToFirebase(imageUri: Uri) {
+//        val storage = FirebaseStorage.getInstance()
+//        val storageRef = storage.reference
+//        val imagesRef = storageRef.child("profilepics").child("Users").child("profilepics")
+//            .child(imageUri.toString())
+//
+//        imageUri.let {
+//            val uploadTask = imagesRef.putFile(it)
+//
+//            uploadTask.addOnSuccessListener {
+//                // Image uploaded successfully
+//                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+//                    pfpURL = uri.toString()
+//                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
+//
+//                    // update the profile picture in the database
+//                    updateProfilePicture(pfpURL)
+//                }.addOnFailureListener {
+//                    // Handle failure to get download URL
+//                }
+//            }.addOnFailureListener { exception ->
+//                // Handle unsuccessful upload
+//                Toast.makeText(
+//                    this,
+//                    "Failed to upload image: ${exception.message}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        } ?: run {
+//            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
+//        }
+//
+//    }
 
-        imageUri.let {
-            val uploadTask = imagesRef.putFile(it)
+//    private fun updateProfilePicture(pfpURL: String) {
+//        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+//        val userId = userIdSharedPreferences.getString("userId", null)
+//        if (userId != null) {
+//            UserInstance.updateUser(this, User(userId,
+//                getInstance()!!.email, getInstance()?.fullName,
+//                getInstance()!!.city, getInstance()!!.country, pfpURL, getInstance()!!.bannerPic,
+//                getInstance()!!.fcmToken )) { success ->
+//                if (success) {
+//                    // Update successful
+//                    Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
+//                } else {
+//                    // Update failed
+//                    Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//            }
+//        }
+//    }
 
-            uploadTask.addOnSuccessListener {
-                // Image uploaded successfully
-                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                    pfpURL = uri.toString()
-                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
 
-                    // update the profile picture in the database
-                    updateProfilePicture(pfpURL)
-                }.addOnFailureListener {
-                    // Handle failure to get download URL
-                }
-            }.addOnFailureListener { exception ->
-                // Handle unsuccessful upload
-                Toast.makeText(
-                    this,
-                    "Failed to upload image: ${exception.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } ?: run {
-            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
+//    private fun uploadCoverToFirebase(imageUri: Uri) {
+//        val storage = FirebaseStorage.getInstance()
+//        val storageRef = storage.reference
+//        val imagesRef = storageRef.child("profilepics").child("Users").child("coverpics")
+//            .child(imageUri.toString())
+//
+//        imageUri.let {
+//            val uploadTask = imagesRef.putFile(it)
+//
+//            uploadTask.addOnSuccessListener {
+//                // Image uploaded successfully
+//                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+//                    coverURL = uri.toString()
+//                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
+//                    updateBannerPicture(coverURL)
+//                }.addOnFailureListener {
+//                    // Handle failure to get download URL
+//                }
+//            }.addOnFailureListener { exception ->
+//                // Handle unsuccessful upload
+//                Toast.makeText(
+//                    this,
+//                    "Failed to upload image: ${exception.message}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        } ?: run {
+//            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+
+//    private fun updateBannerPicture(coverURL: String) {
+//        // update the profile picture in the database
+//        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
+//        val userId = userIdSharedPreferences.getString("userId", null)
+//        if (userId != null) {
+//            var updatedUser: User? = User()
+//            UserInstance.fetchUser(this,userId) { user ->
+//                updatedUser = user?.let {
+//                    User(
+//                        it.userId,
+//                        user.email,
+//                        user.fullName,
+//                        user.city,
+//                        user.country,
+//                        user.profilePic,
+//                        coverURL
+//                    )
+//                }
+//            }
+//            updatedUser?.let {
+//                UserInstance.updateUser(this,it) { success ->
+//                    if (success) {
+//                        // Update successful
+//                        Toast.makeText(this, "Cover photo updated", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        // Update failed
+//                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
+//                            .show()
+//                    }
+//                }
+//            }
+//        }
+//
+//    }
+
+
+//    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+//        uri?.let {
+//            if (isPfp) {
+//                uploadPfPToFirebase(uri)
+//                findViewById<ImageView>(R.id.profilePicture).setImageURI(uri)
+//            } else {
+//                uploadCoverToFirebase(uri)
+//                findViewById<ImageView>(R.id.coverPicture).setImageURI(uri)
+//            }
+//        } ?: run {
+//            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+//        }
+//    }
+
+    private fun encodeImage(bitmap: Bitmap?): String? {
+        bitmap?.let {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            it.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+
+            // Log image size and other properties for debugging
+            Log.d("ImageInfo", "Image Size: ${byteArrayOutputStream.size()}")
+            Log.d("ImageInfo", "Encoded Image Len gth: ${encodedImage.length}")
+
+            return encodedImage
         }
-
+        return null
     }
+    @RequiresApi(Build.VERSION_CODES.P)
+    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data?.let {
+                val imageUri = it.data
+                try {
+                    val source = ImageDecoder.createSource(this.contentResolver, imageUri!!)
+                    val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                        decoder.setTargetSampleSize(1) // shrinking by
+                        decoder.isMutableRequired = true // this resolve the hardware type of bitmap problem
+                    }
 
-    private fun updateProfilePicture(pfpURL: String) {
-        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-        val userId = userIdSharedPreferences.getString("userId", null)
-        if (userId != null) {
-            UserInstance.updateUser(this, User(userId,
-                getInstance()!!.email, getInstance()?.fullName,
-                getInstance()!!.city, getInstance()!!.country, pfpURL, getInstance()!!.bannerPic,
-                getInstance()!!.fcmToken )) { success ->
-                if (success) {
-                    // Update successful
-                    Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Update failed
-                    Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-    }
+                    selectedImage = encodeImage(bitmap)
 
-
-    private fun uploadCoverToFirebase(imageUri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
-        val imagesRef = storageRef.child("profilepics").child("Users").child("coverpics")
-            .child(imageUri.toString())
-
-        imageUri.let {
-            val uploadTask = imagesRef.putFile(it)
-
-            uploadTask.addOnSuccessListener {
-                // Image uploaded successfully
-                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                    coverURL = uri.toString()
-                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
-                    updateBannerPicture(coverURL)
-                }.addOnFailureListener {
-                    // Handle failure to get download URL
-                }
-            }.addOnFailureListener { exception ->
-                // Handle unsuccessful upload
-                Toast.makeText(
-                    this,
-                    "Failed to upload image: ${exception.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } ?: run {
-            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateBannerPicture(coverURL: String) {
-        // update the profile picture in the database
-        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-        val userId = userIdSharedPreferences.getString("userId", null)
-        if (userId != null) {
-            var updatedUser: User? = User()
-            UserInstance.fetchUser(this,userId) { user ->
-                updatedUser = user?.let {
-                    User(
-                        it.userId,
-                        user.email,
-                        user.fullName,
-                        user.city,
-                        user.country,
-                        user.profilePic,
-                        coverURL
-                    )
-                }
-            }
-            updatedUser?.let {
-                UserInstance.updateUser(this,it) { success ->
-                    if (success) {
-                        // Update successful
-                        Toast.makeText(this, "Cover photo updated", Toast.LENGTH_SHORT).show()
+                    if (isPfp) {
+//                        uploadPfPToFirebase(uri)
+                        uploadPfP(selectedImage)
+                        findViewById<ImageView>(R.id.profilePicture).setImageBitmap(bitmap)
                     } else {
-                        // Update failed
-                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
-                            .show()
+//                        uploadCoverToFirebase(uri)
+                        uploadCoverPhoto(selectedImage)
+
+//                        findViewById<ImageView>(R.id.coverPicture).setImageURI(uri)
+                        findViewById<ImageView>(R.id.coverPicture).setImageBitmap(bitmap)
+
+                    }
+
+                    Log.d("ImageURI", imageUri.toString())
+
+//                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+//                    imageView.setImageBitmap(bitmap)
+                    Log.d("ImageInfo", "Selected Image: $selectedImage")
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    private fun uploadCoverPhoto(selectedImage: String?) {
+        val url ="http://${DatabaseIP.IP}/uploadUserCover.php"
+
+        selectedImage?.let { uri ->
+            try {
+//                val requestBody = "rollno=$roll&name=$name&image=$uri"
+
+                val stringRequest = object : StringRequest(
+                    Method.POST, url,
+                    Response.Listener { response ->
+                        // Handle successful response
+                        Log.d("API Response", response)
+                        Toast.makeText(this, "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        // Optionally, you can refresh the data after successful upload
+//                        get()
+                    },
+                    Response.ErrorListener { error ->
+                        // Handle error
+                        Toast.makeText(this, "Upload Failure", Toast.LENGTH_SHORT).show();
+                        Log.e("API Error", "Error occurred: ${error.message}")
+                    }) {
+                    //                    override fun getBody(): ByteArray {
+//                        return requestBody.toByteArray(Charset.defaultCharset())
+//                    }
+//
+//                    override fun getBodyContentType(): String {
+//                        return "application/x-www-form-urlencoded; charset=UTF-8"
+//                    }
+                    override fun getParams(): MutableMap<String, String> {
+                        val params = HashMap<String, String>()
+                        params["userid"] = getInstance()!!.userId
+                        params["image"] = uri
+                        return params
                     }
                 }
-            }
-        }
 
-    }
+                Volley.newRequestQueue(this).add(stringRequest)
 
-
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            if (isPfp) {
-                uploadPfPToFirebase(uri)
-                findViewById<ImageView>(R.id.profilePicture).setImageURI(uri)
-            } else {
-                uploadCoverToFirebase(uri)
-                findViewById<ImageView>(R.id.coverPicture).setImageURI(uri)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                // Handle error
+                Toast.makeText(this, "Error reading image", Toast.LENGTH_SHORT).show();
+                Log.e("Image Upload Error", "Error reading image: ${e.message}")
             }
         } ?: run {
-            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            // If selected image URI is null
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+        }
+        if (selectedImage != null) {
+            getInstance()!!.bannerPic=selectedImage
+        }
+
+    }
+
+    private fun uploadPfP(selectedImage: String?) {
+        val url ="http://${DatabaseIP.IP}/uploadUserPfP.php"
+
+        selectedImage?.let { uri ->
+            try {
+//                val requestBody = "rollno=$roll&name=$name&image=$uri"
+
+                val stringRequest = object : StringRequest(
+                    Method.POST, url,
+                    Response.Listener { response ->
+                        // Handle successful response
+                        Log.d("API Response", response)
+                        UserInstance.fetchUser(this, getInstance()!!.userId){
+                            user ->
+                            if (user != null){
+                                getInstance()!!.profilePic = user.profilePic
+                            }
+                        }
+                        Toast.makeText(this, "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        // Optionally, you can refresh the data after successful upload
+//                        get()
+                    },
+                    Response.ErrorListener { error ->
+                        // Handle error
+                        Toast.makeText(this, "Upload Failure", Toast.LENGTH_SHORT).show();
+                        Log.e("API Error", "Error occurred: ${error.message}")
+                    }) {
+                    //                    override fun getBody(): ByteArray {
+//                        return requestBody.toByteArray(Charset.defaultCharset())
+//                    }
+//
+//                    override fun getBodyContentType(): String {
+//                        return "application/x-www-form-urlencoded; charset=UTF-8"
+//                    }
+                    override fun getParams(): MutableMap<String, String> {
+                        val params = HashMap<String, String>()
+                        params["userid"] = getInstance()!!.userId
+                        params["image"] = uri
+                        return params
+                    }
+                }
+
+                Volley.newRequestQueue(this).add(stringRequest)
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+                // Handle error
+                Toast.makeText(this, "Error reading image", Toast.LENGTH_SHORT).show();
+                Log.e("Image Upload Error", "Error reading image: ${e.message}")
+            }
+        } ?: run {
+            // If selected image URI is null
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
+        }
+        if (selectedImage != null) {
+            getInstance()!!.profilePic=selectedImage
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun uploadImage(){
 //        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        pickImage.launch("image/*")
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        pickImage.launch(intent)
     }
 }
