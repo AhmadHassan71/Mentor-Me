@@ -27,7 +27,9 @@ class ReviewActivity : AppCompatActivity() {
             mentorname.text = mentor.name
             if (mentor.profilePicture.isNotEmpty()){
                 // it should fill the image view with the mentor's profile picture
-                Picasso.get().load(mentor.profilePicture).into(mentorPFP)
+                val url = "http://" + DatabaseIP.IP + "/MentorProfilePics/" + mentor.profilePicture
+
+                Picasso.get().load(url).into(mentorPFP)
             }
             // it should fill the image view with the mentor's profile picture
         }

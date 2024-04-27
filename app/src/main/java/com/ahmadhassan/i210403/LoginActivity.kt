@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         val sharedPrefs: SharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE)
         val isLoggedIn = sharedPrefs.getBoolean("isLoggedIn", false) // Check saved state
 
-        if (false) {
+        if (isLoggedIn) {
             // do not show login screen if user is already logged in
             setContentView(R.layout.loading)
             val userIdSharedPreferences: SharedPreferences =

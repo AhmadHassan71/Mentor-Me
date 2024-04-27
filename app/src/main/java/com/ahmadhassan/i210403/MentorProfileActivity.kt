@@ -32,8 +32,9 @@ class MentorProfileActivity : AppCompatActivity() {
             if (mentorPfp.isNotEmpty()){
 //                // it should fill the image view with the mentor's profile picture
 //                profileImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                val url = "http://" + DatabaseIP.IP + "/MentorProfilePics/" + mentorPfp
 
-                Picasso.get().load(mentorPfp).into(profileImage)
+                Picasso.get().load(url).into(profileImage)
 
         }
 

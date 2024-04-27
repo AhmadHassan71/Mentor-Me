@@ -191,9 +191,10 @@ class EditProfileActivity : AppCompatActivity() {
     private fun updateUI(user: User? = null) {
         user?.let { user ->
             val profilePicture = findViewById<ImageView>(R.id.pfpimage)
-            val profile = user.profilePic
-            if(profile != "")
-                Picasso.get().load(profile).into(profilePicture)
+            val profileUrl = "http://${DatabaseIP.IP}/UserPfPs/${user?.profilePic}"
+
+            if(profileUrl != "")
+                Picasso.get().load(profileUrl).into(profilePicture)
 
             val nameTextView = findViewById<EditText>(R.id.NameEditText)
             nameTextView.setText(user.fullName)

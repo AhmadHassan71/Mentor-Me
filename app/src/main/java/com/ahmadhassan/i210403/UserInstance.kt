@@ -2,6 +2,7 @@ package com.ahmadhassan.i210403
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -96,40 +97,39 @@ object UserInstance {
     fun updateUser(context: Context, updatedUser: User, callback: (Boolean) -> Unit) {
         val url = "$baseUrl/updateuser.php"
 
-        val jsonObject = JSONObject().apply {
-            put("userId", updatedUser.userId)
-            put("email", updatedUser.email)
-            put("city", updatedUser.city)
-            put("country", updatedUser.country)
-            put("fullName", updatedUser.fullName)
-            put("profilePic", updatedUser.profilePic)
-            put("bannerPic", updatedUser.bannerPic)
-            put("fcmToken", updatedUser.fcmToken)
+
+        val requestQueue = Volley.newRequestQueue(context)
+        val stringRequest = object : StringRequest(
+            Method.POST,
+            url,
+            Response.Listener { response ->
+                // Handle response from the server
+                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                Log.d("UpdateUserActivity", "Response: $response")
+                currentUser= updatedUser
+            },
+            Response.ErrorListener { error ->
+                // Handle error
+                // Optionally display an error message
+                Toast.makeText(context, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                updatedUser.let { user ->
+                    params["userId"] = user.userId ?: ""
+                    params["fullName"] = user.fullName ?: ""
+                    params["city"] = user.city ?: ""
+                    params["country"] = user.country ?: ""
+                    params["email"] = user.email ?: ""
+                    params["profilePic"] = user.profilePic ?: ""
+                    params["bannerPic"] = user.bannerPic ?: ""
+                    params["fcmToken"] = user.fcmToken ?: ""
+                }
+                return params
+            }
         }
 
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, url, jsonObject,
-            { response ->
-                try {
-                    val success = response.getBoolean("success")
-                    if (success) {
-                        currentUser = updatedUser
-                        callback(true)
-                    } else {
-                        callback(false)
-                    }
-                } catch (e: JSONException) {
-                    Log.d("UserInstance", "Error parsing JSON: ${e.message}")
-                    callback(false)
-                }
-            },
-            { error ->
-                Log.d("UserInstance", "Error: ${error.message}")
-                callback(false)
-            }
-        )
-
-        Volley.newRequestQueue(context).add(jsonObjectRequest)
+        requestQueue.add(stringRequest)
     }
 
     fun setFCMToken(context: Context, token: String, callback: (Boolean) -> Unit) {

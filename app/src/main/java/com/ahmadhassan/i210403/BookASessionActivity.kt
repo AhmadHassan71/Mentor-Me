@@ -46,8 +46,12 @@ class BookASessionActivity : AppCompatActivity() {
             mentor.name.also { mentorname.text = it }
             if (mentor.profilePicture.isNotEmpty()){
                 // it should fill the image view with the mentor's profile picture
-                Picasso.get().load(mentor.profilePicture).into(mentorPFP)
+                val url = "http://" + DatabaseIP.IP + "/MentorProfilePics/" + mentor.profilePicture
+
+                Picasso.get().load(url).into(mentorPFP)
             }
+            val rate = findViewById<TextView>(R.id.rateTextView)
+            rate.text = mentor.rate
             // it should fill the image view with the mentor's profile picture
         }
 

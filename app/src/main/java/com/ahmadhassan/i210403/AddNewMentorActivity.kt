@@ -1,9 +1,15 @@
 package com.ahmadhassan.i210403
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -12,18 +18,26 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
+import java.io.IOException
 
 class AddNewMentorActivity: AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var databaseRef: DatabaseReference
     private lateinit var pfpURL:String
+    private var selectedImage: String? = null
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.add_new_mentor)
@@ -107,18 +121,21 @@ class AddNewMentorActivity: AppCompatActivity() {
 
         findViewById<Button>(R.id.uploadButton).setOnClickListener {
             if (validateInputs()) { // Add a validation function
-                val mentorId = databaseRef.child("Mentors").push().key // Generate a unique mentor ID
-                mentorId?.let {
-                    val mentor = createMentorObject(mentorId)
-                    storeMentorData(mentor, mentorId)  // Pass mentor ID along with mentor object
-                } ?: run {
-                    Toast.makeText(this, "Error creating mentor ID", Toast.LENGTH_SHORT).show()
-                }
+//                val mentorId = databaseRef.child("Mentors").push().key // Generate a unique mentor ID
+//                mentorId?.let {
+//                    storeMentorData(mentor, mentorId)  // Pass mentor ID along with mentor object
+//                } ?: run {
+//                    Toast.makeText(this, "Error creating mentor ID", Toast.LENGTH_SHORT).show()
+//                }
+
+                createMentorAccount()
+//                val mentor = createMentorObject(mentorId)
+
 
                 // After successful storage
-//                val intent = Intent(this, HomeActivity::class.java)
-//                startActivity(intent)
-//                finish()
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
             }
             else {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
@@ -126,6 +143,56 @@ class AddNewMentorActivity: AppCompatActivity() {
         }
 
     }
+
+
+    private fun createMentorAccount(){
+        val mentor = createMentorObject("1");
+        val url = "http://${DatabaseIP.IP}/registermentor.php"
+        val requestQueue = Volley.newRequestQueue(this)
+        val stringRequest = object : StringRequest(
+            Method.POST,
+            url,
+            Response.Listener { response ->
+                // Handle response from the server
+                Toast.makeText(this, "Mentor Added Successfully", Toast.LENGTH_SHORT).show()
+                Log.d("RegisterMentorActivity", "Response: $response")
+                if (response.contains("Mentor registered successfully")) {
+                    // Registration successful
+                    // Optionally handle further actions after successful registration
+                    val mentorId = response.split(":")[1].trim()
+                    // Use mentorId as needed
+                    findViewById<EditText>(R.id.NameEditText).setText("")
+                    findViewById<EditText>(R.id.descriptionEditText).setText("")
+                    findViewById<EditText>(R.id.jobTitleEditText).setText("")
+                    findViewById<EditText>(R.id.priceEditText).setText("")
+                    findViewById<EditText>(R.id.employerEditText).setText("")
+                    selectedImage = null
+                }
+            },
+            Response.ErrorListener { error ->
+                // Handle error
+                // Optionally display an error message
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["name"] = mentor.name
+                params["jobTitle"] = mentor.jobTitle
+                params["rate"] = mentor.rate
+                params["availability"] = mentor.availability
+                params["favorite"] = mentor.favorite
+                params["description"] = mentor.description
+                params["company"] = mentor.company
+                params["profilePicture"] = selectedImage ?: ""
+                return params
+            }
+        }
+
+        requestQueue.add(stringRequest)
+
+
+    }
+
     private fun uploadToFirebase(imageUri: Uri) {
         val storage = FirebaseStorage.getInstance()
         val storageRef = storage.reference
@@ -150,17 +217,54 @@ class AddNewMentorActivity: AppCompatActivity() {
             Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
         }
     }
-    private val pickImage =  registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-                    // Pick and show the image on the screen in the constraint layout
-                    uploadToFirebase(uri)
-                }
-            ?: run {
-                Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
-            }
+
+    private fun encodeImage(bitmap: Bitmap?): String? {
+        bitmap?.let {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            it.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+
+            // Log image size and other properties for debugging
+            Log.d("ImageInfo", "Image Size: ${byteArrayOutputStream.size()}")
+            Log.d("ImageInfo", "Encoded Image Len gth: ${encodedImage.length}")
+
+            return encodedImage
+        }
+        return null
     }
+    @RequiresApi(Build.VERSION_CODES.P)
+    private val pickImage = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            data?.let {
+                val imageUri = it.data
+                try {
+                    val source = ImageDecoder.createSource(this.contentResolver, imageUri!!)
+                    val bitmap = ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+                        decoder.setTargetSampleSize(1) // shrinking by
+                        decoder.isMutableRequired = true // this resolve the hardware type of bitmap problem
+                    }
+
+                    selectedImage = encodeImage(bitmap)
+
+
+
+                    Log.d("ImageURI", imageUri.toString())
+
+//                    val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+//                    imageView.setImageBitmap(bitmap)
+                    Log.d("ImageInfo", "Selected Image: $selectedImage")
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun uploadImage(){
-        pickImage.launch("image/*")
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        pickImage.launch(intent)
     }
     private fun validateInputs(): Boolean {
         // name validation
@@ -181,6 +285,10 @@ class AddNewMentorActivity: AppCompatActivity() {
             Toast.makeText(this, "Availability is required", Toast.LENGTH_SHORT).show()
             return false
         }
+        if(selectedImage == null){
+            Toast.makeText(this, "Profile Picture is required", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
         return true // Replace with actual validation
     }
@@ -193,7 +301,7 @@ class AddNewMentorActivity: AppCompatActivity() {
         // add $/hr at the end of _rate
         val rate = "$$_rate/hr"
         val availability = findViewById<Spinner>(R.id.availabilityEditText).selectedItem.toString()
-        val profilePicture = pfpURL
+        val profilePicture = selectedImage ?: "" // Set to the image URL
         val isFavorite = false // Set to true if mentor is a favorite
         val description = findViewById<EditText>(R.id.descriptionEditText).text.toString()
         val company = findViewById<EditText>(R.id.employerEditText).text.toString()

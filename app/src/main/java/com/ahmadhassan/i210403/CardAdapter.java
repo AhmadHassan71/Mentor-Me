@@ -130,7 +130,8 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
 
         if (!Objects.equals(mentor.getProfilePicture(), "")) {
-            Picasso.get().load(mentor.getProfilePicture()).into(holder.ProfilePic);
+            String url =  "http://"+DatabaseIP.IP+"/MentorProfilePics/"+mentor.getProfilePicture();
+            Picasso.get().load(url).into(holder.ProfilePic);
         }
 
         // Set click listener

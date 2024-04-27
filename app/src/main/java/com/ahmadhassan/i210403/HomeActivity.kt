@@ -11,12 +11,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import org.json.JSONArray
 
 class HomeActivity : AppCompatActivity() {
+    private val apiUrl = "http://${DatabaseIP.IP}/getallmentors.php" // Replace with your API endpoint
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,35 +78,55 @@ class HomeActivity : AppCompatActivity() {
         val ref = database.getReference("Mentors")
         
         
+//
+//        ref.get().addOnSuccessListener { dataSnapshot ->
+//            for (mentorSnapshot in dataSnapshot.children) {
+//                val mentorData = mentorSnapshot.getValue(Mentors::class.java)
+//
+//                mentorData?.let { mentorsList.add(it) }
+//            }
+//            // Create adapter after fetching data
+//            val adapter = CardAdapter(mentorsList, this)
+//
+//            // Set adapter for each RecyclerView
+//            recyclerViewTopMentor.adapter = adapter
+//            recyclerViewEdMentor.adapter = adapter
+//            recyclerViewRecentMentor.adapter = adapter
+//
+//            adapter.setOnItemClickListener {mentor ->
+//                val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
+//                intent.putExtra("mentor", mentor) // Pass mentor object
+//                startActivity(intent)
+//            }
+//
+//
+//
+//
+//
+//        }.addOnFailureListener { exception ->
+//            // Handle failure
+//            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
+//        }
 
-        ref.get().addOnSuccessListener { dataSnapshot ->
-            for (mentorSnapshot in dataSnapshot.children) {
-                val mentorData = mentorSnapshot.getValue(Mentors::class.java)
-
-                mentorData?.let { mentorsList.add(it) }
-            }
+        fetchAllMentors( { mentors ->
+            // Success callback: mentors have been fetched successfully
             // Create adapter after fetching data
-            val adapter = CardAdapter(mentorsList, this)
+            val adapter = CardAdapter(mentors, this)
 
             // Set adapter for each RecyclerView
             recyclerViewTopMentor.adapter = adapter
             recyclerViewEdMentor.adapter = adapter
             recyclerViewRecentMentor.adapter = adapter
 
-            adapter.setOnItemClickListener {mentor ->
+            adapter.setOnItemClickListener { mentor ->
                 val intent = Intent(this@HomeActivity, MentorProfileActivity::class.java)
                 intent.putExtra("mentor", mentor) // Pass mentor object
                 startActivity(intent)
             }
-
-            
-
-
-
-        }.addOnFailureListener { exception ->
-            // Handle failure
-            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
-        }
+        }, { error ->
+            // Error callback: handle error when fetching mentors
+            Toast.makeText(this, "Error getting mentors: $error", Toast.LENGTH_SHORT).show()
+        })
 
         val addMentorButton = findViewById<ImageView>(R.id.addMentorButton)
         addMentorButton.setOnClickListener {
@@ -147,4 +175,39 @@ class HomeActivity : AppCompatActivity() {
 
 
     }
+    private fun fetchAllMentors( onSuccess: (List<Mentors>) -> Unit, onError: (String) -> Unit) {
+        val requestQueue = Volley.newRequestQueue(this)
+        val jsonArrayRequest = JsonArrayRequest(
+            Request.Method.GET,
+            apiUrl,
+            null,
+            { response ->
+                val mentorsList = mutableListOf<Mentors>()
+
+                try {
+                    val gson = Gson()
+                    val jsonArray = JSONArray(response.toString())
+
+                    for (i in 0 until jsonArray.length()) {
+                        val mentorJson = jsonArray.getJSONObject(i)
+                        val mentor = gson.fromJson(mentorJson.toString(), Mentors::class.java)
+                        mentorsList.add(mentor)
+                    }
+
+                    onSuccess(mentorsList)
+                } catch (e: Exception) {
+                    onError("Error parsing JSON: ${e.message}")
+                }
+            },
+            { error ->
+                onError("Error fetching mentors: ${error.message}")
+            }
+        )
+
+        requestQueue.add(jsonArrayRequest)
+    }
+    fun fetchMentorsFromApi() {
+
+    }
+
 }
