@@ -54,6 +54,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         holder.jobTitle.setText(mentor.getJobTitle());
         holder.rate.setText(mentor.getRate());
         holder.availability.setText(mentor.getAvailability());
+        Log.d("Favorite", mentor.getFavorite());
         holder.Favorite.setText(mentor.getFavorite());
 
         if (mentor.getAvailability().equals("Available") || mentor.getAvailability().equals(" 🟢 Available")) {

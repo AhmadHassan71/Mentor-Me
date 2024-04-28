@@ -32,7 +32,7 @@ public class Mentors implements  Serializable {
             this.availability = " ⚪ Not Available";
             // make text color silver
         }
-        if(Favorite.equals("Favorite")){
+        if(Favorite.equals("Favorite") || Favorite.equals("❤️")){
             this.favorite = "❤️";
         } else {
             this.favorite = "🩶";

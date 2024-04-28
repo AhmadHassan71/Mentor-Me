@@ -15,6 +15,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -98,24 +101,13 @@ class BookASessionActivity : AppCompatActivity() {
         // on submit review button go to  MentorProfileActivity
         val submitReviewButton = findViewById<Button>(R.id.bookAppointmentButton)
         submitReviewButton.setOnClickListener {
-            val bookedSession = BookedSession(mentor!!.mentorId, dateString, timeString, UserInstance.getInstance()!!.userId)
-            val database = FirebaseDatabase.getInstance()
-            val ref = database.getReference("BookedSessions")
-            val newRef = ref.push()
-            newRef.setValue(bookedSession).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Session Booked", Toast.LENGTH_SHORT).show()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                    // delay
-                    SendNotification("You have booked a session with ${mentor.name} on $dateString at $timeString.")
-                    }, 5000)
-
-
-                    onBackPressedDispatcher.onBackPressed()
-                } else {
-                    Toast.makeText(this, "Failed to book session", Toast.LENGTH_SHORT).show()
-                }
+            if (dateString.isEmpty() || timeString.isEmpty()) {
+                Toast.makeText(this, "Please select a date and time", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            val currUser = UserInstance.getInstance()!!
+            val currMentor = mentor!!
+            bookSession(currUser, currMentor, dateString, timeString)
             onBackPressedDispatcher.onBackPressed()
         }
 
@@ -137,6 +129,37 @@ class BookASessionActivity : AppCompatActivity() {
         }
     }
 
+    private fun bookSession(currUser: User, currMentor: Mentors, date: String, time: String) {
+        val url = "http://" + DatabaseIP.IP + "/setsession.php"
+        // using string request in volley
+        val stringRequest = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                Log.d("BookASessionActivity", "Response: $response")
+                if (response == "Session added successfully.") {
+                    Toast.makeText(this, "Session booked successfully", Toast.LENGTH_SHORT).show()
+                    SendNotification("New Session Booked")
+                } else {
+                    Toast.makeText(this, "Failed to book session", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                Log.d("BookASessionActivity", "Error: $error")
+                Toast.makeText(this, "Failed to book session", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["mentorId"] = currMentor.mentorId
+                params["mentorName"] = currMentor.name
+                params["mentorProfilePic"] = currMentor.profilePicture
+                params["jobTitle"] = currMentor.jobTitle
+                params["date"] = date
+                params["time"] = time
+                params["userId"] = currUser.userId
+                return params
+            }
+        }
+        Volley.newRequestQueue(this).add(stringRequest)
+    }
     private fun SendNotification(message: String) {
 
             Log.d("SendNotification", "Sending Notification")

@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhassan.i210403.UserInstance.getInstance
+import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -145,7 +146,7 @@ class MyProfileActivity: AppCompatActivity() {
 
 
 
-
+        fetchFavoriteMentors()
 
 
         // optionsImageView opens EditProfileActivity
@@ -177,7 +178,68 @@ class MyProfileActivity: AppCompatActivity() {
 
     }
 
+    private fun fetchFavoriteMentors() {
+        val url = "http://${DatabaseIP.IP}/getfavorites.php" // Replace with your actual URL
+        val requestQueue = Volley.newRequestQueue(this)
 
+        val stringRequest = StringRequest(
+            Request.Method.POST, // Assuming getfavorites.php expects a POST request
+            url,
+            { response ->
+                val mentors = mutableListOf<Mentors>()
+                try {
+                    val jsonArray = JSONArray(response) // Parse the response as JSON array
+
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject = jsonArray.getJSONObject(i)
+                        val mentor = Mentors(
+                            // Replace with actual field names from your database
+                            jsonObject.getString("mentorId"),
+                            jsonObject.getString("name"),
+                            jsonObject.getString("jobTitle"),
+                            jsonObject.getString("rate"),
+                            jsonObject.getString("availability"),
+                            "Favorite",
+                            jsonObject.getString("profilePicture"),
+                            jsonObject.getString("description"),
+                            jsonObject.getString("company"),
+
+                        )
+//                        Log.d("Mentorhere", mentor.mentorId)
+//                        Log.d("Mentorhere", mentor.name)
+//                        Log.d("Mentorhere", mentor.jobTitle)
+//                        Log.d("Mentorhere", mentor.rate)
+//                        Log.d("Mentorhere", mentor.availability)
+//                        Log.d("Mentorhere", mentor.favorite)
+//                        Log.d("Mentorhere", mentor.profilePicture)
+//                        Log.d("Mentorhere", mentor.description)
+//                        Log.d("Mentorhere", mentor.company)
+                        mentors.add(mentor)
+                    }
+                    val recyclerViewTopMentor: RecyclerView = findViewById(R.id.favMentorsRecyclerView)
+                    recyclerViewTopMentor.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                    val adapter = CardAdapter(mentors, this)
+                    recyclerViewTopMentor.adapter = adapter
+                    adapter.setOnItemClickListener { mentor ->
+                        val intent = Intent(this, MentorProfileActivity::class.java)
+                        intent.putExtra("mentor", mentor) // Pass mentor object
+                        startActivity(intent)
+                    }
+                // Handle the retrieved list of favorite mentors (e.g., update UI)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // Handle parsing error (e.g., show a toast message)
+//                    Toast.makeText(this, "Error fetching mentors: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { error ->
+                // Handle network error
+//                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        requestQueue.add(stringRequest)
+    }
     private fun fetchReviews(userId: Int) {
         val url = "http://${DatabaseIP.IP}/getreviews.php"
         val requestQueue = Volley.newRequestQueue(this)

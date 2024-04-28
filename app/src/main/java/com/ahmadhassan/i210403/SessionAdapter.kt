@@ -27,7 +27,7 @@ class SessionAdapter(private val sessions: List<Session>) :
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val currentSession = sessions[position]
         if(currentSession.mentorProfilePic != "")
-            Picasso.get().load(currentSession.mentorProfilePic).into(holder.profilePicture)
+            Picasso.get().load("http://" + DatabaseIP.IP + "/MentorProfilePics/" + currentSession.mentorProfilePic).into(holder.profilePicture)
         holder.mentorName.text = currentSession.mentorName
         holder.jobTitle.text = currentSession.jobTitle
         holder.date.text = currentSession.date
