@@ -141,10 +141,9 @@ object UserInstance {
 
         val url = "$baseUrl/setfcmtoken.php"
 
-        val requestBody = JSONObject().apply {
-            put("userId", currentUser!!.userId)
-            put("fcmToken", token)
-        }.toString()
+        val params = HashMap<String, String>()
+        params["userId"] = currentUser!!.userId
+        params["fcmToken"] = token
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
@@ -167,17 +166,14 @@ object UserInstance {
                 Log.d("UserInstance", "Error: ${error.message}")
                 callback(false)
             }) {
-            override fun getBodyContentType(): String {
-                return "application/json"
-            }
-
-            override fun getBody(): ByteArray {
-                return requestBody.toByteArray(Charset.defaultCharset())
+            override fun getParams(): Map<String, String> {
+                return params
             }
         }
 
         Volley.newRequestQueue(context).add(stringRequest)
     }
+
 
     fun clearInstance() {
         currentUser = null

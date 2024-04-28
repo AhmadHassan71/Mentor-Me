@@ -446,31 +446,32 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
         sendAudioMessage(audioUri)
         // Now you can handle the recorded audio file, e.g., upload it to Firebase.
     }private fun sendAudioMessage(audioUri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
-        val audioRef = storageRef.child("isAudioMessage").child("${System.currentTimeMillis()}.3gp")
-        val uploadTask = audioRef.putFile(audioUri)
-        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
-        uploadTask.addOnSuccessListener { _ ->
-            audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                val audioUrl = downloadUri.toString()
-                val currTime = System.currentTimeMillis()
-                val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
-                val message = Message(
-                    (currTime % Int.MAX_VALUE).toString(),
-                    "",
-                    currentTime,
-                    audioUrl,
-                    sentByCurrentUser = true,
-                    audioMessage = true
-                )
-                database.child(message.id).setValue(message)
-                SendNotification(message)
+//        val storage = FirebaseStorage.getInstance()
+//        val storageRef = storage.reference
+//        val audioRef = storageRef.child("isAudioMessage").child("${System.currentTimeMillis()}.3gp")
+//        val uploadTask = audioRef.putFile(audioUri)
+//        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
+//        uploadTask.addOnSuccessListener { _ ->
+//            audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
+//                val audioUrl = downloadUri.toString()
+//                val currTime = System.currentTimeMillis()
+//                val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
+//                val message = Message(
+//                    (currTime % Int.MAX_VALUE).toString(),
+//                    "",
+//                    currentTime,
+//                    audioUrl,
+//                    sentByCurrentUser = true,
+//                    audioMessage = true
+//                )
+//                database.child(message.id).setValue(message)
+//                SendNotification(message)
+//
+//            }
+//        }.addOnFailureListener { exception ->
+//            Toast.makeText(this, "Failed to upload audio: ${exception.message}", Toast.LENGTH_SHORT).show()
+//        }
 
-            }
-        }.addOnFailureListener { exception ->
-            Toast.makeText(this, "Failed to upload audio: ${exception.message}", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun SendNotification(message: Message) {

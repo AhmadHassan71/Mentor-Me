@@ -22,9 +22,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var auth: FirebaseAuth
-    private lateinit var database : FirebaseDatabase
-    private lateinit var dbref : DatabaseReference
+    private lateinit var token : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -50,8 +48,8 @@ class LoginActivity : AppCompatActivity() {
 //                        finish()
 //                    }
 //                    else{
-                        Log.d("INTENT_NULL", "User fetched successfully")
                         getFCMToken()
+
                         val intent = Intent(this@LoginActivity, HomeActivity::class.java)
                         startActivity(intent)
                         finish()
@@ -292,10 +290,11 @@ class LoginActivity : AppCompatActivity() {
     private fun getFCMToken(){
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful){
-                val token = it.result
+                 token = it.result
                 UserInstance.setFCMToken(this,token) { success ->
                     if (success) {
                         Log.d("LoginActivity", "FCM Token updated successfully")
+
                     } else {
                         Log.d("LoginActivity", "Failed to update FCM Token")
                     }

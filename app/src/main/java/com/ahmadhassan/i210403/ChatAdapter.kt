@@ -131,7 +131,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
                     messageList[adapterPosition].text = newText
                     notifyItemChanged(adapterPosition)
                     val messageId = message.id
-                    database.child(messageId).child("text").setValue(newText)
+//                    database.child(messageId).child("text").setValue(newText)
                 }
             }
 
@@ -178,7 +178,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
             // Load image if available
             // Replace "R.drawable.placeholder_image" with your actual placeholder image resource
             if (message.imageUrl != "")
-                Picasso.get().load(message.imageUrl).into(messageImageView)
+                Picasso.get().load("http://" + DatabaseIP.IP + "/MentorProfilePics/"+message.imageUrl).into(messageImageView)
             // Implement edit and delete functionality here
             itemView.setOnLongClickListener {
                 // Implement edit and delete logic here

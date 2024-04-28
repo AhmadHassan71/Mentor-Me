@@ -56,45 +56,24 @@ public class VerticalCardAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
 
         if (!Objects.equals(mentor.getProfilePicture(), "")) {
-            Picasso.get().load(mentor.getProfilePicture()).into(holder.ProfilePic);
+            Picasso.get().load("http://"+DatabaseIP.IP+"/MentorProfilePics/"+mentor.getProfilePicture()).into(holder.ProfilePic);
         }
 
+        holder.Favorite.setText(mentor.getFavorite());
 
-        // Check if the mentor is favorited by the current user
-        String userId = Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId();
-        DatabaseRef.get().addOnSuccessListener(dataSnapshot -> {
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                Favorite favorite = snapshot.getValue(Favorite.class);
-                if (favorite != null && favorite.getMentorId().equals(mentor.getMentorId()) && favorite.getUserId().equals(userId)) {
-                    mentor.setFavorite("❤️");
-                    holder.Favorite.setText("❤️");
-                }
-                else{
+        holder.Favorite.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Toggle the favorite state
+                if ( mentor.getFavorite().equals("❤️")) {
                     mentor.setFavorite("🩶");
-                    holder.Favorite.setText("🩶");
+                    //Remove from the database
+                } else {
+                    mentor.setFavorite("❤️");
+                    // Add to the database
                 }
+                notifyItemChanged(position); // Notify adapter that data set has changed
             }
-            notifyDataSetChanged();
         });
-
-//        holder.Favorite.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                // Toggle the favorite state
-//                if (mentor.getFavorite().equals("Favorite") || mentor.getFavorite().equals("❤️")) {
-//                    mentor.setFavorite("🩶");
-//                    holder.Favorite.setText("🩶");
-//                    //Remove from the database
-//                    DatabaseRef.child(userId).child(mentor.getMentorId()).removeValue();
-//                } else {
-//                    mentor.setFavorite("❤️");
-//                    holder.Favorite.setText("❤️");
-//                    // Add to the database
-//                    Favorite favorite = new Favorite(mentor.getMentorId(), userId);
-//                    DatabaseRef.child(userId).child(mentor.getMentorId()).setValue(favorite);
-//                }
-//                notifyItemChanged(position); // Notify adapter that data set has changed
-//            }
-//        });
 
         // Set click listener
         holder.setItemClickListener(new ViewHolder.OnItemClickListener() {
