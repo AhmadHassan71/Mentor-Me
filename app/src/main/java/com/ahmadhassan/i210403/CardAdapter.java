@@ -44,6 +44,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+//        position = holder.getAdapterPosition();
         final DatabaseReference DatabaseRef = FirebaseDatabase.getInstance().getReference("Favorite");
 
         Mentors mentor = mentors.get(position);
@@ -68,21 +69,21 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        boolean isFavorite = false;
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Favorite favorite = snapshot.getValue(Favorite.class);
-                            if (favorite != null && favorite.getMentorId().equals(mentor.getMentorId())) {
-                                isFavorite = true;
-                                break;
-                            }
-                        }
-                        // Update the favorite status
-                        if (isFavorite) {
-                            mentor.setFavorite("❤️");
-                        } else {
-                            mentor.setFavorite("🩶");
-                        }
-                        notifyDataSetChanged();
+//                        boolean isFavorite = false;
+//                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                            Favorite favorite = snapshot.getValue(Favorite.class);
+//                            if (favorite != null && favorite.getMentorId().equals(mentor.getMentorId())) {
+//                                isFavorite = true;
+//                                break;
+//                            }
+//                        }
+//                        // Update the favorite status
+//                        if (isFavorite) {
+//                            mentor.setFavorite("❤️");
+//                        } else {
+//                            mentor.setFavorite("🩶");
+//                        }
+//                        notifyDataSetChanged();
                     }
 
                     @Override
@@ -93,37 +94,13 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         holder.Favorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (mentor.getFavorite().equals("Favorite") || mentor.getFavorite().equals("❤️")) {
-                    // Remove from favorites
-                    DatabaseRef.child(Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId())
-                            .child(mentor.getMentorId()).removeValue()
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d("Favorite", "Removed from favorites");
-                                    // Update favorite status
-                                    mentor.setFavorite("🩶");
-                                    // Notify adapter that data set has changed
-                                    notifyItemChanged(position);
-                                } else {
-                                    Log.d("Favorite", "Failed to remove from favorites");
-                                }
-                            });
+                if (mentor.getFavorite().equals("❤️")) {
+                    mentor.setFavorite("🩶");
+                    notifyItemChanged(position);
                 } else {
                     // Add to favorites
-                    Favorite favorite = new Favorite(mentor.getMentorId(), Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId());
-                    DatabaseRef.child(UserInstance.INSTANCE.getInstance().getUserId())
-                            .child(mentor.getMentorId()).setValue(favorite)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    Log.d("Favorite", "Added to favorites");
-                                    // Update favorite status
-                                    mentor.setFavorite("❤️");
-                                    // Notify adapter that data set has changed
-                                    notifyItemChanged(position);
-                                } else {
-                                    Log.d("Favorite", "Failed to add to favorites");
-                                }
-                            });
+                   mentor.setFavorite("❤️");
+                    notifyItemChanged(position);
                 }
             }
         });

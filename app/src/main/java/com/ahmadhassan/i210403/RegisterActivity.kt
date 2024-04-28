@@ -198,7 +198,7 @@ class RegisterActivity : AppCompatActivity() {
                 val stringRequest = object : StringRequest(Method.POST, url,
                     Response.Listener { response ->
                         // Handle response from the server
-                        Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
                         Log.d("RegisterActivity", "Response: $response")
                         if (response.contains("User registered successfully")) {
                             // Registration successful, navigate to next activity

@@ -10,6 +10,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
+import java.nio.charset.Charset
 
 object UserInstance {
     private var currentUser: User? = null
@@ -140,16 +141,17 @@ object UserInstance {
 
         val url = "$baseUrl/setfcmtoken.php"
 
-        val jsonObject = JSONObject().apply {
+        val requestBody = JSONObject().apply {
             put("userId", currentUser!!.userId)
             put("fcmToken", token)
-        }
+        }.toString()
 
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, url, jsonObject,
-            { response ->
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener<String> { response ->
                 try {
-                    val success = response.getBoolean("success")
+                    val jsonObject = JSONObject(response)
+                    val success = jsonObject.getBoolean("success")
                     if (success) {
                         currentUser!!.fcmToken = token
                         callback(true)
@@ -161,13 +163,20 @@ object UserInstance {
                     callback(false)
                 }
             },
-            { error ->
+            Response.ErrorListener { error ->
                 Log.d("UserInstance", "Error: ${error.message}")
                 callback(false)
+            }) {
+            override fun getBodyContentType(): String {
+                return "application/json"
             }
-        )
 
-        Volley.newRequestQueue(context).add(jsonObjectRequest)
+            override fun getBody(): ByteArray {
+                return requestBody.toByteArray(Charset.defaultCharset())
+            }
+        }
+
+        Volley.newRequestQueue(context).add(stringRequest)
     }
 
     fun clearInstance() {

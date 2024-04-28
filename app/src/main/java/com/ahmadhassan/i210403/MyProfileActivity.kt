@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmadhassan.i210403.UserInstance.getInstance
 import com.android.volley.Response
@@ -25,6 +26,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import org.json.JSONArray
+import org.json.JSONException
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.Objects
@@ -104,71 +107,44 @@ class MyProfileActivity: AppCompatActivity() {
                 else -> false
             }
         }
+        fetchReviews(getInstance()!!.userId.toInt())
 
-        val recyclerViewTopMentor: RecyclerView = findViewById(R.id.favMentorsRecyclerView)
-        recyclerViewTopMentor.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        val database = FirebaseDatabase.getInstance()
-        val ref = database.getReference("Favorite")
-        val mentorsList = mutableListOf<Mentors>()
-        val favList = mutableListOf<Favorite>()
-        ref.get().addOnSuccessListener { dataSnapshot ->
-            for (favSnapshot in dataSnapshot.children) {
-                val favData = favSnapshot.getValue(Favorite::class.java)
-                favData?.let { favList.add(it) }
-            }
-            for (fav in favList){
-                if(fav.userId == getInstance()!!.userId) {
-                    val mentorRef = database.getReference("Mentors").child(fav.mentorId)
-                    mentorRef.get().addOnSuccessListener { mentorSnapshot ->
-                        val mentorData = mentorSnapshot.getValue(Mentors::class.java)
-                        mentorData?.let { mentorsList.add(it) }
-                    }
-                }
-            }
-            val adapter = CardAdapter(mentorsList, this)
-            recyclerViewTopMentor.adapter = adapter
-            adapter.setOnItemClickListener { mentor ->
-                val intent = Intent(this@MyProfileActivity, MentorProfileActivity::class.java)
-                intent.putExtra("mentor", mentor) // Pass mentor object
-                startActivity(intent)
-            }
-        }.addOnFailureListener { exception ->
-            // Handle failure
-            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
-        }
-
-
-
+//        val recyclerViewTopMentor: RecyclerView = findViewById(R.id.favMentorsRecyclerView)
+//        recyclerViewTopMentor.layoutManager =
+//            androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+//        val database = FirebaseDatabase.getInstance()
+//        val ref = database.getReference("Favorite")
+//        val mentorsList = mutableListOf<Mentors>()
+//        val favList = mutableListOf<Favorite>()
+//        ref.get().addOnSuccessListener { dataSnapshot ->
+//            for (favSnapshot in dataSnapshot.children) {
+//                val favData = favSnapshot.getValue(Favorite::class.java)
+//                favData?.let { favList.add(it) }
+//            }
+//            for (fav in favList){
+//                if(fav.userId == getInstance()!!.userId) {
+//                    val mentorRef = database.getReference("Mentors").child(fav.mentorId)
+//                    mentorRef.get().addOnSuccessListener { mentorSnapshot ->
+//                        val mentorData = mentorSnapshot.getValue(Mentors::class.java)
+//                        mentorData?.let { mentorsList.add(it) }
+//                    }
+//                }
+//            }
+//            val adapter = CardAdapter(mentorsList, this)
+//            recyclerViewTopMentor.adapter = adapter
+//            adapter.setOnItemClickListener { mentor ->
+//                val intent = Intent(this@MyProfileActivity, MentorProfileActivity::class.java)
+//                intent.putExtra("mentor", mentor) // Pass mentor object
+//                startActivity(intent)
+//            }
+//        }.addOnFailureListener { exception ->
+//            // Handle failure
+//            Toast.makeText(this, "Error getting data: ${exception.message}", Toast.LENGTH_SHORT).show()
+//        }
 
 
 
-        val recyclerView: RecyclerView = findViewById(R.id.reviewRecycleView)
-        recyclerView.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
-        val reviews:MutableList<Review> = mutableListOf()
-        databaseReference.get().addOnSuccessListener {
-            val snapshots = it.children
-            for (review in snapshots){
-                val reviewObj = review.getValue(Review::class.java)
-                if (reviewObj != null){
-                    if (reviewObj.userId == userId){
-                        reviews.add(reviewObj)
-                    }
-                }
-            }
-            val adapter2 = ReviewAdapter(reviews)
-            recyclerView.adapter = adapter2
-
-        }
-//            listOf(
-//            Review("Mentor 1", 4.5f, "Great mentor! taught me everything I know."),
-//            Review("Mentor 2", 3.0f, "Average mentor. Could be better."),
-//            Review("Mentor 3", 5.0f, "Best mentor ever!"),
-//            Review("Mentor 4", 2.5f, "Not a good mentor. Waste of time."),
-//
-//            )
 
 
 
@@ -201,126 +177,62 @@ class MyProfileActivity: AppCompatActivity() {
 
     }
 
-//    private fun uploadPfPToFirebase(imageUri: Uri) {
-//        val storage = FirebaseStorage.getInstance()
-//        val storageRef = storage.reference
-//        val imagesRef = storageRef.child("profilepics").child("Users").child("profilepics")
-//            .child(imageUri.toString())
-//
-//        imageUri.let {
-//            val uploadTask = imagesRef.putFile(it)
-//
-//            uploadTask.addOnSuccessListener {
-//                // Image uploaded successfully
-//                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-//                    pfpURL = uri.toString()
-//                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
-//
-//                    // update the profile picture in the database
-//                    updateProfilePicture(pfpURL)
-//                }.addOnFailureListener {
-//                    // Handle failure to get download URL
-//                }
-//            }.addOnFailureListener { exception ->
-//                // Handle unsuccessful upload
-//                Toast.makeText(
-//                    this,
-//                    "Failed to upload image: ${exception.message}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        } ?: run {
-//            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
-//        }
-//
-//    }
 
-//    private fun updateProfilePicture(pfpURL: String) {
-//        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-//        val userId = userIdSharedPreferences.getString("userId", null)
-//        if (userId != null) {
-//            UserInstance.updateUser(this, User(userId,
-//                getInstance()!!.email, getInstance()?.fullName,
-//                getInstance()!!.city, getInstance()!!.country, pfpURL, getInstance()!!.bannerPic,
-//                getInstance()!!.fcmToken )) { success ->
-//                if (success) {
-//                    // Update successful
-//                    Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    // Update failed
-//                    Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//            }
-//        }
-//    }
+    private fun fetchReviews(userId: Int) {
+        val url = "http://${DatabaseIP.IP}/getreviews.php"
+        val requestQueue = Volley.newRequestQueue(this)
 
+        val stringRequest = object : StringRequest(
+            Method.POST,
+            url,
+            Response.Listener { response ->
+                val reviewsList = mutableListOf<Review>()
+                try {
+                    val jsonArray = JSONArray(response)
+                    for (i in 0 until jsonArray.length()) {
+                        val jsonObject = jsonArray.getJSONObject(i)
 
-//    private fun uploadCoverToFirebase(imageUri: Uri) {
-//        val storage = FirebaseStorage.getInstance()
-//        val storageRef = storage.reference
-//        val imagesRef = storageRef.child("profilepics").child("Users").child("coverpics")
-//            .child(imageUri.toString())
-//
-//        imageUri.let {
-//            val uploadTask = imagesRef.putFile(it)
-//
-//            uploadTask.addOnSuccessListener {
-//                // Image uploaded successfully
-//                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-//                    coverURL = uri.toString()
-//                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
-//                    updateBannerPicture(coverURL)
-//                }.addOnFailureListener {
-//                    // Handle failure to get download URL
-//                }
-//            }.addOnFailureListener { exception ->
-//                // Handle unsuccessful upload
-//                Toast.makeText(
-//                    this,
-//                    "Failed to upload image: ${exception.message}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        } ?: run {
-//            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
-//        }
-//    }
+                        // Replace with actual key names from your PHP response
+                        val mentorName = jsonObject.getString("mentorName")
+                        val rating = jsonObject.getDouble("rating").toFloat()
+                        val reviewText = jsonObject.getString("reviewDescription")
+                        val mentorId = jsonObject.getString("mentorId")
 
-//    private fun updateBannerPicture(coverURL: String) {
-//        // update the profile picture in the database
-//        val userIdSharedPreferences = getSharedPreferences("userIdPreferences", MODE_PRIVATE)
-//        val userId = userIdSharedPreferences.getString("userId", null)
-//        if (userId != null) {
-//            var updatedUser: User? = User()
-//            UserInstance.fetchUser(this,userId) { user ->
-//                updatedUser = user?.let {
-//                    User(
-//                        it.userId,
-//                        user.email,
-//                        user.fullName,
-//                        user.city,
-//                        user.country,
-//                        user.profilePic,
-//                        coverURL
-//                    )
-//                }
-//            }
-//            updatedUser?.let {
-//                UserInstance.updateUser(this,it) { success ->
-//                    if (success) {
-//                        // Update successful
-//                        Toast.makeText(this, "Cover photo updated", Toast.LENGTH_SHORT).show()
-//                    } else {
-//                        // Update failed
-//                        Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT)
-//                            .show()
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
+                        val review = Review(
+                            mentorName,
+                            rating,
+                            reviewText,
+                            // Adjust user ID retrieval based on your implementation
+                            getInstance()!!.userId.toString(), // Assuming userId is accessible within the class
+                            mentorId
+                        )
+                        reviewsList.add(review)
+                    }
+
+                    val recyclerView: RecyclerView = findViewById(R.id.reviewRecycleView)
+                    recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+                    val adapter = ReviewAdapter(reviewsList)
+                    recyclerView.adapter = adapter
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    when (e) {
+                        is JSONException -> Toast.makeText(this, "Error parsing JSON: ${e.message}", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(this, "Error fetching reviews: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+            Response.ErrorListener { error ->
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["userId"] = userId.toString()
+                return params
+            }
+        }
+
+        requestQueue.add(stringRequest)
+    }
 
 
 //    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -512,3 +424,5 @@ class MyProfileActivity: AppCompatActivity() {
         pickImage.launch(intent)
     }
 }
+
+

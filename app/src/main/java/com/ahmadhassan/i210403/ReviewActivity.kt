@@ -7,6 +7,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
@@ -50,8 +53,8 @@ class ReviewActivity : AppCompatActivity() {
             }
 
             val review = Review(mentorname.text.toString(), ratingBar.rating, reviewDescription.text.toString(), mentor!!.mentorId, user!!.userId)
-            database.push().setValue(review)
-
+//            database.push().setValue(review)
+            addReview(review);
             onBackPressedDispatcher.onBackPressed()
         }
 
@@ -59,5 +62,34 @@ class ReviewActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.backButton).setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+    }
+
+    private fun addReview(review: Review) {
+        val url = "http://${DatabaseIP.IP}/setreview.php"
+        val requestQueue = Volley.newRequestQueue(this)
+
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                if (response == "Review added successfully.") {
+                    Toast.makeText(this, "Review added successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to add review", Toast.LENGTH_SHORT).show()
+                }
+            },
+            Response.ErrorListener { error ->
+                Toast.makeText(this, "Failed to add review", Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["mentorId"] = review.mentorId
+                params["userId"] = review.userId
+                params["rating"] = review.rating.toString()
+                params["reviewDescription"] = review.reviewDescription
+                return params
+            }
+        }
+        requestQueue.add(request)
+
+
     }
 }
