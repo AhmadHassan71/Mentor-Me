@@ -150,6 +150,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                     )
 
 
+
 //                    database.child(newId.toString()).setValue(newMessage)
                     sendMessageToServer(newMessage,"")
                     SendNotification(newMessage)
@@ -159,27 +160,27 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                 adapter.notifyItemInserted(messageList.size - 1)
                     recyclerView.scrollToPosition(messageList.size - 1)
 //                recyclerView.scrollToPosition(messageList.size - 1)
-                    messageEditText.text.clear()
                     val mentorResponse = when {
-                        messageContent.contains("help", ignoreCase = true) -> "I'm here to help."
-                        messageContent.contains(
+                        newMessage.text.contains("help", ignoreCase = true) -> "I'm here to help."
+                        newMessage.text.contains(
                             "thank",
                             ignoreCase = true
                         ) -> "Let me know if there's anything else."
 
-                        messageContent.contains(
+                        newMessage.text.contains(
                             "happy",
                             ignoreCase = true
                         ) -> "That's great to hear! "
 
-                        messageContent.contains("sad", ignoreCase = true) -> "You can talk to me?"
-                        messageContent.contains(
+                        newMessage.text.contains("sad", ignoreCase = true) -> "You can talk to me?"
+                        newMessage.text.contains(
                             "stress",
                             ignoreCase = true
                         ) -> "Stress can be tough."
 
                         else -> "Interesting. Tell me more."
                     }
+
                     // Add delay in mentor's response
 
                     // Mentor's response
@@ -194,6 +195,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                         messageList.add(mentorMessage)
                         SendNotification(mentorMessage)
                         adapter.notifyItemInserted(messageList.size - 1)
+                        recyclerView.scrollToPosition(messageList.size - 1)
                     }, 5000)
 
 
