@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class CommunityActivity : AppCompatActivity() {
-    val database = FirebaseDatabase.getInstance().getReference("messages")
+//    val database = FirebaseDatabase.getInstance().getReference("messages")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class CommunityActivity : AppCompatActivity() {
         val sendMessageButton: ImageView = messageBox.findViewById(R.id.sendButton)
 
         val recyclerView: RecyclerView = findViewById(R.id.communityRecyclerView)
-        val adapter = ChatAdapter(messageList,database )
+        val adapter = ChatAdapter(messageList )
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 

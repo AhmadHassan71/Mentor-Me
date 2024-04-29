@@ -163,11 +163,11 @@ class ChatActivity : AppCompatActivity() {
                         }
                     }
                         messagesList.add(Message("1", "Hello",
-                           "${ System.currentTimeMillis() - (1000 * 60 * 60 * 24) }", null, true))
-                        messagesList.add(Message("2", "Hi", "${ System.currentTimeMillis() - (1000 * 60 * 60 * 24) }", null, false))
-                        messagesList.add(Message("3", "How are you?", "${ System.currentTimeMillis() - (1000 * 60 * 60 * 24) }", null, true))
-                        messagesList.add(Message("4", "I'm good, thanks!", "${ System.currentTimeMillis() - (1000 * 60 * 60 * 24) }", null, false))
-                        messagesList.add(Message("5", "How can I help you today?", "${ System.currentTimeMillis() - (1000 * 60 * 60 * 24) }", null, true))
+                           "${ System.currentTimeMillis() - (1000 * 60 * 60 * 20) }", currMentor.profilePicture, true))
+                        messagesList.add(Message("2", "Hi", "${ System.currentTimeMillis() - (1000 * 30 * 60 * 20) }", currMentor.profilePicture, false))
+                        messagesList.add(Message("3", "How are you?", "${ System.currentTimeMillis() - (1000 * 40 * 60 * 20) }", currMentor.profilePicture, false))
+                        messagesList.add(Message("4", "I'm good, thanks!", "${ System.currentTimeMillis() - (1000 * 60 * 50 * 20) }", currMentor.profilePicture, true))
+                        messagesList.add(Message("5", "How can I help you today?", "${ System.currentTimeMillis() - (1000 * 60 * 60 * 20) }", currMentor.profilePicture, false))
 
 
                     val intent = Intent(this@ChatActivity, ChatRoomActivity::class.java)

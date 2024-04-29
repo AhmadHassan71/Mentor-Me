@@ -193,30 +193,6 @@ class AddNewMentorActivity: AppCompatActivity() {
 
     }
 
-    private fun uploadToFirebase(imageUri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
-        val imagesRef = storageRef.child("profilepics").child("Mentors").child(imageUri.toString())
-
-        imageUri.let {
-            val uploadTask = imagesRef.putFile(it)
-
-            uploadTask.addOnSuccessListener {
-                // Image uploaded successfully
-                imagesRef.downloadUrl.addOnSuccessListener { uri ->
-                    pfpURL = uri.toString()
-                    Toast.makeText(this, "Image has been saved", Toast.LENGTH_SHORT).show()
-                }.addOnFailureListener {
-                    // Handle failure to get download URL
-                }
-            }.addOnFailureListener { exception ->
-                // Handle unsuccessful upload
-                Toast.makeText(this, "Failed to upload image: ${exception.message}", Toast.LENGTH_SHORT).show()
-            }
-        } ?: run {
-            Toast.makeText(this, "Invalid image URI", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun encodeImage(bitmap: Bitmap?): String? {
         bitmap?.let {

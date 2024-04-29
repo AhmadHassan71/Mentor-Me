@@ -13,7 +13,7 @@ import com.google.firebase.database.DatabaseReference
 import com.squareup.picasso.Picasso
 import me.jagar.chatvoiceplayerlibrary.VoicePlayerView
 
-class ChatAdapter(private val messageList: MutableList<Message>, private val database: DatabaseReference) :
+class ChatAdapter(private val messageList: MutableList<Message>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_MESSAGE = 0
@@ -84,7 +84,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
             timestampTextView.text = message.timestamp
             // Load image if available
             if(message.imageUrl != "") {
-                Picasso.get().load(message.imageUrl).into(imageMessage)
+                Picasso.get().load("http://"+DatabaseIP.IP+"/"+message.imageUrl).into(imageMessage)
                 timestampTextView.text = ""
             }
             // Implement edit and delete functionality here
@@ -151,7 +151,6 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
                 val messageId = messageList[position].id
                 messageList.removeAt(position)
                 notifyItemRemoved(position)
-                database.child(messageId).removeValue()
             }
         }
     }
@@ -161,7 +160,7 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
         private val audioPlayer = itemView.findViewById<VoicePlayerView>(R.id.voicePlayerView)
         fun bind(message: Message) {
             Log.d("ChatAdapter", "Audio message URL: ${message.imageUrl}")
-            audioPlayer.setAudio(message.imageUrl)
+            audioPlayer.setAudio("http://"+DatabaseIP.IP+"/"+message.imageUrl)
 
         }
     }
@@ -174,7 +173,15 @@ class ChatAdapter(private val messageList: MutableList<Message>, private val dat
 
         fun bind(message: Message) {
             messageTextView.text = message.text
-            timestampTextView.text = message.timestamp.toString()
+//            timestampTextView.text = message.timestamp.toString()
+            // convert to 24 hour format
+            val time = message.timestamp.toLong()
+            val currentTime = time.toLong()
+            val date = java.util.Date(currentTime)
+            val sdf = java.text.SimpleDateFormat("HH:mm")
+            val formattedDate = sdf.format(date)
+            timestampTextView.text = formattedDate
+
             // Load image if available
             // Replace "R.drawable.placeholder_image" with your actual placeholder image resource
             if (message.imageUrl != "")

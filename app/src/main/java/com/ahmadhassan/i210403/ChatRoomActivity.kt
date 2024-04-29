@@ -20,18 +20,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import android.Manifest
-import android.app.Activity
-import android.content.Context
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import okhttp3.Call
@@ -42,13 +35,18 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONObject
 import java.io.File
-import android.hardware.display.DisplayManager
-import androidx.annotation.RequiresApi
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Base64
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.akexorcist.screenshotdetection.ScreenshotDetectionDelegate
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import java.io.ByteArrayOutputStream
 
 
 class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.ScreenshotDetectionListener {
@@ -56,11 +54,12 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
     private lateinit var adapter: ChatAdapter
     private lateinit var messageEditText: EditText
     private lateinit var sendMessageButton: ImageView
-    private lateinit var database: DatabaseReference
     private var mediaRecorder: MediaRecorder ?= null
     private lateinit var audioPath: String
     private lateinit var audioFile: File
     private var isRecording = false
+    private var messageList: MutableList<Message> = mutableListOf()
+    private lateinit var recyclerView: RecyclerView
 
 
 
@@ -81,8 +80,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
         val chatRoom: ChatRoom = ChatRoomInstance.getInstance()
         Log.d("ChatRoomActivity", "ChatRoom: $chatRoom")
 
-        database = FirebaseDatabase.getInstance().getReference("ChatRooms").child(chatRoom.roomId)
-            .child("messages")
+
 
         val personName = findViewById<TextView>(R.id.MentorNameTextView)
         personName.text = MentorChatInstance.getInstance().name
@@ -91,7 +89,6 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
 
 
         // Message Service
-        val messageList: MutableList<Message> = mutableListOf()
 //        messageList.add(Message("1", "Hello!", "10:20", imageUrl = personProfile!!.profilePicture))
 //        messageList.add(Message("2", "Hi there!", "11:15", imageUrl = personProfile.profilePicture, sentByCurrentUser = false))
 //        messageList.add(Message("3", "How are you?", "11:20", imageUrl = personProfile.profilePicture, sentByCurrentUser = false))
@@ -105,10 +102,17 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
         Log.d("ChatRoomActivity", "MessageList: $messageList")
 
 
-        val recyclerView: RecyclerView = findViewById(R.id.communityRecyclerView)
-        val adapter = ChatAdapter(messageList, database)
+         recyclerView= findViewById(R.id.communityRecyclerView)
+//        val adapter = ChatAdapter(messageList)
+//        recyclerView.adapter = adapter
+//        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        messageList = chatRoom.messages.toMutableList()
+
+        adapter  = ChatAdapter(messageList)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.scrollToPosition(messageList.size - 1)
 
         sendMessageButton.setOnClickListener {
 
@@ -122,45 +126,11 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                 // upload message image uri to storage and get the uri
                 Log.d("ChatRoomActivity", "ImageUri: $messageImageUri")
                 var imageUri = ""
-                val storage = FirebaseStorage.getInstance()
-                val storageRef = storage.reference
-                val imagesRef =
-                    storageRef.child("messageData").child("Users").child("messageImages")
-                        .child(messageImageUri)
-                val uri = Uri.parse(messageImageUri)
-                val uploadTask = imagesRef.putFile(uri)
+               uploadImageToServer(Uri.parse(messageImageUri))
+                CameraImageObject.resetInstance()
+                SendNotification(Message("1", "Image", "10:20", imageUrl = imageUri, sentByCurrentUser = true))
 
-                uploadTask.addOnSuccessListener { _ ->
-                    imagesRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        val imageUrl =
-                            downloadUri.toString() // Get the download URL of the uploaded image
-                        Log.d("ChatRoomActivity", "Image uploaded successfully: $imageUrl")
 
-                        // Continue with saving the message with the download URL
-                        val messageContent =
-                            findViewById<EditText>(R.id.messageEditText).text.toString().trim()
-                        val currTime = System.currentTimeMillis()
-                        val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
-                        val lastMessage = messageList.lastOrNull()
-                        val newId = (lastMessage?.id?.toIntOrNull() ?: 0) + 1
-                        val newMessage = Message(
-                            newId.toString(), messageContent, currentTime,
-                            sentByCurrentUser = true, imageUrl = imageUrl
-                        )
-
-                        database.child(newId.toString()).setValue(newMessage)
-                        CameraImageObject.resetInstance()
-
-                        SendNotification(newMessage)
-                    }
-                }.addOnFailureListener { exception ->
-                    // Handle unsuccessful upload
-                    Toast.makeText(
-                        this,
-                        "Failed to upload image: ${exception.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
                 return@setOnClickListener
             } else {
 
@@ -180,11 +150,14 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                     )
 
 
-                    database.child(newId.toString()).setValue(newMessage)
+//                    database.child(newId.toString()).setValue(newMessage)
+                    sendMessageToServer(newMessage,"")
                     SendNotification(newMessage)
+                    messageList.add(newMessage)
                     messageEditText.text.clear()
 //                messageList.add(newMessage)
-//                adapter.notifyItemInserted(messageList.size - 1)
+                adapter.notifyItemInserted(messageList.size - 1)
+                    recyclerView.scrollToPosition(messageList.size - 1)
 //                recyclerView.scrollToPosition(messageList.size - 1)
                     messageEditText.text.clear()
                     val mentorResponse = when {
@@ -218,9 +191,9 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                             imageUrl = personProfilePic,
                             sentByCurrentUser = false
                         )
-                        database.child((newId + 1).toString()).setValue(mentorMessage)
-
+                        messageList.add(mentorMessage)
                         SendNotification(mentorMessage)
+                        adapter.notifyItemInserted(messageList.size - 1)
                     }, 5000)
 
 
@@ -233,43 +206,6 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
 
 
 
-
-
-        database.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val message = snapshot.getValue(Message::class.java)
-                message?.let {
-                    messageList.add(it)
-                    adapter.notifyItemInserted(messageList.size - 1)
-                    recyclerView.scrollToPosition(messageList.size - 1)
-                }
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                // Handle message update here
-                val message = snapshot.getValue(Message::class.java)
-                message?.let { it ->
-                    val messageId = snapshot.key
-                    val index = messageList.indexOfFirst { it.id == messageId }
-                    if (index != -1) {
-                        messageList[index] = it
-                        adapter.notifyItemChanged(index)
-                    }
-                }
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                // Handle message deletion here
-                val messageId = snapshot.key
-                val index = messageList.indexOfFirst { it.id == messageId }
-                if (index != -1) {
-                    messageList.removeAt(index)
-                    adapter.notifyItemRemoved(index)
-                }
-            }
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
 
 
         val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_navigation_view)
@@ -325,9 +261,12 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
             startActivity(videoCallIntent)
         }
         // For gallery access
+//        findViewById<ImageView>(R.id.imageButton).setOnClickListener {
+//            pickImage.launch("image/*")
+//
+//        }
         findViewById<ImageView>(R.id.imageButton).setOnClickListener {
             pickImage.launch("image/*")
-
         }
 
         // For camera access
@@ -365,6 +304,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
                 }
             } else {
                 // Stop recording if it's already recording
+
                 stopRecording()
             }
         }
@@ -390,11 +330,128 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
     }
 
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let {
-            CameraImageObject.setInstance(uri.toString(), ChatRoom())
+
+
+    private fun sendMessageToServer(messageContent: Message, imageUrl: String) {
+        // Implement sending message to server using HTTP POST request
+        // You can use Volley, Retrofit, or OkHttp to make the HTTP request
+        // Example using Volley:
+        val url = "http://${DatabaseIP.IP}/sendmessage.php"
+        val requestQueue = Volley.newRequestQueue(this)
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener<String> { response ->
+                // Handle the response from the server
+                // Assuming the server responds with success or failure message
+                Toast.makeText(this, response, Toast.LENGTH_SHORT).show()
+                if (response == "Message sent successfully") {
+                    // Clear input fields after successful message sending
+                    messageEditText.text.clear()
+                }
+            },
+            Response.ErrorListener { error ->
+                // Handle error
+                error.printStackTrace()
+//                Toast.makeText(this, "Failed to send message: ${error.message}", Toast.LENGTH_SHORT).show()
+                Log.d("ChatRoomActivity", "Failed to send message: ${error.message}")
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["text"] = messageContent.text
+                params["mentorId"] = MentorChatInstance.getInstance().mentorId ?: ""
+                params["sent_by_current_user"] = true.toString()
+                params["timestamp"] = messageContent.timestamp
+                params["image_url"] = imageUrl
+                params["audio_message"] = messageContent.audioMessage.toString()
+                params["userId"] = UserInstance.getInstance()?.userId ?: ""
+                return params
             }
         }
+        requestQueue.add(stringRequest)
+
+    }
+
+
+    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            // You can handle the selected image URI here
+            // Send the image URI to the server for uploading
+            uploadImageToServer(uri)
+
+        }
+    }
+
+    private fun uploadImageToServer(uri: Uri) {
+        val url = "http://${DatabaseIP.IP}/uploadimage.php"
+
+        // Get the user and mentor IDs
+        val userId = UserInstance.getInstance()?.userId ?: ""
+        val mentorId = MentorChatInstance.getInstance()?.mentorId ?: ""
+
+        // Convert the image URI to a bitmap
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+
+        // Convert the bitmap to a Base64 encoded string
+        val encodedImage = encodeImage(bitmap)
+
+        // Create a new Volley request queue
+        val requestQueue = Volley.newRequestQueue(this)
+
+        // Create a string request
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener<String> { response ->
+                // Handle the response from the server
+                Log.d("UploadImage", "Response from server: $response")
+                // Process the response as needed
+                // get the part containing the path and filename.jpg from response
+
+                messageList.add(Message((messageList.size-1).toString(), "", System.currentTimeMillis().toString(), imageUrl = response, sentByCurrentUser = true))
+                adapter.notifyItemInserted(messageList.size - 1)
+                recyclerView.scrollToPosition(messageList.size - 1)
+            },
+            Response.ErrorListener { error ->
+                // Handle errors that occur during the request
+                Log.e("UploadImage", "Error uploading image: $error")
+                // Display an error message or take appropriate action
+            }) {
+
+            // Override the getParams method to send POST parameters with the request
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["userId"] = userId
+                params["mentorId"] = mentorId
+                params["imageData"] = encodedImage ?: ""
+                params["audioMessage"] = false.toString()
+                params["sentByCurrentUser"] = true.toString()
+                params["timestamp"] = SimpleDateFormat("HH:mm").format(Date())
+                params["text"] = "" // Set the text to empty for image messages
+                return params
+            }
+        }
+
+        // Add the string request to the request queue
+        requestQueue.add(stringRequest)
+
+    }
+
+    // Helper function to encode the bitmap image to Base64 string
+    private fun encodeImage(bitmap: Bitmap?): String? {
+        bitmap?.let {
+            val byteArrayOutputStream = ByteArrayOutputStream()
+            it.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
+            val encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT)
+
+            // Log image size and other properties for debugging
+            Log.d("ImageInfo", "Image Size: ${byteArrayOutputStream.size()}")
+            Log.d("ImageInfo", "Encoded Image Length: ${encodedImage.length}")
+
+            return encodedImage
+        }
+        return null
+    }
+
+
     private fun createRecorder(): MediaRecorder {
         return if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             MediaRecorder(this@ChatRoomActivity)
@@ -406,12 +463,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             Log.d("ChatRoomActivityD", "AudioPath: $audioPath")
-            setOutputFile(audioPath)
-            audioFile = File(
-                externalMediaDirs.firstOrNull(),
-                audioPath
-            )
-            Log.d("ChatRoomActivityD", "AudioFile: $audioFile")
+            setOutputFile(audioFile.absolutePath) // Use the absolute path directly
             try {
                 prepare()
                 start()
@@ -429,6 +481,7 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
     }
 
 
+
     private fun stopRecording() {
         Log.d("ChatRoomActivityD", "Stop recording")
         mediaRecorder?.stop()
@@ -436,44 +489,89 @@ class ChatRoomActivity : AppCompatActivity(),ScreenshotDetectionDelegate.Screens
         mediaRecorder = null
         isRecording = false
         Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
-//        val audioFile = File(
-//            externalMediaDirs.firstOrNull(),
-//            audioPath
-//        )
 
-        val audioUri = Uri.fromFile(audioFile)
-        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
-        sendAudioMessage(audioUri)
-        // Now you can handle the recorded audio file, e.g., upload it to Firebase.
-    }private fun sendAudioMessage(audioUri: Uri) {
-//        val storage = FirebaseStorage.getInstance()
-//        val storageRef = storage.reference
-//        val audioRef = storageRef.child("isAudioMessage").child("${System.currentTimeMillis()}.3gp")
-//        val uploadTask = audioRef.putFile(audioUri)
-//        Log.d("ChatRoomActivityD", "AudioUri: $audioUri")
-//        uploadTask.addOnSuccessListener { _ ->
-//            audioRef.downloadUrl.addOnSuccessListener { downloadUri ->
-//                val audioUrl = downloadUri.toString()
-//                val currTime = System.currentTimeMillis()
-//                val currentTime = SimpleDateFormat("HH:mm").format(Date(currTime))
-//                val message = Message(
-//                    (currTime % Int.MAX_VALUE).toString(),
-//                    "",
-//                    currentTime,
-//                    audioUrl,
-//                    sentByCurrentUser = true,
-//                    audioMessage = true
-//                )
-//                database.child(message.id).setValue(message)
-//                SendNotification(message)
-//
-//            }
-//        }.addOnFailureListener { exception ->
-//            Toast.makeText(this, "Failed to upload audio: ${exception.message}", Toast.LENGTH_SHORT).show()
-//        }
+        val audioFileUri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", audioFile)
 
+        // Get content resolver
+        val contentResolver = applicationContext.contentResolver
+
+        // Open an input stream for the content URI
+        contentResolver.openInputStream(audioFileUri)?.use { inputStream ->
+            // Read the file data from the input stream
+            val fileData = inputStream.readBytes()
+
+            // Upload the audio file data
+            uploadAudioToServer(fileData)
+        } ?: run {
+            Log.e("ChatRoomActivityD", "Failed to open input stream for URI: $audioFileUri")
+            // Handle the case where the input stream could not be opened
+        }
     }
 
+    private fun uploadAudioToServer(fileData: ByteArray) {
+        val url = "http://${DatabaseIP.IP}/uploadaudio.php"
+
+        // Get the user and mentor IDs
+        val userId = UserInstance.getInstance()?.userId ?: ""
+        val mentorId = MentorChatInstance.getInstance().mentorId ?: ""
+
+        // Convert the file data to a Base64 string
+        val encodedFileData = Base64.encodeToString(fileData, Base64.DEFAULT)
+
+        // Create a new Volley request queue
+        val requestQueue = Volley.newRequestQueue(this)
+
+        // Create a string request
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener<String> { response ->
+                // Handle the response from the server
+                Log.d("UploadAudio", "Response from server: $response")
+                // Process the response as needed
+                messageList.add(Message((messageList.size-1).toString(), "", System.currentTimeMillis().toString(), imageUrl = response, sentByCurrentUser = true, audioMessage = true))
+                adapter.notifyItemInserted(messageList.size - 1)
+                recyclerView.scrollToPosition(messageList.size - 1)
+            },
+            Response.ErrorListener { error ->
+                // Handle errors that occur during the request
+                Log.e("UploadAudio", "Error uploading audio: $error")
+                // Display an error message or take appropriate action
+            }) {
+
+            // Override the getParams method to send POST parameters with the request
+            override fun getParams(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["userId"] = userId
+                params["mentorId"] = mentorId
+                params["audioFile"] = encodedFileData // Include the Base64 encoded audio data
+                params["timestamp"] = SimpleDateFormat("HH:mm").format(Date())
+                return params
+            }
+        }
+
+        // Add the string request to the request queue
+        requestQueue.add(stringRequest)
+    }
+
+    private fun getFileDataFromUri(uri: Uri): ByteArray? {
+        try {
+            val inputStream = contentResolver.openInputStream(uri)
+            inputStream?.let {
+                val buffer = ByteArrayOutputStream()
+                val bufferSize = 1024
+                val data = ByteArray(bufferSize)
+                var nRead: Int
+                while (inputStream.read(data, 0, bufferSize).also { nRead = it } != -1) {
+                    buffer.write(data, 0, nRead)
+                }
+                buffer.flush()
+                return buffer.toByteArray()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
     private fun SendNotification(message: Message) {
 
         if(!message.sentByCurrentUser){

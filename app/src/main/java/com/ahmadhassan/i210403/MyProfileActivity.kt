@@ -277,10 +277,6 @@ class MyProfileActivity: AppCompatActivity() {
                     recyclerView.adapter = adapter
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    when (e) {
-                        is JSONException -> Toast.makeText(this, "Error parsing JSON: ${e.message}", Toast.LENGTH_SHORT).show()
-                        else -> Toast.makeText(this, "Error fetching reviews: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
                 }
             },
             Response.ErrorListener { error ->

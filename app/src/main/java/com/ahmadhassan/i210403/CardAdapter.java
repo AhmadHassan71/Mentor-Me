@@ -45,7 +45,7 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 //        position = holder.getAdapterPosition();
-        final DatabaseReference DatabaseRef = FirebaseDatabase.getInstance().getReference("Favorite");
+//        final DatabaseReference DatabaseRef = FirebaseDatabase.getInstance().getReference("Favorite");
 
         Mentors mentor = mentors.get(position);
 
@@ -66,32 +66,32 @@ public class CardAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
 
         // Check if current mentor is in the favorites for current user
-        DatabaseRef.orderByChild("userId").equalTo(Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        boolean isFavorite = false;
-//                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                            Favorite favorite = snapshot.getValue(Favorite.class);
-//                            if (favorite != null && favorite.getMentorId().equals(mentor.getMentorId())) {
-//                                isFavorite = true;
-//                                break;
-//                            }
-//                        }
-//                        // Update the favorite status
-//                        if (isFavorite) {
-//                            mentor.setFavorite("❤️");
-//                        } else {
-//                            mentor.setFavorite("🩶");
-//                        }
-//                        notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Handle error
-                    }
-                });
+//        DatabaseRef.orderByChild("userId").equalTo(Objects.requireNonNull(UserInstance.INSTANCE.getInstance()).getUserId())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////                        boolean isFavorite = false;
+////                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+////                            Favorite favorite = snapshot.getValue(Favorite.class);
+////                            if (favorite != null && favorite.getMentorId().equals(mentor.getMentorId())) {
+////                                isFavorite = true;
+////                                break;
+////                            }
+////                        }
+////                        // Update the favorite status
+////                        if (isFavorite) {
+////                            mentor.setFavorite("❤️");
+////                        } else {
+////                            mentor.setFavorite("🩶");
+////                        }
+////                        notifyDataSetChanged();
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                        // Handle error
+//                    }
+//                });
 
         holder.Favorite.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
